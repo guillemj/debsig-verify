@@ -1,3 +1,9 @@
+debsig-verify (0.3) unstable; urgency=low
+
+  * debian/control: Suggests debian-keyring, Section non-US/main
+
+ -- Ben Collins <bcollins@debian.org>  Sun, 21 Jan 2001 13:48:08 -0500
+
 debsig-verify (0.2) unstable; urgency=low
 
   * Added --list-policies, to get a list of applicable policies for a .deb

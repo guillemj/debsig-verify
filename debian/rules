@@ -28,7 +28,7 @@ binary-arch: build install
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs
-	dh_installdocs docs/policy-syntax.txt
+	dh_installdocs docs/policy-syntax.txt docs/policy.dtd
 	dh_installdeb
 	dh_strip
 	dh_compress

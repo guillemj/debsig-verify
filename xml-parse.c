@@ -40,11 +40,15 @@ static struct group *cur_grp = NULL;
 #define parse_error(fmt, args...) { parse_error++; ds_printf(DS_LEV_ERR, fmt, ## args); }
 
 static void startElement(void *userData, const char *name, const char **atts) {
-    int i;
+    int i, depth;
     int *depthPtr = userData;
 
+    /* save the current and increment the userdata */
+    depth = *depthPtr;
+    *depthPtr = depth + 1;
+
     if (!strcmp(name,"Policy")) {
-	if (*depthPtr != 0)
+	if (depth != 0)
 	    parse_error("policy parse error: `Policy' found at wrong level");
 
 	for (i = 0; atts[i]; i += 2) {
@@ -56,7 +60,7 @@ static void startElement(void *userData, const char *name, const char **atts) {
 			     atts[i]);
 	}
     } else if (!strcmp(name,"Origin")) {
-	if (*depthPtr != 1)
+	if (depth != 1)
 	    parse_error("policy parse error: `Origin' found at wrong level");
 	
 	for (i = 0; atts[i]; i += 2) {
@@ -75,7 +79,7 @@ static void startElement(void *userData, const char *name, const char **atts) {
 	    parse_error("Origin element missing Name or ID attribute");
     } else if (!strcmp(name,"Selection") || !strcmp(name,"Verification")) {
 	struct group *g = NULL;
-	if (*depthPtr != 1)
+	if (depth != 1)
 	    parse_error("policy parse error: `Selection/Verification' found at wrong level");
 
 	/* create a new entry, make it the current */
@@ -117,13 +121,13 @@ static void startElement(void *userData, const char *name, const char **atts) {
     } else if (!strcmp(name,"Required") || !strcmp(name,"Reject") ||
 	       !strcmp(name,"Optional")) {
 	struct match *m = NULL, *cur_m = NULL;
-	if (*depthPtr != 2)
+	if (depth != 2)
 	    parse_error("policy parse error: Match element found at wrong level");
 
 	/* This should never happen with the other checks in place */
 	if (cur_grp == NULL) {
 	    parse_error("policy parse error: No current group for match element");
-	    goto get_out;
+	    return;
 	}
 
         /* create a new entry, make it the current */
@@ -176,9 +180,6 @@ static void startElement(void *userData, const char *name, const char **atts) {
 		parse_error("Reject must have a Type attribute");
 	}
     }
-
-get_out:
-    *depthPtr += 1;
 }
 
 static void endElement(void *userData, const char *name) {

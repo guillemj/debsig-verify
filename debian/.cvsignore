@@ -1,0 +1,6 @@
+build-stamp
+tmp
+postinst.debhelper
+prerm.debhelper
+substvars
+files

@@ -15,13 +15,14 @@
 - Testing setup. This is the way I invision it. Basically we have
   directories with sample data. Each directory contains some related parts
   of a Debian file (control.tar.gz, data.tar.gz), signatures and
-  policy's/keyrings. We than have some XML files (god I love XML :) that
+  policy's/keyrings. We then have some XML files (god I love XML :) that
   describe the tests. This includes which parts to use to build the debs,
-  and which policies. Need a program that parses this and performs the
-  jobs. One drawback is, how can we tell debsig-verify where to find the
-  polices and keyrings, since it is hardcoded? Should we allow command
-  line options to override this?
-
+  which policies to configure for checking it, and the expected outcome of
+  the checks. Need a program that parses this and performs the jobs. One
+  drawback is, how can we tell debsig-verify where to find the polices and
+  keyrings, since it is hardcoded? Should we allow command line options to
+  override this?
 
 - Obviously this needs some serious auditing, not matter how good I think
-  my coding is.
+  my coding is. Generally I've used static buffers and length constrained
+  functions (snprintf, strncmp) where ever possible.

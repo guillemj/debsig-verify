@@ -163,7 +163,7 @@ int gpgVerify(const char *deb, struct match *mtc, const char *tmp_file) {
 	ds_fail_printf("gpgVerify: could not open file stream for pipe");
     if (!(pid = fork())) {
 	dup2(p[0],0); close(p[0]); close(p[1]); close(1); close(2);
-	execl(GPG_PROG, "gpg", GPG_ARGS, "--always-trust", "-q", "--keyring",
+	execl(GPG_PROG, "gpg", GPG_ARGS, "-q", "--keyring",
 		keyring, "--verify", tmp_file);
 	exit(1);
     }

@@ -1,3 +1,10 @@
+Mon Dec 11 10:47:49 EST 2000  Ben Collins <bcollins@debian.org>
+
+  * debsig-verify.c: outputUsage(): new function
+  * debsig-verify.c: main(): Use it. Also, handle argv[0] better
+    (prog_name).
+  * gpg-parse.c: gpgVerify(): do not pass --always-trust to gpg.
+
 Fri Dec  8 09:22:05 EST 2000  Ben Collins <bcollins@debian.org>
 
   * debsig.h:ds_fail_printf: new macro to print DS_LEV_ERR message and

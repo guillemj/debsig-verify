@@ -40,6 +40,8 @@ FILE *deb_fs = NULL;
 
 char *ver_members[] = { "control.tar.gz", "data.tar.gz", 0 };
 
+static char *prog_name = NULL;
+
 static int checkGroupRules(struct group *grp, const char *deb) {
     FILE *fg;
     char buf[2048], tmp_file[32];
@@ -123,12 +125,29 @@ static int checkGroupRules(struct group *grp, const char *deb) {
 }
 
 static void outputVersion(void) {
-    fprintf(stderr, "Debsig Program Version - "VERSION"\n");
-    fprintf(stderr, "  Signature Version - "SIG_VERSION"\n");
-    fprintf(stderr, "  Signature Namespace - "DEBSIG_NS"\n");
-    fprintf(stderr, "  Policies Directory - "DEBSIG_POLICIES_DIR"\n");
-    fprintf(stderr, "  Keyrings Directory - "DEBSIG_KEYRINGS_DIR"\n");
+    fprintf(stderr, "\
+Debsig Program Version - "VERSION"\n\
+  Signature Version - "SIG_VERSION"\n\
+  Signature Namespace - "DEBSIG_NS"\n\
+  Policies Directory - "DEBSIG_POLICIES_DIR"\n\
+  Keyrings Directory - "DEBSIG_KEYRINGS_DIR"\n");
     return;
+}
+
+static void outputUsage(void) {
+        fprintf(stderr, "\
+Usage: %s [ options ] <deb>\n\n\
+   -q                  Quiet, only output fatal errors\n\
+   -v                  Verbose output (mainly debug)\n\
+   --version           Output version info, and exit\n\
+   --list-policies     Only list policies that can be used to\n\
+                       validate this sig. This runs through\n\
+                       `Selection' block of the policies only.\n\
+   --use-policy <name> Used in conjunction with the above\n\
+                       option. This allows you to specify the\n\
+                       short name of the policy you wish to try.\n",
+	prog_name);
+        exit(1);
 }
 
 int main(int argc, char *argv[]) {
@@ -139,8 +158,13 @@ int main(int argc, char *argv[]) {
     struct group *grp;
     int i, list_only = 0;
 
+    if ((prog_name = strrchr(argv[0], '/')) == NULL)
+	prog_name = strdup(argv[0]);
+    else
+	prog_name = strdup(prog_name + 1);
+
     if (argc < 2)
-	goto usage;
+	outputUsage();
 
     for (i = 1; i < argc && argv[i][0] == '-'; i++) {
 	if (!strcmp(argv[i], "-q"))
@@ -166,26 +190,14 @@ int main(int argc, char *argv[]) {
 	    force_file = argv[++i];
 	    if (i == argc || force_file[0] == '-') {
 		ds_printf(DS_LEV_ERR, "--use-policy requires an argument");
-		goto usage;
+		outputUsage();
 	    }
 	} else
-	    goto usage;
+	    outputUsage();
     }
 
-    if (i + 1 != argc) { /* There should only be one arg left */
-usage:
-	fprintf(stderr, "Usage: %s [ options ] <deb>\n\n", argv[0]);
-	fprintf(stderr, "   -q                  Quiet, only output fatal errors\n");
-	fprintf(stderr, "   -v                  Verbose output (mainly debug)\n");
-	fprintf(stderr, "   --version           Output version info, and exit\n");
-	fprintf(stderr, "   --list-policies     Only list policies that can be used to\n");
-	fprintf(stderr, "                       validate this sig. This runs through\n");
-	fprintf(stderr, "                       `Selection' block of the policies only.\n");
-	fprintf(stderr, "   --use-policy <name> Used in conjunction with the above\n");
-	fprintf(stderr, "                       option. This allows you to specify the\n");
-	fprintf(stderr, "                       short name of the policy you wish to try.\n");
-	exit(1);
-    }
+    if (i + 1 != argc) /* There should only be one arg left */
+	outputUsage();
 
     deb = argv[i];
     
@@ -251,6 +263,8 @@ not_deb:
 	/* Damn, can't verify this one */
 	ds_fail_printf("No applicable policies found. Verify failed.\n");
 
+    ds_printf(DS_LEV_INFO, "Using Policy file: %s", pol_file);
+    
     if (list_only)
 	exit(0); /* our job is done */
 
@@ -262,7 +276,6 @@ not_deb:
 
     ds_printf(DS_LEV_INFO, "Verified using `%s' (%s)", pol->description,
 	    pol->name);
-    ds_printf(DS_LEV_INFO, "Used Policy file: %s", pol_file);
 
     /* If we get here, then things passed just fine */
     exit(0);

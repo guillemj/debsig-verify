@@ -29,6 +29,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <stdlib.h>
 
 #include "debsig.h"
 

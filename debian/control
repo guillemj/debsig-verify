@@ -1,5 +1,5 @@
 Source: debsig-verify
-Section: non-US/main
+Section: admin
 Priority: standard
 Maintainer: Ben Collins <bcollins@debian.org>
 Build-Depends: libxmltok1-dev, debhelper

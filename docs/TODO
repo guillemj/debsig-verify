@@ -5,10 +5,9 @@
     very good wrapper, but it is hugely overweight for what I need.
     Basically this may be a dead issue. Otherwise, I should probably start
     using the --with-colon and --status-fd output for better parsing.
-- Add another option to force only trying a specific policy. We cannot
-  change the originID, so we force which policy to use under a specific
-  originID.
 - Figure out how to integrate this with the package tools (apt, dpkg
   etc..)
 - Free memory from policy struct (minor mem leak).
 - Expiry still needs to be handled
+- Add some more info to the verbose output.
+- Create manpage

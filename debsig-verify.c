@@ -131,7 +131,7 @@ static void outputVersion(void) {
 
 int main(int argc, char *argv[]) {
     struct policy *pol = NULL;
-    char buf[8192], pol_file[8192], *tmpID;
+    char buf[8192], pol_file[8192], *tmpID, *force_file = NULL;
     DIR *pd = NULL;
     struct dirent *pd_ent;
     struct group *grp;
@@ -159,20 +159,29 @@ int main(int argc, char *argv[]) {
 	    /* Just create a list of policies we can use */
 	    list_only = 1;
 	    ds_printf(DS_LEV_ERR, "Listing usable policies");
+	} else if (!strcmp(argv[i], "--use-policy")) {
+	    /* We take one arg */
+	    force_file = argv[++i];
+	    if (i == argc || force_file[0] == '-') {
+		ds_printf(DS_LEV_ERR, "--use-policy requires an argument");
+		goto usage;
+	    }
 	} else
 	    goto usage;
     }
 
     if (i + 1 != argc) { /* There should only be one arg left */
 usage:
-	ds_printf(DS_LEV_ERR, "Usage: %s [ options ] <deb>", argv[0]);
-	putchar('\n');
-	ds_printf(DS_LEV_ERR, "   -q                Quiet, only output fatal errors");
-	ds_printf(DS_LEV_ERR, "   -v                Verbose output (mainly debug)");
-	ds_printf(DS_LEV_ERR, "   --version         Output version info, and exit");
-	ds_printf(DS_LEV_ERR, "   --list-policies   Only list policies that can be used to");
-	ds_printf(DS_LEV_ERR, "                     validate this sig. This runs through");
-	ds_printf(DS_LEV_ERR, "                     `Selection' block of the policies only.");
+	fprintf(stderr, "Usage: %s [ options ] <deb>\n\n", argv[0]);
+	fprintf(stderr, "   -q                  Quiet, only output fatal errors\n");
+	fprintf(stderr, "   -v                  Verbose output (mainly debug)\n");
+	fprintf(stderr, "   --version           Output version info, and exit\n");
+	fprintf(stderr, "   --list-policies     Only list policies that can be used to\n");
+	fprintf(stderr, "                       validate this sig. This runs through\n");
+	fprintf(stderr, "                       `Selection' block of the policies only.\n");
+	fprintf(stderr, "   --use-policy <name> Used in conjunction with the above\n");
+	fprintf(stderr, "                       option. This allows you to specify the\n");
+	fprintf(stderr, "                       short name of the policy you wish to try.\n");
 	exit(1);
     }
 
@@ -213,6 +222,9 @@ usage:
 	/* Make sure we have the right name format */
 	if (strstr(pd_ent->d_name, ".pol") == NULL)
 	    continue;
+
+	if (force_file != NULL && strcmp(pd_ent->d_name, force_file))
+		continue;
 
 	/* Now try to parse the file */
 	snprintf(pol_file, sizeof(pol_file) - 1, "%s/%s", buf, pd_ent->d_name);

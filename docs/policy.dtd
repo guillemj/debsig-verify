@@ -1,4 +1,7 @@
 <!--
+ Written by Ben Collins <bcollins@debian.org>, placed in the Public
+ Domain.
+
  DTD describing Policy files for verifying signatures of .deb packages.
   -->
 

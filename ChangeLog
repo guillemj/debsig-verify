@@ -1,3 +1,9 @@
+Thu Dec  7 10:50:17 EST 2000  Ben Collins <bcollins@debian.org>
+
+  * Added a --use-policy option, which takes the shortname of a policy
+    that was listed with --list-policies. Allows the user to specify the
+    policy they want to use.
+
 Thu Dec  7 02:24:50 EST 2000  Ben Collins <bcollins@debian.org>
 
   * debsig-verify.c: Added --list-policies option.

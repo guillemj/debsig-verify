@@ -13,7 +13,7 @@ DEBSIG_POLICIES_DIR=$(shell pwd)/testing/policies
 endif
 
 PROGRAM = debsig-verify
-OBJS = xml-parse.o ar-parse.o debsig-verify.o misc.o
+OBJS = xml-parse.o ar-parse.o gpg-parse.o debsig-verify.o misc.o
 
 CFLAGS += -DDEBSIG_POLICIES_DIR=\"$(DEBSIG_POLICIES_DIR)\" \
 -DDEBSIG_KEYRINGS_DIR=\"$(DEBSIG_KEYRINGS_DIR)\"
@@ -21,7 +21,7 @@ CFLAGS += -DDEBSIG_POLICIES_DIR=\"$(DEBSIG_POLICIES_DIR)\" \
 all: $(PROGRAM)
 
 $(PROGRAM): $(OBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -o $@
+	$(CC) $(CFLAGS) $(OBJS) $(LDFLAGS) -o $@
 
 install: all
 	install -d -m755 $(DESTDIR)/usr/bin
@@ -32,5 +32,5 @@ install: all
 clean:
 	rm -f debsig-verify $(OBJS)
 
-%.o: %.c
+%.o: %.c debsig.h
 	$(CC) $(CFLAGS) -c $< -o $@

@@ -66,6 +66,10 @@ struct policy {
 
 struct policy *parsePolicyFile(char *filename);
 size_t findMember(const char *name);
+int checkSigExist(const char *name);
+char *getKeyID (const struct match *mtc);
+char *getSigKeyID (const char *deb, const char *type);
+int gpgVerify(const char *deb, struct match *mtc, const char *tmp_file);
 
 #define DS_LEV_ERR 2
 #define DS_LEV_INFO 1
@@ -75,3 +79,4 @@ void ds_printf(int level, const char *fmt, ...);
 extern int ds_debug_level;
 extern FILE *deb_fs;
 extern char *deb;
+extern char originID[];

@@ -1,7 +1,12 @@
 - Make sure all error checking is done
 - Create some test setups to verify the policy parsing
 - Is there a GnuPG library we can link against instead of execing gpg?
+  * Yes, there is PGG, but it is merely a wrapper around the GPG binary. A
+    very good wrapper, but it is hugely overweight for what I need.
+    Basically this may be a dead issue. Otherwise, I should probably start
+    using the --with-colon and --status-fd output for better parsing.
 - Add an option so that we just list policies that can validate this deb
+- Add another option to force only trying a specific policy
 - Figure out how to integrate this with the package tools (apt, dpkg
   etc..)
 - Free memory from policy struct (minor mem leak).

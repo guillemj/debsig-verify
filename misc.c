@@ -43,3 +43,16 @@ void ds_printf(int level, const char *fmt, ...) {
 
     return;
 }
+
+int checkSigExist(const char *name) {
+    char buf[16];
+
+    if (name == NULL) {
+	ds_printf(DS_LEV_VER, "checkSigExist: NULL values passed");
+	return 0;
+    }
+
+    snprintf(buf, sizeof(buf) - 1, "_gpg%s", name);
+
+    return findMember(buf);
+}

@@ -51,7 +51,10 @@ There are three types of matching rules within the two blocks.
 
 Required	- The Type must be present, and must verify.
 Optional	- If the Type is present, it must verify. If it isn't present, we
-		  ignore this match.
+		  ignore this match. Being "present" means that the "Type"
+		  exists in the .deb. If the ID is included, then the sig
+		  in the deb must contain the same ID for it to be
+		  considered "present".
 Reject		- If this type is present, we fail.
 
   Type - short string that matches the name of the sig file in the deb.

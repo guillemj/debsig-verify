@@ -1,3 +1,10 @@
+Fri Dec  8 09:22:05 EST 2000  Ben Collins <bcollins@debian.org>
+
+  * debsig.h:ds_fail_printf: new macro to print DS_LEV_ERR message and
+    exit(1). Used throughout now.
+  * xml-parse.c: Convert PARSE_ERROR macro to parse_error using proper
+    stdarg format.
+
 Thu Dec  7 21:28:40 EST 2000  Ben Collins <bcollins@debian.org>
 
   * xml-parse.c:clear_policy(): Used to free the memory used by the policy

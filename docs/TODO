@@ -1,5 +1,4 @@
 - Make sure all error checking is done
-- Create some test setups to verify the policy parsing
 - Is there a GnuPG library we can link against instead of execing gpg?
   * Yes, there is PGG, but it is merely a wrapper around the GPG binary. A
     very good wrapper, but it is hugely overweight for what I need.
@@ -9,3 +8,13 @@
   etc..)
 - Expiry still needs to be handled
 - Add some more info to the verbose output.
+
+- Testing setup. This is the way I invision it. Basically we have
+  directories with sample data. Each directory contains some related parts
+  of a Debian file (control.tar.gz, data.tar.gz), signatures and
+  policy's/keyrings. We than have some XML files (god I love XML :) that
+  describe the tests. This includes which parts to use to build the debs,
+  and which policies. Need a program that parses this and performs the
+  jobs. One drawback is, how can we tell debsig-verify where to find the
+  polices and keyrings, since it is hardcoded? Should we allow command
+  line options to override this?

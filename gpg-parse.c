@@ -32,8 +32,6 @@
 
 #include "debsig.h"
 
-static char *ver_members[] = { "control.tar.gz", "data.tar.gz", 0 };
-
 char *getKeyID (const struct match *mtc) {
     static char buf[2048];
     FILE *ds;
@@ -92,10 +90,9 @@ char *getSigKeyID (const char *deb, const char *type) {
     pipe(pread);pipe(pwrite);
     /* I like file streams, so sue me :P */
     if ((ds_read = fdopen(pread[0], "r")) == NULL ||
-	 (ds_write = fdopen(pwrite[1], "w")) == NULL) {
-	ds_printf(DS_LEV_ERR, "error opening file stream for gpg");
-	exit(1);
-    }
+	 (ds_write = fdopen(pwrite[1], "w")) == NULL)
+	ds_fail_printf("error opening file stream for gpg");
+
     if (!(pid = fork())) {
 	/* Here we go */
 	dup2(pread[1],1); close(pread[0]); close(pread[1]);
@@ -116,10 +113,8 @@ char *getSigKeyID (const char *deb, const char *type) {
 	len -= t;
 	t = fread(buf, 1, sizeof(buf), deb_fs);
     }
-    if (ferror(ds_write)) {
-	ds_printf(DS_LEV_ERR, "error writing to gpg");
-	exit(1);
-    }
+    if (ferror(ds_write))
+	ds_fail_printf("error writing to gpg");
     fclose(ds_write);
 
     /* Now, let's see what gpg has to say about all this */
@@ -137,10 +132,8 @@ char *getSigKeyID (const char *deb, const char *type) {
 	}
 	c = fgets(buf, sizeof(buf), ds_read);
     }
-    if (ferror(ds_read)) {
-	ds_printf(DS_LEV_ERR, "error reading from gpg");
-	exit(1);
-    }
+    if (ferror(ds_read))
+	ds_fail_printf("error reading from gpg");
     fclose(ds_read);
     
     waitpid(pid, NULL, 0);
@@ -166,10 +159,8 @@ int gpgVerify(const char *deb, struct match *mtc, const char *tmp_file) {
     }
 
     pipe(p);
-    if ((fs = fdopen(p[1], "w")) == NULL) {
-	ds_printf(DS_LEV_ERR, "gpgVerify: could not open file stream for pipe");
-	exit(1);
-    }
+    if ((fs = fdopen(p[1], "w")) == NULL)
+	ds_fail_printf("gpgVerify: could not open file stream for pipe");
     if (!(pid = fork())) {
 	dup2(p[0],0); close(p[0]); close(p[1]); close(1); close(2);
 	execl(GPG_PROG, "gpg", GPG_ARGS, "--always-trust", "-q", "--keyring",
@@ -180,10 +171,8 @@ int gpgVerify(const char *deb, struct match *mtc, const char *tmp_file) {
 
     /* Now pipe our data to gpg */
     for (i = 0; ver_members[i]; i++) {
-	if ((len = findMember(ver_members[i])) == 0) {
-	    ds_printf(DS_LEV_ERR, "gpgVerify: could not find %s member", ver_members[i]);
-	    exit(1);
-	}
+	if ((len = findMember(ver_members[i])) == 0)
+	    ds_fail_printf("gpgVerify: could not find %s member", ver_members[i]);
 	t = fread(buf, 1, sizeof(buf), deb_fs);
 	while(len > 0) {
 	    if (t > len)
@@ -194,10 +183,8 @@ int gpgVerify(const char *deb, struct match *mtc, const char *tmp_file) {
 	    t = fread(buf, 1, sizeof(buf), deb_fs);
 	}
     }
-    if (ferror(fs)) {
-        ds_printf(DS_LEV_ERR, "error writing to gpg");
-        exit(1);
-    }
+    if (ferror(fs))
+        ds_fail_printf("error writing to gpg");
     fclose(fs);
     
     waitpid(pid, &status, 0);

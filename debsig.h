@@ -27,8 +27,8 @@
 #define GPG_PROG "/usr/bin/gpg"
 
 /* This is so ugly, but easy */
-#define GPG_ARGS_FMT "%s %s"
-#define GPG_ARGS "--no-options", "--no-default-keyring"
+#define GPG_ARGS_FMT "%s %s %s"
+#define GPG_ARGS "--no-options", "--no-default-keyring", "--batch"
 
 #define SIG_MAGIC ":signature packet:"
 #define USER_MAGIC ":user ID packet:"
@@ -72,12 +72,15 @@ char *getSigKeyID (const char *deb, const char *type);
 int gpgVerify(const char *deb, struct match *mtc, const char *tmp_file);
 void clear_policy(void);
 
+#define DS_LEV_ALWAYS 3
 #define DS_LEV_ERR 2
 #define DS_LEV_INFO 1
 #define DS_LEV_VER 0
 void ds_printf(int level, const char *fmt, ...);
+#define ds_fail_printf(fmt, args...) { ds_printf(DS_LEV_ERR, fmt, ##args); exit(1); }
 
 extern int ds_debug_level;
 extern FILE *deb_fs;
 extern char *deb;
 extern char originID[];
+extern char *ver_members[];

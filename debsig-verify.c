@@ -38,6 +38,8 @@ char originID[2048];
 char *deb = NULL;
 FILE *deb_fs = NULL;
 
+char *ver_members[] = { "control.tar.gz", "data.tar.gz", 0 };
+
 static int checkGroupRules(struct group *grp, const char *deb) {
     FILE *fg;
     char buf[2048], tmp_file[32];
@@ -158,7 +160,7 @@ int main(int argc, char *argv[]) {
 	} else if (!strcmp(argv[i], "--list-policies")) {
 	    /* Just create a list of policies we can use */
 	    list_only = 1;
-	    ds_printf(DS_LEV_ERR, "Listing usable policies");
+	    ds_printf(DS_LEV_ALWAYS, "Listing usable policies");
 	} else if (!strcmp(argv[i], "--use-policy")) {
 	    /* We take one arg */
 	    force_file = argv[++i];
@@ -187,18 +189,19 @@ usage:
 
     deb = argv[i];
     
-    if ((deb_fs = fopen(deb, "r")) == NULL) {
-	ds_printf(DS_LEV_ERR, "could not open %s (%s)", deb, strerror(errno));
-	exit(1);
-    }
+    if ((deb_fs = fopen(deb, "r")) == NULL)
+	ds_fail_printf("could not open %s (%s)", deb, strerror(errno));
 
     if (!list_only)
-	ds_printf(DS_LEV_INFO, "starting verification for %s", deb);
+	ds_printf(DS_LEV_INFO, "Starting verification for: %s", deb);
 
-    if (!findMember("debian-binary") || !findMember("control.tar.gz") ||
-	    !findMember("data.tar.gz")) {
-	ds_printf(DS_LEV_ERR, "%s does not appear to be a deb format package", deb);
-	exit (1);
+    if (!findMember("debian-binary"))
+	goto not_deb;
+
+    for (i = 0; ver_members[i]; i++) {
+	if (!findMember(ver_members[i]))
+not_deb:
+	    ds_fail_printf("%s does not appear to be a deb format package", deb);
     }
 
     if ((tmpID = getSigKeyID(deb, "origin")) == NULL) {
@@ -216,7 +219,7 @@ usage:
     }
 
     if (list_only)
-	ds_printf(DS_LEV_ERR, "  Policies in: %s", buf);
+	ds_printf(DS_LEV_ALWAYS, "  Policies in: %s", buf);
 
     while ((pd_ent = readdir(pd)) != NULL && (pol == NULL || list_only)) {
 	/* Make sure we have the right name format */
@@ -241,7 +244,7 @@ usage:
 	    }
 	}
 	if (pol && list_only) {
-	    ds_printf(DS_LEV_ERR, "    Usable: %s", pd_ent->d_name);
+	    ds_printf(DS_LEV_ALWAYS, "    Usable: %s", pd_ent->d_name);
 	    list_only++;
 	}
     }
@@ -258,14 +261,13 @@ usage:
 
     /* Now the final test */
     for (grp = pol->vers; grp; grp = grp->next) {
-	if (!checkGroupRules(grp, deb)) {
-	    fprintf(stderr, "Failed validation.\n");
-	    exit(1);
-	}
+	if (!checkGroupRules(grp, deb))
+	    ds_fail_printf("Failed validation for %s.", deb);
     }
 
-    ds_printf(DS_LEV_INFO, "Verified using the `%s' (%s) policy in %s.", pol->description,
-	    pol->name, pol_file);
+    ds_printf(DS_LEV_INFO, "Verified using `%s' (%s)", pol->description,
+	    pol->name);
+    ds_printf(DS_LEV_INFO, "Used Policy file: %s", pol_file);
 
     /* If we get here, then things passed just fine */
     exit(0);

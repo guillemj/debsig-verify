@@ -37,7 +37,7 @@ static int parse_error;
 static struct policy ret;
 static struct group *cur_grp = NULL;
 
-#define PARSE_ERROR(x) do { parse_error++; ds_printf x; } while(0)
+#define parse_error(fmt, args...) { parse_error++; ds_printf(DS_LEV_ERR, fmt, ## args); }
 
 static void startElement(void *userData, const char *name, const char **atts) {
     int i;
@@ -45,19 +45,19 @@ static void startElement(void *userData, const char *name, const char **atts) {
 
     if (!strcmp(name,"Policy")) {
 	if (*depthPtr != 0)
-	    PARSE_ERROR((DS_LEV_ERR, "policy parse error: `Policy' found at wrong level"));
+	    parse_error("policy parse error: `Policy' found at wrong level");
 
 	for (i = 0; atts[i]; i += 2) {
 	    if (!strcmp(atts[i], "xmlns")) {
 		if (strcmp(atts[i+1], DEBSIG_NS))
-		    PARSE_ERROR((DS_LEV_ERR, "policy name space != " DEBSIG_NS));
+		    parse_error("policy name space != " DEBSIG_NS);
 	    } else
-		PARSE_ERROR((DS_LEV_ERR, "Policy element contains unknown attribute `%s'",
-			     atts[i]));
+		parse_error("Policy element contains unknown attribute `%s'",
+			     atts[i]);
 	}
     } else if (!strcmp(name,"Origin")) {
 	if (*depthPtr != 1)
-	    PARSE_ERROR((DS_LEV_ERR, "policy parse error: `Origin' found at wrong level"));
+	    parse_error("policy parse error: `Origin' found at wrong level");
 	
 	for (i = 0; atts[i]; i += 2) {
 	    if (!strcmp(atts[i], "id"))
@@ -67,24 +67,21 @@ static void startElement(void *userData, const char *name, const char **atts) {
 	    else if (!strcmp(atts[i], "Description"))
 		ret.description = strdup(atts[i+1]);
 	    else
-		PARSE_ERROR((DS_LEV_ERR, "Origin element contains unknown attribute `%s'",
-			     atts[i]));
+		parse_error("Origin element contains unknown attribute `%s'",
+			     atts[i]);
 	}
 
 	if (ret.id == NULL || ret.name == NULL)
-	    PARSE_ERROR((DS_LEV_ERR, "Origin element missing Name or ID attribute"));
+	    parse_error("Origin element missing Name or ID attribute");
     } else if (!strcmp(name,"Selection") || !strcmp(name,"Verification")) {
 	struct group *g = NULL;
 	if (*depthPtr != 1)
-	    PARSE_ERROR((DS_LEV_ERR,
-			 "policy parse error: `Selection/Verification' found at wrong level"));
+	    parse_error("policy parse error: `Selection/Verification' found at wrong level");
 
 	/* create a new entry, make it the current */
 	cur_grp = (struct group *)malloc(sizeof(struct group));
-	if (cur_grp == NULL) {
-	    ds_printf(DS_LEV_ERR, "out of memory");
-	    exit(1);
-	}
+	if (cur_grp == NULL)
+	    ds_fail_printf("out of memory");
 	memset(cur_grp, 0, sizeof(struct group));
 
 	if (!strcmp(name,"Selection")) {
@@ -109,35 +106,30 @@ static void startElement(void *userData, const char *name, const char **atts) {
 		int t; const char *c = atts[i+1];
 		for (t = 0; c[t]; t++) {
 		    if (!isdigit(c[t]))
-			PARSE_ERROR((DS_LEV_ERR, "MinOptional requires a numerical value"));
+			parse_error("MinOptional requires a numerical value");
 		}
 		cur_grp->min_opt = atoi(c);
 	    } else {
-		PARSE_ERROR((DS_LEV_ERR,
-			     "Selection/Verification element contains unknown attribute `%s'",
-			     atts[i]));
+		parse_error("Selection/Verification element contains unknown attribute `%s'",
+			     atts[i]);
 	    }
 	}
     } else if (!strcmp(name,"Required") || !strcmp(name,"Reject") ||
 	       !strcmp(name,"Optional")) {
 	struct match *m = NULL, *cur_m = NULL;
 	if (*depthPtr != 2)
-	    PARSE_ERROR((DS_LEV_ERR,
-			 "policy parse error: Match element found at wrong level"));
+	    parse_error("policy parse error: Match element found at wrong level");
 
 	/* This should never happen with the other checks in place */
 	if (cur_grp == NULL) {
-	    PARSE_ERROR((DS_LEV_ERR,
-			 "policy parse error: No current group for match element"));
+	    parse_error("policy parse error: No current group for match element");
 	    goto get_out;
 	}
 
         /* create a new entry, make it the current */
         cur_m = (struct match *)malloc(sizeof(struct match));
-        if (cur_m == NULL) {
-            ds_printf(DS_LEV_ERR, "out of memory");
-            exit(1);
-        }
+        if (cur_m == NULL)
+            ds_fail_printf("out of memory");
         memset(cur_m, 0, sizeof(struct match));
 
 	if (cur_grp->matches == NULL)
@@ -160,13 +152,12 @@ static void startElement(void *userData, const char *name, const char **atts) {
 		int t; const char *c = atts[i+1];
 		for (t = 0; c[t]; t++) {
 		    if (!isdigit(c[t]))
-			PARSE_ERROR((DS_LEV_ERR, "Expiry requires a numerical value"));
+			parse_error("Expiry requires a numerical value");
 		}
                 cur_m->day_expiry = atoi(c);
             } else {
-                PARSE_ERROR((DS_LEV_ERR,
-                             "Match element contains unknown attribute `%s'",
-                             atts[i]));
+                parse_error("Match element contains unknown attribute `%s'",
+                             atts[i]);
             }
         }
 
@@ -174,18 +165,15 @@ static void startElement(void *userData, const char *name, const char **atts) {
         if (!strcmp(name,"Required")) {
 	    cur_m->type = REQUIRED_MATCH;
 	    if (cur_m->name == NULL || cur_m->file == NULL)
-		PARSE_ERROR((DS_LEV_ERR,
-			     "Required must have a Type and File attribute"));
+		parse_error("Required must have a Type and File attribute");
 	} else if (!strcmp(name,"Optional")) {
 	    cur_m->type = OPTIONAL_MATCH;
 	    if (cur_m->name == NULL || cur_m->file == NULL)
-		PARSE_ERROR((DS_LEV_ERR,
-			     "Optional must have a Type and File attribute"));
+		parse_error("Optional must have a Type and File attribute");
 	} else { /* Reject */
 	    cur_m->type = REJECT_MATCH;
 	    if (cur_m->name == NULL)
-		PARSE_ERROR((DS_LEV_ERR,
-			     "Reject must have a Type attribute"));
+		parse_error("Reject must have a Type attribute");
 	}
     }
 
@@ -206,8 +194,8 @@ static void endElement(void *userData, const char *name) {
 		i++;
 	}
 	if (!i) {
-	    PARSE_ERROR((DS_LEV_ERR, "Selection/Verification block does not contain any "
-			 "Required or Optional matches."));
+	    parse_error("Selection/Verification block does not contain any "
+			 "Required or Optional matches.");
 	}
 	cur_grp = NULL; /* just to make sure */
     }

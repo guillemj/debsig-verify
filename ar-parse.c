@@ -39,7 +39,7 @@ static unsigned long parseLength(const char *inh, size_t len) {
     char *endp;
 
     if (memchr(inh, 0, len))
-	ds_printf(DS_LEV_ERR, "parseLength: member lenght contains NULL's");
+	ds_fail_printf("parseLength: member lenght contains NULL's");
 
     assert(sizeof(buf) > len);
     memcpy(buf, inh, len);
@@ -47,29 +47,25 @@ static unsigned long parseLength(const char *inh, size_t len) {
     *strchr(buf,' ') = 0;
     r = strtoul(buf,&endp,10);
 
-    if (*endp) {
-	ds_printf(DS_LEV_ERR,"parseLength: archive is corrupt - bad digit `%c' member length",
+    if (*endp)
+	ds_fail_printf("parseLength: archive is corrupt - bad digit `%c' member length",
 		  *endp);
-	return -1;
-    }
 
     return r;
 }
 
-/* This function takes a member name as an argument. It then goes throught
+/* This function takes a member name as an argument. It then goes through
  * the archive trying to find it. If it does, it returns the size of the
  * member's data, and leaves the deb_fs file pointer at the start of that
  * data. Yes, we may have a zero length member in here somewhere, but
- * nothing important is going to be zero length anyway.
- */
+ * nothing important is going to be zero length anyway, so we treat it as
+ * "non-existant".  */
 size_t findMember(const char *name) {
     char magic[SARMAG+1];
     struct ar_hdr arh;
     long mem_len;
     int len = strlen(name);
-/*
-    ds_printf(DS_LEV_VER, "findMember: checking for archive member `%s'", name);
- */
+
     if (len > sizeof(arh.ar_name)) {
 	ds_printf(DS_LEV_ERR, "findMember: `%s' is too long to be an archive member name",
 		  name);
@@ -77,62 +73,49 @@ size_t findMember(const char *name) {
     }
     
     /* This shouldn't happen, but... */
-    if (deb_fs == NULL) {
-	ds_printf(DS_LEV_ERR, "findMember: called while deb_fs == NULL");
-	exit(1);
-    }
+    if (deb_fs == NULL)
+	ds_fail_printf("findMember: called while deb_fs == NULL");
 
     rewind(deb_fs);
     
-    if (!fgets(magic,sizeof(magic),deb_fs)) {
-	ds_printf(DS_LEV_ERR, "findMember: failure to read package (%s)",
+    if (!fgets(magic,sizeof(magic),deb_fs))
+	ds_fail_printf("findMember: failure to read package (%s)",
 		  strerror(errno));
-	exit(1);
-    }
 
-    if (strcmp(magic,ARMAG)) {
-	ds_printf(DS_LEV_VER, "findMember: archive has bad magic");
-	exit(1);
-    }
+    if (strcmp(magic,ARMAG))
+	ds_fail_printf("findMember: archive has bad magic");
 
     while(!feof(deb_fs)) {
 	if (fread(&arh, 1, sizeof(arh),deb_fs) != sizeof(arh)) {
-	    if (ferror(deb_fs)) {
-		ds_printf(DS_LEV_ERR, "findMember: error while parsing archive header (%s)",
+	    if (ferror(deb_fs))
+		ds_fail_printf("findMember: error while parsing archive header (%s)",
 			  strerror(errno));
-		exit(1);
-	    }
 	    return 0;
 	}
 
-	if (memcmp(arh.ar_fmag, ARFMAG, sizeof(arh.ar_fmag))) {
-	    ds_printf(DS_LEV_ERR, "findMember: archive appears to be corrupt, fmag incorrect");
-	    exit(1);
-	}
+	if (memcmp(arh.ar_fmag, ARFMAG, sizeof(arh.ar_fmag)))
+	    ds_fail_printf("findMember: archive appears to be corrupt, fmag incorrect");
 
-	if ((mem_len = parseLength(arh.ar_size, sizeof(arh.ar_size))) < 0) {
-	    ds_printf(DS_LEV_ERR, "findMember: archive appears to be corrupt, negative member length");
-	    return 0;
-	}
+	if ((mem_len = parseLength(arh.ar_size, sizeof(arh.ar_size))) < 0)
+	    ds_fail_printf("findMember: archive appears to be corrupt, negative member length");
 
 	/*
 	 * If all looks well, then we return the length of the member, and
 	 * leave the file pointer where it is (at the start of the data).
 	 * The logic here is based on the ar spec. The ar_name field is
-	 * padded with spaces to get the full lenght. The actual name may
+	 * padded with spaces to get the full length. The actual name may
 	 * also be suffixed with '/' (dpkg-deb creates .deb's without the
 	 * trailing '/' in the member names, but binutils ar does, so we
-	 * try to be compatible, like dpkg does).
+	 * try to be compatible, like dpkg does). We don't support the
+	 * "extended naming" scheme that binutils does.
 	 */
 	if (!strncmp(arh.ar_name, name, len) && (len == sizeof(arh.ar_name) ||
 		    arh.ar_name[len] == '/' || arh.ar_name[len] == ' '))
 	    return (size_t)mem_len;
 
 	/* fseek to the start of the next member, and try again */
-	if (fseek(deb_fs, mem_len + (mem_len & 1), SEEK_CUR) == -1 && ferror(deb_fs)) {
-	    ds_printf(DS_LEV_ERR, "findMember: error during file seek (%s)", strerror(errno));
-	    return 0;
-	}
+	if (fseek(deb_fs, mem_len + (mem_len & 1), SEEK_CUR) == -1 && ferror(deb_fs))
+	    ds_fail_printf("findMember: error during file seek (%s)", strerror(errno));
     }
 
     /* well, nothing found, so let's pass on the bad news */

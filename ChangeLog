@@ -1,0 +1,4 @@
+Mon Dec  4 19:17:46 EST 2000  Ben Collins <bcollins@debian.org>
+
+  * Added parsing to pull out the keyID from a full name. E.g. "Name
+    <email@foo>" -> 28219193292JSAJALS

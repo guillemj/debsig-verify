@@ -1,15 +1,6 @@
 - Make sure all error checking is done
 - Create some test setups to verify the policy parsing
-- Implement an internal ar archive parser to do away with the binutils dep
-  * all we need is one function of this type:
-  
-    size_t findMember(FILE *fp, const char *name);
-    
-    This will take an open file stream pointer, position it to the start
-    of the member, and return the length of that member. If it returns 0,
-    then the member does not exist. If it returns a -1, then this is not
-    an "ar" archive. "name" is the name of the member we are searching
-    for.
+- One small ar usage left.
 - Is there a GnuPG library we can link against instead of execing gpg?
 - Add an option so that we just lists policies that can validate this deb
 - Add --verbose and --quiet options
@@ -17,3 +8,5 @@
   etc..)
 - Convert to using expat, which is smaller, but uses a different interface
   (it also actually works when we compile with -static).
+- Free memory from policy struct (minor mem leak).
+- Add the DayExpiry type to the DTD and code parsing

@@ -2,9 +2,9 @@
 <!DOCTYPE Policy SYSTEM "docs/policy.dtd">
 <Policy xmlns="http://www.debian.org/debsig/1.0/">
 
-  <Origin Name="Debian" id="7CD73F641E04EC2D" Description="Debian GNU Project"/>
   <!-- This is mainly a sanity check, since our filename is that of the ID
        anyway. -->
+  <Origin Name="Debian" id="7CD73F641E04EC2D" Description="Debian GNU Project"/>
 
   <!-- This is required to match in order for this policy to be used. We
        reject the release Type, since we want a different rule set for

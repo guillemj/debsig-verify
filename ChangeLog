@@ -1,3 +1,12 @@
+Tue Dec 12 17:39:55 EST 2000  Ben Collins <bcollins@debian.org>
+
+  * Add a -d (debug) command line option.
+  * debsig-verify.1: Document it
+  * debsig.h: Add a DS_LEV define for it
+  * debsig-verify.c: Some better formatting, and use the DEBUG level for
+    some.
+  * .c: use the DEBUG level for lots of the function info
+
 Mon Dec 11 14:35:49 EST 2000  Ben Collins <bcollins@debian.org>
 
   * debsig-verify.c: main(): Better formatting for the

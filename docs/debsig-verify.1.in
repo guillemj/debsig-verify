@@ -69,6 +69,10 @@ value only.
 Causes the program to send more output on execution, so as to follow the
 steps it is taking while trying to verify the \fBdeb\fR.
 .TP
+.BR -d
+Outputs even more info than the \fB-v\fR option. This is mainly for
+debugging.
+.TP
 .BR --version
 Outputs the version information for the program. This includes the policy
 format version. This option does not require any other arguments.

@@ -3,7 +3,7 @@
     very good wrapper, but it is hugely overweight for what I need.
     Basically this may be a dead issue. Otherwise, I should probably start
     using the --with-colon and --status-fd output for better parsing of
-    the verify and keyring parsing.
+    the verify and keyring output.
 
 - Figure out how to integrate this with the package tools (apt, dpkg
   etc..)
@@ -11,6 +11,7 @@
 - Expiry still needs to be handled
 
 - Add some more info to the verbose output.
+  STATUS: in progress
 
 - Testing setup. This is the way I invision it. Basically we have
   directories with sample data. Each directory contains some related parts

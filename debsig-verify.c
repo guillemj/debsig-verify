@@ -106,7 +106,7 @@ static int checkGroupRules(struct group *grp, const char *deb) {
 	/* We fail no matter what now. Even if this is an optional match
 	 * rule, by now, we know that the sig exists, so we must fail */
 	if (!t) {
-	    ds_printf(DS_LEV_VER, "checkGroupRules: failed for %s", mtc->name);
+	    ds_printf(DS_LEV_DEBUG, "checkGroupRules: failed for %s", mtc->name);
 	    return 0;
 	}
 
@@ -116,7 +116,7 @@ static int checkGroupRules(struct group *grp, const char *deb) {
     }
 
     if (opt_count < grp->min_opt) {
-	ds_printf(DS_LEV_VER, "checkGroupRules: opt passed - %d, opt required %d",
+	ds_printf(DS_LEV_DEBUG, "checkGroupRules: opt passed - %d, opt required %d",
 		  opt_count, grp->min_opt);
 	return 0;
     }
@@ -151,6 +151,7 @@ static void outputUsage(void) {
 Usage: %s [ options ] <deb>\n\n\
    -q                  Quiet, only output fatal errors\n\
    -v                  Verbose output (mainly debug)\n\
+   -d                  Debug output aswell\n\
    --version           Output version info, and exit\n\
    --list-policies     Only list policies that can be used to\n\
                        validate this sig. This runs through\n\
@@ -183,6 +184,8 @@ int main(int argc, char *argv[]) {
 	    ds_debug_level = DS_LEV_ERR;
 	else if (!strcmp(argv[i], "-v"))
 	    ds_debug_level = DS_LEV_VER;
+	else if (!strcmp(argv[i], "-d"))
+	    ds_debug_level = DS_LEV_DEBUG;
 	else if (!strcmp(argv[i], "--version")) {
 	    outputVersion();
 	    /* Make sure we exit non-zero if there are any more args. This
@@ -233,6 +236,8 @@ int main(int argc, char *argv[]) {
     if ((pd = opendir(buf)) == NULL)
 	ds_fail_printf("Could not open Origin dir %s: %s\n", buf, strerror(errno));
 
+    ds_printf(DS_LEV_VER, "Using policy directory: %s", buf);
+
     if (list_only)
 	ds_printf(DS_LEV_ALWAYS, "  Policies in: %s", buf);
 
@@ -242,21 +247,21 @@ int main(int argc, char *argv[]) {
 	    continue;
 
 	if (force_file != NULL && strcmp(pd_ent->d_name, force_file))
-		continue;
+	    continue;
 
 	/* Now try to parse the file */
 	snprintf(pol_file, sizeof(pol_file) - 1, "%s/%s", buf, pd_ent->d_name);
+	ds_printf(DS_LEV_VER, "  Parsing policy file: %s", pol_file);
 	pol = parsePolicyFile(pol_file);
 
 	if (pol == NULL) continue;
 
 	/* Now let's see if this policy's selection is useful for this .deb  */
-	ds_printf(DS_LEV_VER, "Checking Selection for %s", pol_file);
+	ds_printf(DS_LEV_VER, "    Checking Selection group(s).");
 	for (grp = pol->sels; grp != NULL; grp = grp->next) {
-	    ds_printf(DS_LEV_VER, "  Checking group...");
 	    if (!checkGroupRules(grp, deb)) {
 		clear_policy();
-		ds_printf(DS_LEV_VER, "  Selection group failed checks");
+		ds_printf(DS_LEV_VER, "    Selection group failed checks.");
 		pol = NULL;
 		break;
 	    }
@@ -266,27 +271,35 @@ int main(int argc, char *argv[]) {
 	    ds_printf(DS_LEV_ALWAYS, "    Usable: %s", pd_ent->d_name);
 	    list_only++;
 	} else if (pol)
-	    ds_printf(DS_LEV_VER, "  Selection groups passed, policy is usable");
+	    ds_printf(DS_LEV_VER, "    Selection group(s) passed, policy is usable.");
     }
     closedir(pd);
 
-    if (pol == NULL || list_only == 1)
-	/* Damn, can't verify this one */
-	ds_fail_printf("No applicable policies found.\n");
+    if (pol == NULL || list_only == 1) /* Damn, can't verify this one */
+	ds_fail_printf("No applicable policy found.\n");
 
     if (list_only)
 	exit(0); /* our job is done */
 
-    ds_printf(DS_LEV_INFO, "Using Policy file: %s", pol_file);
+    ds_printf(DS_LEV_INFO, "Using policy file: %s", pol_file);
+
+    /* This should actually be caught in the xml-parsing. */
+    if (pol->vers == NULL)
+	ds_fail_printf("Failed, no Verification groups in policy.");
 
     /* Now the final test */
-    ds_printf(DS_LEV_VER, "Checking Validation groups...");
+    ds_printf(DS_LEV_VER, "    Checking Verification group(s).");
+
     for (grp = pol->vers; grp; grp = grp->next) {
-	if (!checkGroupRules(grp, deb))
-	    ds_fail_printf("Failed validation for %s.", deb);
+	if (!checkGroupRules(grp, deb)) {
+	    ds_printf(DS_LEV_VER, "    Verification group failed checks.");
+	    ds_fail_printf("Failed verification for %s.", deb);
+	}
     }
 
-    ds_printf(DS_LEV_INFO, "Verified using `%s' (%s)", pol->description,
+    ds_printf(DS_LEV_VER, "    Verification group(s) passed, deb is validated.");
+
+    ds_printf(DS_LEV_INFO, "Verified using `%s' (%s).", pol->description,
 	    pol->name);
 
     /* If we get here, then things passed just fine */

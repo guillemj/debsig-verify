@@ -48,7 +48,7 @@ int checkSigExist(const char *name) {
     char buf[16];
 
     if (name == NULL) {
-	ds_printf(DS_LEV_VER, "checkSigExist: NULL values passed");
+	ds_printf(DS_LEV_DEBUG, "checkSigExist: NULL values passed");
 	return 0;
     }
 

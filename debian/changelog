@@ -6,8 +6,9 @@ debsig-verify (0.2) unstable; urgency=low
   * Added manpage for debsig-verify
   * Added some code to free up alloc'd memory used by parsePolicy()
   * Lots of code cleanups
+  * Added a -d option for debug output
 
- -- Ben Collins <bcollins@debian.org>  Thu,  7 Dec 2000 21:53:32 -0500
+ -- Ben Collins <bcollins@debian.org>  Tue, 12 Dec 2000 17:41:53 -0500
 
 debsig-verify (0.1) unstable; urgency=low
 

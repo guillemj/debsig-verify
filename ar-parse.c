@@ -67,7 +67,7 @@ size_t findMember(const char *name) {
     int len = strlen(name);
 
     if (len > sizeof(arh.ar_name)) {
-	ds_printf(DS_LEV_ERR, "findMember: `%s' is too long to be an archive member name",
+	ds_printf(DS_LEV_DEBUG, "findMember: `%s' is too long to be an archive member name",
 		  name);
 	return 0;
     }
@@ -84,7 +84,7 @@ size_t findMember(const char *name) {
 
     /* We will fail in main() with this one */
     if (strcmp(magic,ARMAG)) {
-	ds_printf(DS_LEV_VER, "findMember: archive has bad magic");
+	ds_printf(DS_LEV_DEBUG, "findMember: archive has bad magic");
 	return 0;
     }
 

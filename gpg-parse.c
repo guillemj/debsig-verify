@@ -75,9 +75,9 @@ char *getKeyID (const struct match *mtc) {
     pclose(ds);
 
     if (ret == NULL)
-	ds_printf(DS_LEV_VER, "    getKeyID: failed for %s", mtc->id);
+	ds_printf(DS_LEV_DEBUG, "getKeyID: failed for %s", mtc->id);
     else
-	ds_printf(DS_LEV_VER, "    getKeyID: mapped %s -> %s", mtc->id, ret);
+	ds_printf(DS_LEV_DEBUG, "getKeyID: mapped %s -> %s", mtc->id, ret);
 
     return ret;
 }
@@ -144,9 +144,9 @@ char *getSigKeyID (const char *deb, const char *type) {
     
     waitpid(pid, NULL, 0);
     if (ret == NULL)
-	ds_printf(DS_LEV_VER, "    getSigKeyID: failed for %s", type);
+	ds_printf(DS_LEV_DEBUG, "getSigKeyID: failed for %s", type);
     else
-	ds_printf(DS_LEV_VER, "    getSigKeyID: got %s for %s key", ret, type);
+	ds_printf(DS_LEV_DEBUG, "getSigKeyID: got %s for %s key", ret, type);
 
     return ret;
 }
@@ -160,7 +160,7 @@ int gpgVerify(const char *deb, struct match *mtc, const char *tmp_file) {
 
     snprintf(keyring, sizeof(keyring) - 1, DEBSIG_KEYRINGS_FMT, originID, mtc->file);
     if (stat(keyring, &st)) {
-	ds_printf(DS_LEV_VER, "    gpgVerify: could not stat %s", keyring);
+	ds_printf(DS_LEV_DEBUG, "gpgVerify: could not stat %s", keyring);
 	return 0;
     }
 
@@ -195,7 +195,7 @@ int gpgVerify(const char *deb, struct match *mtc, const char *tmp_file) {
     
     waitpid(pid, &status, 0);
     if (!WIFEXITED(status) || WEXITSTATUS(status)) {
-	ds_printf(DS_LEV_VER, "gpgVerify: gpg exited abnormally or with non-zero exit status");
+	ds_printf(DS_LEV_DEBUG, "gpgVerify: gpg exited abnormally or with non-zero exit status");
 	return 0;
     }
 

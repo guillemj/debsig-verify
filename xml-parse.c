@@ -33,11 +33,16 @@
 
 #include "debsig.h"
 
-static int parse_error;
+static int parse_err_cnt;
 static struct policy ret;
 static struct group *cur_grp = NULL;
+static XML_Parser parser;
 
-#define parse_error(fmt, args...) { parse_error++; ds_printf(DS_LEV_ERR, fmt, ## args); }
+#define parse_error(fmt, args...) \
+{ \
+    parse_err_cnt++; \
+    ds_printf(DS_LEV_DEBUG , "%d: " fmt , XML_GetCurrentLineNumber(parser) , ## args); \
+}
 
 static void startElement(void *userData, const char *name, const char **atts) {
     int i, depth;
@@ -231,11 +236,12 @@ void clear_policy(void) {
 
 struct policy *parsePolicyFile(char *filename) {
     char buf[BUFSIZ];
-    XML_Parser parser = XML_ParserCreate(NULL);
     int done, depth = 0;
     FILE *pol_fs;
 
-    ds_printf(DS_LEV_VER, "parsePolicyFile: parsing `%s'", filename);
+    parser = XML_ParserCreate(NULL);
+
+    ds_printf(DS_LEV_DEBUG, "parsePolicyFile: parsing `%s'", filename);
 
     if ((pol_fs = fopen(filename, "r")) == NULL) {
 	ds_printf(DS_LEV_ERR, "parsePolicyFile: could not open `%s' (%s)",
@@ -246,18 +252,18 @@ struct policy *parsePolicyFile(char *filename) {
     XML_SetUserData(parser, &depth);
     XML_SetElementHandler(parser, startElement, endElement);
 
-    parse_error = 0;
+    parse_err_cnt = 0;
     clear_policy();
 
     do {
 	size_t len = fread(buf, 1, sizeof(buf), pol_fs);
 	done = len < sizeof(buf);
 	if (!XML_Parse(parser, buf, len, done)) {
-	    ds_printf(DS_LEV_ERR,
+	    ds_printf(DS_LEV_DEBUG,
 		"%s at line %d",
 		XML_ErrorString(XML_GetErrorCode(parser)),
 		XML_GetCurrentLineNumber(parser));
-	    parse_error++;
+	    parse_err_cnt++;
 	    break;
 	}
     } while (!done);
@@ -265,11 +271,11 @@ struct policy *parsePolicyFile(char *filename) {
     XML_ParserFree(parser);
     fclose(pol_fs);
 
-    ds_printf(DS_LEV_VER, "parsePolicyFile: completed");
+    ds_printf(DS_LEV_DEBUG, "parsePolicyFile: completed");
 
-    if (parse_error) {
-	ds_printf(DS_LEV_ERR, "parsePolicyFile: %d errors during parsing, failed",
-		  parse_error);
+    if (parse_err_cnt) {
+	ds_printf(DS_LEV_DEBUG, "parsePolicyFile: %d errors during parsing, failed",
+		  parse_err_cnt);
 	clear_policy();
 	return NULL;
     }

@@ -76,6 +76,7 @@ void clear_policy(void);
 #define DS_LEV_ERR 2
 #define DS_LEV_INFO 1
 #define DS_LEV_VER 0
+#define DS_LEV_DEBUG -1
 void ds_printf(int level, const char *fmt, ...);
 #define ds_fail_printf(fmt, args...) { ds_printf(DS_LEV_ERR, fmt, ##args); exit(1); }
 

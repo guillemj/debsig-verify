@@ -124,6 +124,18 @@ static int checkGroupRules(struct group *grp, const char *deb) {
     return 1;
 }
 
+static int checkIsDeb(void) {
+    int i;
+    if (!findMember("debian-binary"))
+        return 0;
+
+    for (i = 0; ver_members[i]; i++)
+        if (!findMember(ver_members[i]))
+	    return 0;
+
+    return 1;
+}
+
 static void outputVersion(void) {
     fprintf(stderr, "\
 Debsig Program Version - "VERSION"\n\
@@ -207,14 +219,8 @@ int main(int argc, char *argv[]) {
     if (!list_only)
 	ds_printf(DS_LEV_INFO, "Starting verification for: %s", deb);
 
-    if (!findMember("debian-binary"))
-	goto not_deb;
-
-    for (i = 0; ver_members[i]; i++) {
-	if (!findMember(ver_members[i]))
-not_deb:
-	    ds_fail_printf("%s does not appear to be a deb format package", deb);
-    }
+    if (!checkIsDeb())
+	ds_fail_printf("%s does not appear to be a deb format package", deb);
 
     if ((tmpID = getSigKeyID(deb, "origin")) == NULL)
 	ds_fail_printf("Origin Signature check failed. This deb might not be signed.\n");

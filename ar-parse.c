@@ -82,8 +82,11 @@ size_t findMember(const char *name) {
 	ds_fail_printf("findMember: failure to read package (%s)",
 		  strerror(errno));
 
-    if (strcmp(magic,ARMAG))
-	ds_fail_printf("findMember: archive has bad magic");
+    /* We will fail in main() with this one */
+    if (strcmp(magic,ARMAG)) {
+	ds_printf(DS_LEV_VER, "findMember: archive has bad magic");
+	return 0;
+    }
 
     while(!feof(deb_fs)) {
 	if (fread(&arh, 1, sizeof(arh),deb_fs) != sizeof(arh)) {

@@ -39,7 +39,7 @@ static unsigned long parseLength(const char *inh, size_t len) {
     char *endp;
 
     if (memchr(inh, 0, len))
-	ds_fail_printf("parseLength: member lenght contains NULL's");
+	ds_fail_printf(DS_FAIL_INTERNAL, "parseLength: member lenght contains NULL's");
 
     assert(sizeof(buf) > len);
     memcpy(buf, inh, len);
@@ -48,7 +48,7 @@ static unsigned long parseLength(const char *inh, size_t len) {
     r = strtoul(buf,&endp,10);
 
     if (*endp)
-	ds_fail_printf("parseLength: archive is corrupt - bad digit `%c' member length",
+	ds_fail_printf(DS_FAIL_INTERNAL, "parseLength: archive is corrupt - bad digit `%c' member length",
 		  *endp);
 
     return r;
@@ -74,12 +74,12 @@ size_t findMember(const char *name) {
     
     /* This shouldn't happen, but... */
     if (deb_fs == NULL)
-	ds_fail_printf("findMember: called while deb_fs == NULL");
+	ds_fail_printf(DS_FAIL_INTERNAL, "findMember: called while deb_fs == NULL");
 
     rewind(deb_fs);
     
     if (!fgets(magic,sizeof(magic),deb_fs))
-	ds_fail_printf("findMember: failure to read package (%s)",
+	ds_fail_printf(DS_FAIL_INTERNAL, "findMember: failure to read package (%s)",
 		  strerror(errno));
 
     /* We will fail in main() with this one */
@@ -91,16 +91,17 @@ size_t findMember(const char *name) {
     while(!feof(deb_fs)) {
 	if (fread(&arh, 1, sizeof(arh),deb_fs) != sizeof(arh)) {
 	    if (ferror(deb_fs))
-		ds_fail_printf("findMember: error while parsing archive header (%s)",
+		ds_fail_printf(DS_FAIL_INTERNAL, "findMember: error while parsing archive header (%s)",
 			  strerror(errno));
 	    return 0;
 	}
 
 	if (memcmp(arh.ar_fmag, ARFMAG, sizeof(arh.ar_fmag)))
-	    ds_fail_printf("findMember: archive appears to be corrupt, fmag incorrect");
+	    ds_fail_printf(DS_FAIL_INTERNAL, "findMember: archive appears to be corrupt, fmag incorrect");
 
 	if ((mem_len = parseLength(arh.ar_size, sizeof(arh.ar_size))) < 0)
-	    ds_fail_printf("findMember: archive appears to be corrupt, negative member length");
+	    ds_fail_printf(DS_FAIL_INTERNAL,
+			   "findMember: archive appears to be corrupt, negative member length");
 
 	/*
 	 * If all looks well, then we return the length of the member, and
@@ -118,7 +119,8 @@ size_t findMember(const char *name) {
 
 	/* fseek to the start of the next member, and try again */
 	if (fseek(deb_fs, mem_len + (mem_len & 1), SEEK_CUR) == -1 && ferror(deb_fs))
-	    ds_fail_printf("findMember: error during file seek (%s)", strerror(errno));
+	    ds_fail_printf(DS_FAIL_INTERNAL,
+			   "findMember: error during file seek (%s)", strerror(errno));
     }
 
     /* well, nothing found, so let's pass on the bad news */

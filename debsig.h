@@ -37,7 +37,7 @@
 #define REQUIRED_MATCH 2
 #define REJECT_MATCH 3
 
-#define VERSION "0.5"
+#define VERSION "0.6"
 #define SIG_VERSION "1.0"
 #define DEBSIG_NS "http://www.debian.org/debsig/"SIG_VERSION"/"
 
@@ -72,13 +72,26 @@ char *getSigKeyID (const char *deb, const char *type);
 int gpgVerify(const char *data, struct match *mtc, const char *sig);
 void clear_policy(void);
 
+/* Debugging and failures */
 #define DS_LEV_ALWAYS 3
 #define DS_LEV_ERR 2
 #define DS_LEV_INFO 1
 #define DS_LEV_VER 0
 #define DS_LEV_DEBUG -1
-void ds_printf(int level, const char *fmt, ...);
-#define ds_fail_printf(fmt, args...) { ds_printf(DS_LEV_ERR, fmt, ##args); exit(1); }
+
+#define DS_SUCCESS		0
+#define DS_FAIL_NOSIGS		10
+#define DS_FAIL_UNKNOWN_ORIGIN	11
+#define DS_FAIL_NOPOLICIES	12
+#define DS_FAIL_BADSIG		13
+#define DS_FAIL_INTERNAL	14
+extern void ds_printf(int level, const char *fmt, ...)
+	__attribute__ ((__format__ (__printf__, 2, 3)));
+#define ds_fail_printf(myexit, fmt, args...)	\
+do {						\
+	ds_printf(DS_LEV_ERR, fmt, ##args);	\
+	exit(myexit);				\
+} while(0)
 
 extern int ds_debug_level;
 extern FILE *deb_fs;

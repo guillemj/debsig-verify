@@ -1,3 +1,13 @@
+Fri Apr 27 13:53:32 EDT 2001  Ben Collins <bcollins@debian.org>
+
+  * debsig.h: Redefine ds_fail_printf with exit values, and macros. Also, add
+    __attributes__ to ds_printf so gcc will warn us on misuse
+  * ar-parse.c: Convert to new ds_fail_printf
+  * debsig-verify.c: ditto
+  * gpg-parse.c: ditto
+  * xml-parse.c: ditto
+  * docs/policy-syntax.txt: Update terms for handling policy selection
+
 Thu Mar  8 10:50:14 EST 2001  Ben Collins <bcollins@debian.org>
 
   * gpg-parse.c (gpgVerify): Make sure we add NULL to the end of execl call.

@@ -36,7 +36,10 @@ Selection	- The matching rules which decide if we want to use this
 		  rule set. Basically the rules in this group decide if we
 		  use this set. If they pass, we commit to using this
 		  Policy. If it fails, the checker will go and try another
-		  Policy.
+		  Policy. The signatures in this set are not actually
+		  verified via gpg. They are merely checked for existence.
+		  If an ID is specified for a match, then that ID is also
+		  checked.
 
 Verification	- Once we commit to using this Policy, the matching rules
 		  in this block must verify without error before we

@@ -272,7 +272,7 @@ int main(int argc, char *argv[]) {
 	else if (!strcmp(argv[i], "--version")) {
 	    outputVersion();
 	    /* Make sure we exit non-zero if there are any more args. This
-	     * makes sure someone doesn't so something stupid like pass
+	     * makes sure someone doesn't do something stupid like pass
 	     * --version and a .deb, and expect it to return a validation
 	     * exit status.  */
 	    if (argc > 2)
@@ -300,16 +300,16 @@ int main(int argc, char *argv[]) {
     deb = argv[i];
     
     if ((deb_fs = fopen(deb, "r")) == NULL)
-	ds_fail_printf("could not open %s (%s)", deb, strerror(errno));
+	ds_fail_printf(DS_FAIL_INTERNAL, "could not open %s (%s)", deb, strerror(errno));
 
     if (!list_only)
 	ds_printf(DS_LEV_VER, "Starting verification for: %s", deb);
 
     if (!checkIsDeb())
-	ds_fail_printf("%s does not appear to be a deb format package", deb);
+	ds_fail_printf(DS_FAIL_INTERNAL, "%s does not appear to be a deb format package", deb);
 
     if ((tmpID = getSigKeyID(deb, "origin")) == NULL)
-	ds_fail_printf("Origin Signature check failed. This deb might not be signed.\n");
+	ds_fail_printf(DS_FAIL_NOSIGS, "Origin Signature check failed. This deb might not be signed.\n");
 
     strncpy(originID, tmpID, sizeof(originID));
 
@@ -317,7 +317,8 @@ int main(int argc, char *argv[]) {
 
     snprintf(buf, sizeof(buf) - 1, DEBSIG_POLICIES_DIR_FMT, originID);
     if ((pd = opendir(buf)) == NULL)
-	ds_fail_printf("Could not open Origin dir %s: %s\n", buf, strerror(errno));
+	ds_fail_printf(DS_FAIL_UNKNOWN_ORIGIN,
+		       "Could not open Origin dir %s: %s\n", buf, strerror(errno));
 
     ds_printf(DS_LEV_VER, "Using policy directory: %s", buf);
 
@@ -360,7 +361,7 @@ int main(int argc, char *argv[]) {
     closedir(pd);
 
     if ((pol == NULL && !list_only) || list_only == 1) /* Damn, can't verify this one */
-	ds_fail_printf("No applicable policy found.");
+	ds_fail_printf(DS_FAIL_NOPOLICIES, "No applicable policy found.");
 
     if (list_only)
 	exit(0); /* our job is done */
@@ -369,7 +370,7 @@ int main(int argc, char *argv[]) {
 
     /* This should actually be caught in the xml-parsing. */
     if (pol->vers == NULL)
-	ds_fail_printf("Failed, no Verification groups in policy.");
+	ds_fail_printf(DS_FAIL_NOPOLICIES, "Failed, no Verification groups in policy.");
 
     /* Now the final test */
     ds_printf(DS_LEV_VER, "    Checking Verification group(s).");
@@ -377,7 +378,7 @@ int main(int argc, char *argv[]) {
     for (grp = pol->vers; grp; grp = grp->next) {
 	if (!verifyGroupRules(grp, deb)) {
 	    ds_printf(DS_LEV_VER, "    Verification group failed checks.");
-	    ds_fail_printf("Failed verification for %s.", deb);
+	    ds_fail_printf(DS_FAIL_BADSIG, "Failed verification for %s.", deb);
 	}
     }
 
@@ -387,5 +388,5 @@ int main(int argc, char *argv[]) {
 	      pol->description, pol->name);
 
     /* If we get here, then things passed just fine */
-    exit(0);
+    exit(DS_SUCCESS);
 }

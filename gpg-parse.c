@@ -32,6 +32,16 @@
 
 #include "debsig.h"
 
+static int gpg_inited = 0;
+
+/* Crazy damn hack to make sure gpg has created ~/.gnupg, else it will
+ * fail first time called */
+static void gpg_init(void) {
+    if (gpg_inited) return;
+    system(GPG_PROG" --options /dev/null < /dev/null > /dev/null 2>&1");
+    gpg_inited = 1;
+}
+
 char *getKeyID (const struct match *mtc) {
     static char buf[2048];
     FILE *ds;
@@ -39,6 +49,8 @@ char *getKeyID (const struct match *mtc) {
 
     if (ret == NULL)
 	return NULL;
+
+    gpg_init();
 
     snprintf(buf, sizeof(buf) - 1, GPG_PROG" "GPG_ARGS_FMT" --list-packets -q "DEBSIG_KEYRINGS_FMT,
 	     GPG_ARGS, originID, mtc->file);
@@ -92,12 +104,14 @@ char *getSigKeyID (const char *deb, const char *type) {
     if (!len)
 	return NULL;
 
+    gpg_init();
+
     /* Fork for gpg, keeping a nice pipe to read/write from.  */
     pipe(pread);pipe(pwrite);
     /* I like file streams, so sue me :P */
     if ((ds_read = fdopen(pread[0], "r")) == NULL ||
 	 (ds_write = fdopen(pwrite[1], "w")) == NULL)
-	ds_fail_printf("error opening file stream for gpg");
+	ds_fail_printf(DS_FAIL_INTERNAL, "error opening file stream for gpg");
 
     if (!(pid = fork())) {
 	/* Here we go */
@@ -120,7 +134,7 @@ char *getSigKeyID (const char *deb, const char *type) {
 	t = fread(buf, 1, sizeof(buf), deb_fs);
     }
     if (ferror(ds_write))
-	ds_fail_printf("error writing to gpg");
+	ds_fail_printf(DS_FAIL_INTERNAL, "error writing to gpg");
     fclose(ds_write);
 
     /* Now, let's see what gpg has to say about all this */
@@ -139,7 +153,7 @@ char *getSigKeyID (const char *deb, const char *type) {
 	c = fgets(buf, sizeof(buf), ds_read);
     }
     if (ferror(ds_read))
-	ds_fail_printf("error reading from gpg");
+	ds_fail_printf(DS_FAIL_INTERNAL, "error reading from gpg");
     fclose(ds_read);
     
     waitpid(pid, NULL, 0);
@@ -156,6 +170,8 @@ int gpgVerify(const char *data, struct match *mtc, const char *sig) {
     int status;
     pid_t pid;
     struct stat st;
+
+    gpg_init();
 
     snprintf(keyring, sizeof(keyring) - 1, DEBSIG_KEYRINGS_FMT, originID, mtc->file);
     if (stat(keyring, &st)) {

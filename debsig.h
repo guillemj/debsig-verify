@@ -72,6 +72,6 @@ size_t findMember(const char *name);
 #define DS_LEV_VER 0
 void ds_printf(int level, const char *fmt, ...);
 
-extern int debug_level;
+extern int ds_debug_level;
 extern FILE *deb_fs;
 extern char *deb;

@@ -113,18 +113,17 @@ static char *getSigKeyID (const char *deb, const char *type) {
 
     /* Fork for gpg, keeping a nice pipe to read/write from.  */
     pipe(pread);pipe(pwrite);
+    /* I like file streams, so sue me :P */
+    if ((ds_read = fdopen(pread[0], "r")) == NULL ||
+	 (ds_write = fdopen(pwrite[1], "w")) == NULL) {
+	ds_printf(DS_LEV_ERR, "error opening file stream for gpg");
+	exit(1);
+    }
     if (!(pid = fork())) {
 	/* Here we go */
 	dup2(pread[1],1); close(pread[0]); close(pread[1]);
 	dup2(pwrite[0],0); close(pwrite[0]); close(pwrite[1]);
 	execl(GPG_PROG, "gpg", GPG_ARGS, "--list-packets", "-q", "-", NULL);
-	exit(1);
-    }
-
-    /* I like file streams, so sue me :P */
-    if ((ds_read = fdopen(pread[0], "r")) == NULL ||
-	    (ds_write = fdopen(pwrite[1], "w")) == NULL) {
-	ds_printf(DS_LEV_ERR, "error opening file stream for gpg");
 	exit(1);
     }
     close(pread[1]); close(pwrite[0]);
@@ -192,9 +191,8 @@ static int gpgVerify(const char *deb, struct match *mtc, const char *tmp_file) {
     pipe(p);
     if ((fs = fdopen(p[1], "w")) == NULL) {
 	ds_printf(DS_LEV_ERR, "gpgVerify: could not open file stream for pipe");
-	exit(0);
+	exit(1);
     }
-
     if (!(pid = fork())) {
 	dup2(p[0],0); close(p[0]); close(p[1]); close(1); close(2);
 	execl(GPG_PROG, "gpg", GPG_ARGS, "--always-trust", "-q", "--keyring",
@@ -226,8 +224,10 @@ static int gpgVerify(const char *deb, struct match *mtc, const char *tmp_file) {
     fclose(fs);
     
     waitpid(pid, &status, 0);
-    if (!WIFEXITED(status) || WEXITSTATUS(status))
+    if (!WIFEXITED(status) || WEXITSTATUS(status)) {
+	ds_printf(DS_LEV_VER, "gpgVerify: gpg exited abnormally or with non-zero exit status");
 	return 0;
+    }
 
     return 1;
 }
@@ -334,9 +334,9 @@ int main(int argc, char *argv[]) {
 
     for (i = 1; i < argc && argv[i][0] == '-'; i++) {
 	if (!strcmp(argv[i], "-q"))
-	    debug_level = DS_LEV_ERR;
+	    ds_debug_level = DS_LEV_ERR;
 	else if (!strcmp(argv[i], "-v"))
-	    debug_level = DS_LEV_VER;
+	    ds_debug_level = DS_LEV_VER;
 	else if (!strcmp(argv[i], "--version")) {
 	    outputVersion();
 	    /* Make sure we exit non-zero if there are any more args. This
@@ -358,10 +358,13 @@ usage:
     }
 
     deb = argv[i];
+    
     if ((deb_fs = fopen(deb, "r")) == NULL) {
 	ds_printf(DS_LEV_ERR, "could not open %s (%s)", deb, strerror(errno));
 	exit(1);
     }
+
+    ds_printf(DS_LEV_INFO, "starting verification for %s", deb);
 
     if (!findMember("debian-binary") || !findMember("control.tar.gz") ||
 	    !findMember("data.tar.gz")) {
@@ -418,7 +421,7 @@ usage:
 	}
     }
 
-    ds_printf(DS_LEV_INFO, "Verified using the `%s' (%s) policy in %s.\n", pol->description,
+    ds_printf(DS_LEV_INFO, "Verified using the `%s' (%s) policy in %s.", pol->description,
 	    pol->name, pol_file);
 
     /* If we get here, then things passed just fine */

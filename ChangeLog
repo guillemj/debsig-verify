@@ -1,3 +1,7 @@
+Thu Dec  7 02:24:50 EST 2000  Ben Collins <bcollins@debian.org>
+
+  * debsig-verify.c: Added --list-policies option.
+
 Mon Dec  4 19:17:46 EST 2000  Ben Collins <bcollins@debian.org>
 
   * Added parsing to pull out the keyID from a full name. E.g. "Name

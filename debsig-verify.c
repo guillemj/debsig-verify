@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
     DIR *pd = NULL;
     struct dirent *pd_ent;
     struct group *grp;
-    int i;
+    int i, list_only = 0;
 
     if (argc < 2)
 	goto usage;
@@ -155,13 +155,24 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	    else
 		exit(0);
+	} else if (!strcmp(argv[i], "--list-policies")) {
+	    /* Just create a list of policies we can use */
+	    list_only = 1;
+	    ds_printf(DS_LEV_ERR, "Listing usable policies");
 	} else
 	    goto usage;
     }
 
     if (i + 1 != argc) { /* There should only be one arg left */
 usage:
-	ds_printf(DS_LEV_ERR, "Usage: %s [ --version ] [ -q | -v ] <deb>", argv[0]);
+	ds_printf(DS_LEV_ERR, "Usage: %s [ options ] <deb>", argv[0]);
+	putchar('\n');
+	ds_printf(DS_LEV_ERR, "   -q                Quiet, only output fatal errors");
+	ds_printf(DS_LEV_ERR, "   -v                Verbose output (mainly debug)");
+	ds_printf(DS_LEV_ERR, "   --version         Output version info, and exit");
+	ds_printf(DS_LEV_ERR, "   --list-policies   Only list policies that can be used to");
+	ds_printf(DS_LEV_ERR, "                     validate this sig. This runs through");
+	ds_printf(DS_LEV_ERR, "                     `Selection' block of the policies only.");
 	exit(1);
     }
 
@@ -172,7 +183,8 @@ usage:
 	exit(1);
     }
 
-    ds_printf(DS_LEV_INFO, "starting verification for %s", deb);
+    if (!list_only)
+	ds_printf(DS_LEV_INFO, "starting verification for %s", deb);
 
     if (!findMember("debian-binary") || !findMember("control.tar.gz") ||
 	    !findMember("data.tar.gz")) {
@@ -194,7 +206,10 @@ usage:
 	exit (1);
     }
 
-    while ((pd_ent = readdir(pd)) != NULL && pol == NULL) {
+    if (list_only)
+	ds_printf(DS_LEV_ERR, "  Policies in: %s", buf);
+
+    while ((pd_ent = readdir(pd)) != NULL && (pol == NULL || list_only)) {
 	/* Make sure we have the right name format */
 	if (strstr(pd_ent->d_name, ".pol") == NULL)
 	    continue;
@@ -212,14 +227,21 @@ usage:
 		break;
 	    }
 	}
+	if (pol && list_only) {
+	    ds_printf(DS_LEV_ERR, "    Usable: %s", pd_ent->d_name);
+	    list_only++;
+	}
     }
     closedir(pd);
 
-    if (pol == NULL) {
+    if (pol == NULL && list_only <= 1) {
 	/* Damn, can't verify this one */
 	fprintf(stderr, "No applicable policies found. Verify failed.\n");
 	exit (1);
     }
+
+    if (list_only)
+	exit(0); /* our job is done */
 
     /* Now the final test */
     for (grp = pol->vers; grp; grp = grp->next) {

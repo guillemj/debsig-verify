@@ -5,8 +5,9 @@
     very good wrapper, but it is hugely overweight for what I need.
     Basically this may be a dead issue. Otherwise, I should probably start
     using the --with-colon and --status-fd output for better parsing.
-- Add an option so that we just list policies that can validate this deb
-- Add another option to force only trying a specific policy
+- Add another option to force only trying a specific policy. We cannot
+  change the originID, so we force which policy to use under a specific
+  originID.
 - Figure out how to integrate this with the package tools (apt, dpkg
   etc..)
 - Free memory from policy struct (minor mem leak).

@@ -80,7 +80,7 @@ static int checkGroupRules(struct group *grp, const char *deb) {
 	/* Write it to a temp file */
 	strncpy(tmp_file, "/tmp/debsig.XXXXXX", sizeof(tmp_file));
 	if ((fd = mkstemp(tmp_file)) == -1 || (fg = fdopen(fd, "w+")) == NULL) {
-	    fprintf(stderr, "error creating tmpfile: %s\n", strerror(errno));
+	    ds_printf(DS_LEV_ERR, "error creating tmpfile: %s\n", strerror(errno));
 	    if (fd != -1) close(fd);
 	    return 0;
 	}
@@ -204,19 +204,16 @@ not_deb:
 	    ds_fail_printf("%s does not appear to be a deb format package", deb);
     }
 
-    if ((tmpID = getSigKeyID(deb, "origin")) == NULL) {
-	fprintf(stderr, "Sig check for %s failed, could not get Origin ID\n", deb);
-	exit (1);
-    }
+    if ((tmpID = getSigKeyID(deb, "origin")) == NULL)
+	ds_fail_printf("Origin Signature check failed. This deb might not be signed.\n");
+
     strncpy(originID, tmpID, sizeof(originID));
 
     /* Now we have an ID, let's check the policy to use */
 
     snprintf(buf, sizeof(buf) - 1, DEBSIG_POLICIES_DIR_FMT, originID);
-    if ((pd = opendir(buf)) == NULL) {
-	fprintf(stderr, "Could not open Origin dir %s: %s\n", buf, strerror(errno));
-	exit (1);
-    }
+    if ((pd = opendir(buf)) == NULL)
+	ds_fail_printf("Could not open Origin dir %s: %s\n", buf, strerror(errno));
 
     if (list_only)
 	ds_printf(DS_LEV_ALWAYS, "  Policies in: %s", buf);
@@ -250,11 +247,9 @@ not_deb:
     }
     closedir(pd);
 
-    if (pol == NULL && list_only <= 1) {
+    if (pol == NULL && list_only <= 1)
 	/* Damn, can't verify this one */
-	fprintf(stderr, "No applicable policies found. Verify failed.\n");
-	exit (1);
-    }
+	ds_fail_printf("No applicable policies found. Verify failed.\n");
 
     if (list_only)
 	exit(0); /* our job is done */

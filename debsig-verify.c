@@ -274,8 +274,9 @@ int main(int argc, char *argv[]) {
 	ds_printf(DS_LEV_ALWAYS, "  Policies in: %s", buf);
 
     while ((pd_ent = readdir(pd)) != NULL && (pol == NULL || list_only)) {
+	char *ext = strstr(pd_ent->d_name, ".pol");
 	/* Make sure we have the right name format */
-	if (strstr(pd_ent->d_name, ".pol") == NULL)
+	if (ext == NULL || (ext - pd_ent->d_name) + 4 != strlen(pd_ent->d_name))
 	    continue;
 
 	if (force_file != NULL && strcmp(pd_ent->d_name, force_file))

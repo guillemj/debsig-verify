@@ -1,3 +1,7 @@
+<!--
+ DTD describing Policy files for verifying signatures of .deb packages.
+  -->
+
 <!ELEMENT Policy (Origin, Selection*, Verification+)>
 
     <!ATTLIST Policy xmlns CDATA #FIXED "http://www.debian.org/debsig/1.0/">

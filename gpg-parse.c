@@ -75,9 +75,9 @@ char *getKeyID (const struct match *mtc) {
     pclose(ds);
 
     if (ret == NULL)
-	ds_printf(DS_LEV_DEBUG, "getKeyID: failed for %s", mtc->id);
+	ds_printf(DS_LEV_DEBUG, "        getKeyID: failed for %s", mtc->id);
     else
-	ds_printf(DS_LEV_DEBUG, "getKeyID: mapped %s -> %s", mtc->id, ret);
+	ds_printf(DS_LEV_DEBUG, "        getKeyID: mapped %s -> %s", mtc->id, ret);
 
     return ret;
 }
@@ -144,9 +144,9 @@ char *getSigKeyID (const char *deb, const char *type) {
     
     waitpid(pid, NULL, 0);
     if (ret == NULL)
-	ds_printf(DS_LEV_DEBUG, "getSigKeyID: failed for %s", type);
+	ds_printf(DS_LEV_DEBUG, "        getSigKeyID: failed for %s", type);
     else
-	ds_printf(DS_LEV_DEBUG, "getSigKeyID: got %s for %s key", ret, type);
+	ds_printf(DS_LEV_DEBUG, "        getSigKeyID: got %s for %s key", ret, type);
 
     return ret;
 }

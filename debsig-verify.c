@@ -83,6 +83,8 @@ static int checkGroupRules(struct group *grp, const char *deb) {
 
     for (mtc = grp->matches; mtc; mtc = mtc->next) {
 
+	ds_printf(DS_LEV_VER, "      Processing `%s' key...", mtc->name);
+
 	/* If we have an ID for this match, check to make sure it exists, and
 	 * matches the signature we are about to check.  */
 	if (mtc->id) {

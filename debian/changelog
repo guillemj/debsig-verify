@@ -2,6 +2,7 @@ debsig-verify (0.4) unstable; urgency=low
 
   * Fix execl in gpgVerify()
   * Make sure files end in .pol
+  * Add some more debug output
 
  -- Ben Collins <bcollins@debian.org>  Thu,  8 Mar 2001 10:50:01 -0500
 

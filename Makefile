@@ -31,7 +31,7 @@ install: all
 	install -d -m755 $(DESTDIR)$(DEBSIG_POLICIES_DIR)
 	install -d -m755 $(DESTDIR)$(DEBSIG_KEYRINGS_DIR)
 	for mpage in $(MANPAGES); do \
-		num=`echo $$mpage | sed s,.*\.,,`; \
+		num=`echo $$mpage | sed 's,.*\.,,'`; \
 		install -d -m755 $(DESTDIR)/usr/share/man/man$$num; \
 		install $$mpage $(DESTDIR)/usr/share/man/man$$num/$$mpage; \
 	done

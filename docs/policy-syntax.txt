@@ -1,0 +1,67 @@
+The .pol files are in XML format. The main node is the Policy node. Each
+.pol file can only contain one Policy node. Under that, there are three
+main nodes of the Policy, which are Origin, Selection and Verification.
+
+The Origin node describes the supplier of this policy, and subsequent
+packages verified by it. E.g. "debian" is one type of origin, and
+"progeny" may be another.
+
+The Selection node is used to determine the rules to decide if this policy
+will apply to this package. Since an origin can supply more than one
+policy, this is useful. E.g. Debian could supply a "generic" policy and a
+"Potato Release" policy. Debian CD's may also include a policy for
+verifying that particular set of packages. This node is a list of mathes
+that describe how to evaluate the signatures in the package.
+
+If the Selection block does not pass, then the verification tool will
+continue to other policies.
+
+The Verification block is the same format as the Selection block. It is
+only used if the Selection block passes. If the Selection block passes,
+and the Verification block does not, then the package is assumed to not be
+verified, and the verification program will exit with a non-zero status,
+indication failure.
+
+There can be more than one Verification or Selection block. However, there
+must be atleast one of each, else the policy will fail irregardless.
+
+Origin		- Description of this policy. This *must* be the first
+		  node in the Policy file.
+  Name - short name
+  Description - descriptive text (duh :)
+  ID - The GPG keyID of this Policy's Origin key, sanity check
+
+Selection	- The matching rules which decide if we want to use this
+		  rule set. Basically the rules in this group decide if we
+		  use this set. If they pass, we commit to using this
+		  Policy. If it fails, the checker will go and try another
+		  Policy.
+
+Verification	- Once we commit to using this Policy, the matching rules
+		  in this block must verify without error before we
+		  declare the package to be "ok".
+
+
+MinOptional	- This is the minimum number of Optional types that must be
+		  present and verified for this group. This is given as an
+		  attribute to the Verfication and Selection nodes.
+
+There are three types of matching rules within the two blocks.
+
+Required	- The Type must be present, and must verify.
+Optional	- If the Type is present, it must verify. If it isn't present, we
+		  ignore this match.
+Reject		- If this type is present, we fail.
+
+  Type - short string that matches the name of the sig file in the deb.
+  File - the name of the file (sans path) that contains the public key for
+         this signature.
+  ID - If given, the specific keyID to validate against. Otherwise, any
+       key in the keyring specified by "File" will suffice. This is useful
+       if you want several important keys in one keyring, and also for
+       specifying a "group" of keys for one type (like the maintainer
+       keyring).
+
+For the "Required" and "Optional" matches, the "Type" and "File" attribute
+must be given. ID is optional for both cases. For the "Reject" match, only
+the "Type" attribute is used.

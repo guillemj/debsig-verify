@@ -1,0 +1,106 @@
+.\" Copyright (c) 2000 by Ben Collins <bcollins@debian.org>
+.\"
+.\" Covered under the GPL v2
+.\"
+.\" $Id$
+.\"
+.TH DEBSIG-VERIFY 1
+.SH NAME
+debsig-verify \- Verify signatures for a Debian format package
+.SH SYNOPSIS
+.TP 6
+\fBdebsig-verify\fR [\fBoptions\fR] <\fBdeb\fR>
+.SH DESCRIPTION
+This program is part of a security model that verifies the source and
+validity of a Debian format package (commonly refered to as a \fBdeb\fR).
+.PP
+This program implements the verification specs defined in the document,
+"\fBPackage Verification with dpkg: Implementation\fR",
+which is a more complete reference for the verification procedure.
+.PP
+The program generally takes one argument, the \fBdeb\fR file to be
+verified. It will then check the \fBorigin\fR signature of the \fBdeb\fR,
+find it's Public Key ID (long format), and use that as the name for a policy
+subdirectory. If this subdirectory does not exist, then the verification
+fails immediately.
+.PP
+In this subdirectory, the program finds one or more files named with
+the \fB.pol\fR file extension, which signifies an XML format policy
+definition. This file contains three main parts.
+.PP
+.TP
+.BR Origin
+Information about the origin of this policy.
+.TP
+.BR Selection
+Rules used to decide if this policy is pertinent to this \fBdeb\fR's
+verification.
+.TP
+.BR Verification
+Rules that are used to actually verify the \fBdeb\fR.
+.PP
+The policy files will reference keyrings by a filename. These keyrings
+will be looked for in a subdirectory of the keyring directory. The
+subdirectory has the same name as the policy subdirectory.
+.PP
+The program will, after first parsing the entire file, check the Origin
+ID against the Public Key ID of the \fBorigin\fR signature in the \fBdeb\fR.
+If these match (which they should, else something is really wrong), then
+it will proceed to the \fBSelection\fR rules.
+.PP
+The \fBSelection\fR rules decide whether this policy is suitable for
+verifying this \fBdeb\fR. If these rules fail, then the program will proceed
+to the next policy. If it passes, then the program commits to using this
+policy for verification, and no other policies will be referenced.
+.PP
+The last verification step relies on the \fBVerification\fR rules. These
+are similar in format to the \fBSelection\fR rules, but are usually more
+constrained. If these rules fail, the program exits with a non-zero
+status. If they pass, then it exits with a zero status.
+.SH OPTIONS
+.TP
+.BR -q
+Causes the program to send no output, other than fatal errors. This is
+useful when being called from another program, where you rely on the exit
+value only.
+.TP
+.BR -v
+Causes the program to send more output on execution, so as to follow the
+steps it is taking while trying to verify the \fBdeb\fR.
+.TP
+.BR --version
+Outputs the version information for the program. This includes the policy
+format version. This option does not require any other arguments.
+.TP
+.BR --list-policies
+Outputs a list of the policies that passed the \fBSelection\fR phase of
+the verification process. In other words, those that could potentially
+verify the \fBdeb\fR. The output is one line showing the directory selected
+by the \fBorigin\fR signature, and then a single line for any policy files
+in that directory that pass the \fBSelection\fR rules. This option will \fBNOT\fR
+verify the \fBdeb\fR.
+.TP
+.BR --use-policy\ <pol>
+This option takes one argument, which is the name of the
+policy file (as shown by the \fB--list-policies\fR option). Note, this is
+just a file, and not a full path. You cannot specifiy arbitrary policies.
+This option is useful if more than one policy applies to potentially
+verifying the \fBdeb\fR. The program will then use this policy, and only
+this policy, to try and verify the \fBdeb\fR.
+.SH FILES
+.TP
+.BR /etc/debsig/policies/
+Directory containing the policy (.pol) definitions.
+.TP
+.BR /etc/debsig/policies/*/*.pol
+XML format policy files.
+.TP
+.BR /usr/share/debsig/keyrings/
+Directory containing the keyrings that coincide with the policies.
+.TP
+.BR /usr/share/debsig/keyrings/*/*.gpg
+GPG format keyrings for use by the policies.
+.SH SEE ALSO
+.BR deb (5),
+.SH AUTHOR
+Ben Collins <bcollins@debian.org>

@@ -28,6 +28,9 @@ install: all
 	install -m755 $(PROGRAM) $(DESTDIR)/usr/bin/$(PROGRAM)
 	install -d -m755 $(DESTDIR)$(DEBSIG_POLICIES_DIR)
 	install -d -m755 $(DESTDIR)$(DEBSIG_KEYRINGS_DIR)
+	install -d -m755 $(DESTDIR)/usr/share/man/man1
+	install docs/debsig-verify.1 \
+		$(DESTDIR)/usr/share/man/man1/debsig-verify.1
 
 clean:
 	rm -f debsig-verify $(OBJS)

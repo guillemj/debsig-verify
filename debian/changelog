@@ -3,6 +3,7 @@ debsig-verify (0.2) unstable; urgency=low
   * Added --list-policies, to get a list of applicable policies for a .deb
     (do not verify the contents). Also added a --use-policy so the user
     can specify one of the shortnames in the list from the list option.
+  * Added manpage for debsig-verify
 
  -- Ben Collins <bcollins@debian.org>  Thu,  7 Dec 2000 02:24:08 -0500
 

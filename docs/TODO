@@ -10,4 +10,3 @@
 - Free memory from policy struct (minor mem leak).
 - Expiry still needs to be handled
 - Add some more info to the verbose output.
-- Create manpage

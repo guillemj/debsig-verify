@@ -7,6 +7,5 @@
     using the --with-colon and --status-fd output for better parsing.
 - Figure out how to integrate this with the package tools (apt, dpkg
   etc..)
-- Free memory from policy struct (minor mem leak).
 - Expiry still needs to be handled
 - Add some more info to the verbose output.

@@ -1,3 +1,10 @@
+Thu Dec  7 21:28:40 EST 2000  Ben Collins <bcollins@debian.org>
+
+  * xml-parse.c:clear_policy(): Used to free the memory used by the policy
+    struct. Call it after a parse error, and before start of parse.
+  * debsig-verify.c:main(): call clear_policy() if we fail, even though
+    parsing succeeded.
+
 Thu Dec  7 16:18:56 EST 2000  Ben Collins <bcollins@debian.org>
 
   * docs/debsig-verify.1.in: Move to here, and generate at build so we get

@@ -235,6 +235,7 @@ usage:
 	/* Now let's see if this policy's selection is useful for this .deb  */
 	for (grp = pol->sels; grp != NULL; grp = grp->next) {
 	    if (!checkGroupRules(grp, deb)) {
+		clear_policy();
 		pol = NULL;
 		break;
 	    }

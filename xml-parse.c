@@ -20,7 +20,7 @@
  */
 
 /* $Id$
- * provides the XML parsing code for policy files
+ * provides the XML parsing code for policy files, via expat (xmltok)
  */
 
 #include <stdio.h>
@@ -213,6 +213,33 @@ static void endElement(void *userData, const char *name) {
     }
 }
 
+static void free_matches(struct match *mch) {
+    if (mch == NULL) return;
+    if (mch->name) free(mch->name);
+    if (mch->id) free(mch->id);
+    if (mch->file) free(mch->file);
+}
+
+static void free_group(struct group *grp) {
+    if (grp == NULL) return;
+    for ( ; grp; grp = grp->next)
+	free_matches(grp->matches);
+    return;
+}
+
+void clear_policy(void) {
+
+    if (ret.name) free(ret.name);
+    if (ret.id) free(ret.id);
+    if (ret.description) free(ret.description);
+
+    free_group(ret.sels);
+    free_group(ret.vers);
+
+    memset(&ret, 0, sizeof(struct policy));
+    return;
+}
+
 struct policy *parsePolicyFile(char *filename) {
     char buf[BUFSIZ];
     XML_Parser parser = XML_ParserCreate(NULL);
@@ -231,7 +258,7 @@ struct policy *parsePolicyFile(char *filename) {
     XML_SetElementHandler(parser, startElement, endElement);
 
     parse_error = 0;
-    memset(&ret,0,sizeof(struct policy));
+    clear_policy();
 
     do {
 	size_t len = fread(buf, 1, sizeof(buf), pol_fs);
@@ -254,6 +281,7 @@ struct policy *parsePolicyFile(char *filename) {
     if (parse_error) {
 	ds_printf(DS_LEV_ERR, "parsePolicyFile: %d errors during parsing, failed",
 		  parse_error);
+	clear_policy();
 	return NULL;
     }
 

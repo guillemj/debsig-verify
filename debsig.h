@@ -70,6 +70,7 @@ int checkSigExist(const char *name);
 char *getKeyID (const struct match *mtc);
 char *getSigKeyID (const char *deb, const char *type);
 int gpgVerify(const char *deb, struct match *mtc, const char *tmp_file);
+void clear_policy(void);
 
 #define DS_LEV_ERR 2
 #define DS_LEV_INFO 1

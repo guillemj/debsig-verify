@@ -1,3 +1,8 @@
+Thu Mar  8 10:50:14 EST 2001  Ben Collins <bcollins@debian.org>
+
+  * gpg-parse.c (gpgVerify): Make sure we add NULL to the end of execl call
+  * debsig-verify.c (main): Extra check to be sure policy files end in .pol
+
 Tue Dec 12 17:39:55 EST 2000  Ben Collins <bcollins@debian.org>
 
   * Add a -d (debug) command line option.

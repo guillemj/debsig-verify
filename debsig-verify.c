@@ -418,7 +418,7 @@ usage:
 	}
     }
 
-    fprintf(stderr, "Verified using the `%s' (%s) policy in %s.\n", pol->description,
+    ds_printf(DS_LEV_INFO, "Verified using the `%s' (%s) policy in %s.\n", pol->description,
 	    pol->name, pol_file);
 
     /* If we get here, then things passed just fine */

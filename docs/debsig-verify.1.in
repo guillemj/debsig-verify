@@ -20,7 +20,7 @@ which is a more complete reference for the verification procedure.
 .PP
 The program generally takes one argument, the \fBdeb\fR file to be
 verified. It will then check the \fBorigin\fR signature of the \fBdeb\fR,
-find it's Public Key ID (long format), and use that as the name for a policy
+find its Public Key ID (long format), and use that as the name for a policy
 subdirectory. If this subdirectory does not exist, then the verification
 fails immediately.
 .PP
@@ -41,7 +41,8 @@ Rules that are used to actually verify the \fBdeb\fR.
 .PP
 The policy files will reference keyrings by a filename. These keyrings
 will be looked for in a subdirectory of the keyring directory. The
-subdirectory has the same name as the policy subdirectory.
+subdirectory has the same name as the policy subdirectory (previously
+determined by the Origin's Public Key ID).
 .PP
 The program will, after first parsing the entire file, check the Origin
 ID against the Public Key ID of the \fBorigin\fR signature in the \fBdeb\fR.

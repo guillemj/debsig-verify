@@ -1,3 +1,10 @@
+Mon Dec 11 11:18:56 EST 2000  Ben Collins <bcollins@debian.org>
+
+  * xml-parse.c: increment depthPtr at start of function to get rid of the
+    goto
+  * debsig-verify.c: checkIsDeb(): new function, functionality moved from
+    main().
+
 Mon Dec 11 10:47:49 EST 2000  Ben Collins <bcollins@debian.org>
 
   * debsig-verify.c: outputUsage(): new function

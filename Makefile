@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -g -O2
 LDFLAGS = -lxmltok -lxmlparse
 
-TESTING=1
+#TESTING=1
 
 ifndef TESTING
 DEBSIG_KEYRINGS_DIR=/usr/share/debsig/keyrings

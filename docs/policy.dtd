@@ -1,0 +1,30 @@
+<!ELEMENT Policy (Origin, Selection*, Verification+)>
+
+    <!ATTLIST Policy xmlns CDATA #FIXED "http://www.debian.org/debsig/1.0/">
+
+<!ELEMENT Origin EMPTY>
+
+    <!ATTLIST Origin
+	Name CDATA #REQUIRED
+	id CDATA #REQUIRED
+	Description CDATA #IMPLIED>
+
+<!ELEMENT Selection ((Required|Optional)+, Reject*)>
+<!ELEMENT Verification ((Required|Optional)+, Reject*)>
+
+    <!ATTLIST Selection MinOptional CDATA #IMPLIED>
+    <!ATTLIST Verification MinOptional CDATA #IMPLIED>
+
+<!ELEMENT Required EMPTY>
+<!ELEMENT Optional EMPTY>
+<!ELEMENT Reject EMPTY>
+
+    <!ATTLIST Required
+	Type CDATA #REQUIRED
+	File CDATA #REQUIRED
+	id CDATA #IMPLIED>
+    <!ATTLIST Optional
+	Type CDATA #REQUIRED
+	File CDATA #REQUIRED
+	id CDATA #IMPLIED>
+    <!ATTLIST Reject Type CDATA #REQUIRED>

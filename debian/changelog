@@ -7,6 +7,9 @@ debsig-verify (0.2) unstable; urgency=low
   * Added some code to free up alloc'd memory used by parsePolicy()
   * Lots of code cleanups
   * Added a -d option for debug output
+  * Change to use "gpg --verify <sig> <file>" intead of stdin. The newest
+    gpg changed this behavior to fix a security issue.
+  * Use obstack to alloc policy data in xml-parts.c
 
  -- Ben Collins <bcollins@debian.org>  Tue, 12 Dec 2000 17:41:53 -0500
 

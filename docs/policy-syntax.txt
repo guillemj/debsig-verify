@@ -40,10 +40,12 @@ Selection	- The matching rules which decide if we want to use this
 
 Verification	- Once we commit to using this Policy, the matching rules
 		  in this block must verify without error before we
-		  declare the package to be "ok".
+		  declare the package to be "ok". If this fails, no
+		  further policies will be checked and the package is
+		  considered to be insecure.
 
 
-MinOptional	- This is the minimum number of Optional types that must be
+  MinOptional	- This is the minimum number of Optional types that must be
 		  present and verified for this group. This is given as an
 		  attribute to the Verfication and Selection nodes.
 
@@ -55,7 +57,9 @@ Optional	- If the Type is present, it must verify. If it isn't present, we
 		  exists in the .deb. If the ID is included, then the sig
 		  in the deb must contain the same ID for it to be
 		  considered "present".
-Reject		- If this type is present, we fail.
+Reject		- If this type is present, we fail. This is mostly useful
+		  for Selection groups, to manage several policies under
+		  one Origin.
 
   Type - short string that matches the name of the sig file in the deb.
   File - the name of the file (sans path) that contains the public key for

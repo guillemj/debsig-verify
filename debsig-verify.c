@@ -43,19 +43,45 @@ char *ver_members[] = { "control.tar.gz", "data.tar.gz", 0 };
 static char *prog_name = NULL;
 
 static int checkGroupRules(struct group *grp, const char *deb) {
-    FILE *fg;
-    char buf[2048], tmp_file[32];
-    int opt_count = 0, t, fd;
+    FILE *fp;
+    char buf[2048], tmp_sig[32] = {'\0'}, tmp_data[32] = {'\0'};
+    int opt_count = 0, t, i, fd;
     struct match *mtc;
+    int len;
 
-    /* If we don't have any matches, we fail. We don't wont blank,
+    /* If we don't have any matches, we fail. We don't want blank,
      * take-all rules. This actually gets checked while we parse the
      * policy file, but we check again for good measure.  */
     if (grp->matches == NULL)
 	return 0;
 
+    /* Go ahead and write out our data to a temp file */
+    strncpy(tmp_data, "/tmp/debsig-data.XXXXXX", sizeof(tmp_data));
+    if ((fd = mkstemp(tmp_data)) == -1 || (fp = fdopen(fd, "w+")) == NULL) {
+	ds_printf(DS_LEV_ERR, "error creating temp file %s: %s\n",
+		  tmp_data, strerror(errno));
+	if (fd != -1) {
+	    close(fd);
+	    unlink(tmp_data);
+	}
+	return 0;
+    }
+
+    /* Now, let's find all the members we need to check and cat them into a
+     * single temp file. This is what we pass to gpg.  */
+    for (i = 0; ver_members[i]; i++) {
+	if (!(len = findMember(ver_members[i])))
+	    goto fail_and_close;
+	while(len > 0) {
+	    t = fread(buf, 1, sizeof(buf), deb_fs);
+	    fwrite(buf, 1, (t > len) ? len : t, fp);
+	    len -= t;
+	}
+    }
+    fclose(fp);
+    fd = -1;
+
     for (mtc = grp->matches; mtc; mtc = mtc->next) {
-	int len;
 
 	/* If we have an ID for this match, check to make sure it exists, and
 	 * matches the signature we are about to check.  */
@@ -63,7 +89,7 @@ static int checkGroupRules(struct group *grp, const char *deb) {
 	    char *m_id = getKeyID(mtc);
 	    char *d_id = getSigKeyID(deb, mtc->name);
 	    if (m_id == NULL || d_id == NULL || strcmp(m_id, d_id))
-		return 0;
+		goto fail_and_close;
 	}
 
 	/* This will also position deb_fs to the start of the member */
@@ -73,41 +99,38 @@ static int checkGroupRules(struct group *grp, const char *deb) {
 	 * doesn't exist, and we require it, die aswell. */
 	if ((!len && mtc->type == REQUIRED_MATCH) ||
 		(len && mtc->type == REJECT_MATCH)) {
-	    return 0;
+	    goto fail_and_close;
 	}
 
 	/* This would mean this is Optional, so we ignore it for now */
 	if (!len) continue;
 
-	/* Write it to a temp file */
-	strncpy(tmp_file, "/tmp/debsig.XXXXXX", sizeof(tmp_file));
-	if ((fd = mkstemp(tmp_file)) == -1 || (fg = fdopen(fd, "w+")) == NULL) {
-	    ds_printf(DS_LEV_ERR, "error creating tmpfile: %s\n", strerror(errno));
-	    if (fd != -1) close(fd);
-	    return 0;
+	/* let's get our temp file */
+	strncpy(tmp_sig, "/tmp/debsig-sig.XXXXXX", sizeof(tmp_sig));
+	if ((fd = mkstemp(tmp_sig)) == -1 || (fp = fdopen(fd, "w+")) == NULL) {
+	    ds_printf(DS_LEV_ERR, "error creating temp file %s: %s\n",
+		      tmp_sig, strerror(errno));
+	    goto fail_and_close;
 	}
 
-	t = fread(buf, 1, sizeof(buf), deb_fs);
 	while(len > 0) {
-	    if (t > len)
-		fwrite(buf, 1, len, fg);
-	    else
-		fwrite(buf, 1, t, fg);
-	    len -= t;
 	    t = fread(buf, 1, sizeof(buf), deb_fs);
+	    fwrite(buf, 1, (t > len) ? len : t, fp);
+	    len -= t;
 	}
-
-	fclose(fg);
+	fclose(fp);
 
 	/* Now, let's check with gpg on this one */
-	t = gpgVerify(deb, mtc, tmp_file);
-	unlink(tmp_file);
+	t = gpgVerify(tmp_data, mtc, tmp_sig);
+
+	fd = -1;
+	unlink(tmp_sig);
 
 	/* We fail no matter what now. Even if this is an optional match
 	 * rule, by now, we know that the sig exists, so we must fail */
 	if (!t) {
 	    ds_printf(DS_LEV_DEBUG, "checkGroupRules: failed for %s", mtc->name);
-	    return 0;
+	    goto fail_and_close;
 	}
 
 	/* Kick up the count once for checking later */
@@ -118,10 +141,19 @@ static int checkGroupRules(struct group *grp, const char *deb) {
     if (opt_count < grp->min_opt) {
 	ds_printf(DS_LEV_DEBUG, "checkGroupRules: opt passed - %d, opt required %d",
 		  opt_count, grp->min_opt);
-	return 0;
+	goto fail_and_close;
     }
-    
+
+    unlink(tmp_data);
     return 1;
+
+fail_and_close:
+    unlink(tmp_data);
+    if (fd != -1) {
+	close(fd);
+	unlink(tmp_sig);
+    }
+    return 0;
 }
 
 static int checkIsDeb(void) {

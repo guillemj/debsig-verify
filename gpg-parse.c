@@ -151,10 +151,9 @@ char *getSigKeyID (const char *deb, const char *type) {
     return ret;
 }
 
-int gpgVerify(const char *deb, struct match *mtc, const char *tmp_file) {
-    char buf[8192], keyring[8192];
-    int status, p[2], len, t, i;
-    FILE *fs;
+int gpgVerify(const char *data, struct match *mtc, const char *sig) {
+    char keyring[8192];
+    int status;
     pid_t pid;
     struct stat st;
 
@@ -164,35 +163,13 @@ int gpgVerify(const char *deb, struct match *mtc, const char *tmp_file) {
 	return 0;
     }
 
-    pipe(p);
-    if ((fs = fdopen(p[1], "w")) == NULL)
-	ds_fail_printf("gpgVerify: could not open file stream for pipe");
     if (!(pid = fork())) {
-	dup2(p[0],0); close(p[0]); close(p[1]); close(1); close(2);
+	close(0); close(1); close(2);
 	execl(GPG_PROG, "gpg", GPG_ARGS, "-q", "--keyring",
-		keyring, "--verify", tmp_file);
+		keyring, "--verify", sig, data);
 	exit(1);
     }
-    close(p[0]);
 
-    /* Now pipe our data to gpg */
-    for (i = 0; ver_members[i]; i++) {
-	if ((len = findMember(ver_members[i])) == 0)
-	    ds_fail_printf("gpgVerify: could not find %s member", ver_members[i]);
-	t = fread(buf, 1, sizeof(buf), deb_fs);
-	while(len > 0) {
-	    if (t > len)
-		fwrite(buf, 1, len, fs);
-	    else
-		fwrite(buf, 1, t, fs);
-	    len -= t;
-	    t = fread(buf, 1, sizeof(buf), deb_fs);
-	}
-    }
-    if (ferror(fs))
-        ds_fail_printf("error writing to gpg");
-    fclose(fs);
-    
     waitpid(pid, &status, 0);
     if (!WIFEXITED(status) || WEXITSTATUS(status)) {
 	ds_printf(DS_LEV_DEBUG, "gpgVerify: gpg exited abnormally or with non-zero exit status");

@@ -28,20 +28,34 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <ctype.h>
+#include <sys/stat.h>
+#include <obstack.h>
 
 #include <xmltok/xmlparse.h>
 
 #include "debsig.h"
 
+#define obstack_chunk_alloc xmalloc
+#define obstack_chunk_free free
+
 static int parse_err_cnt;
 static struct policy ret;
 static struct group *cur_grp = NULL;
 static XML_Parser parser;
+static struct obstack deb_obs;
+static int deb_obs_init = 0;
 
 #define parse_error(fmt, args...) \
 { \
     parse_err_cnt++; \
     ds_printf(DS_LEV_DEBUG , "%d: " fmt , XML_GetCurrentLineNumber(parser) , ## args); \
+}
+
+static void *xmalloc(size_t size) {
+    register void *p = malloc(size);
+    if (p == NULL)
+	ds_fail_printf("out of memory");
+    return p;
 }
 
 static void startElement(void *userData, const char *name, const char **atts) {
@@ -70,11 +84,11 @@ static void startElement(void *userData, const char *name, const char **atts) {
 	
 	for (i = 0; atts[i]; i += 2) {
 	    if (!strcmp(atts[i], "id"))
-		ret.id = strdup(atts[i+1]);
+		ret.id = obstack_copy0(&deb_obs, atts[i+1], strlen(atts[i+1]));
 	    else if (!strcmp(atts[i], "Name"))
-		ret.name = strdup(atts[i+1]);
+		ret.name = obstack_copy0(&deb_obs, atts[i+1], strlen(atts[i+1]));
 	    else if (!strcmp(atts[i], "Description"))
-		ret.description = strdup(atts[i+1]);
+		ret.description = obstack_copy0(&deb_obs, atts[i+1], strlen(atts[i+1]));
 	    else
 		parse_error("Origin element contains unknown attribute `%s'",
 			     atts[i]);
@@ -88,7 +102,7 @@ static void startElement(void *userData, const char *name, const char **atts) {
 	    parse_error("policy parse error: `Selection/Verification' found at wrong level");
 
 	/* create a new entry, make it the current */
-	cur_grp = (struct group *)malloc(sizeof(struct group));
+	cur_grp = (struct group *)obstack_alloc(&deb_obs, sizeof(struct group));
 	if (cur_grp == NULL)
 	    ds_fail_printf("out of memory");
 	memset(cur_grp, 0, sizeof(struct group));
@@ -136,7 +150,7 @@ static void startElement(void *userData, const char *name, const char **atts) {
 	}
 
         /* create a new entry, make it the current */
-        cur_m = (struct match *)malloc(sizeof(struct match));
+        cur_m = (struct match *)obstack_alloc(&deb_obs, sizeof(struct match));
         if (cur_m == NULL)
             ds_fail_printf("out of memory");
         memset(cur_m, 0, sizeof(struct match));
@@ -152,11 +166,11 @@ static void startElement(void *userData, const char *name, const char **atts) {
 	/* Set the attributes first, so we can sanity check the type after */
         for (i = 0; atts[i]; i += 2) {
             if (!strcmp(atts[i], "Type")) {
-                cur_m->name = strdup(atts[i+1]);
+                cur_m->name = obstack_copy0(&deb_obs, atts[i+1], strlen(atts[i+1]));
 	    } else if (!strcmp(atts[i], "File")) {
-		cur_m->file = strdup(atts[i+1]);
+		cur_m->file = obstack_copy0(&deb_obs, atts[i+1], strlen(atts[i+1]));;
 	    } else if (!strcmp(atts[i], "id")) {
-		cur_m->id = strdup(atts[i+1]);
+		cur_m->id = obstack_copy0(&deb_obs, atts[i+1], strlen(atts[i+1]));;
 	    } else if (!strcmp(atts[i], "Expiry")) {
 		int t; const char *c = atts[i+1];
 		for (t = 0; c[t]; t++) {
@@ -207,42 +221,37 @@ static void endElement(void *userData, const char *name) {
     }
 }
 
-static void free_matches(struct match *mch) {
-    if (mch == NULL) return;
-    if (mch->name) free(mch->name);
-    if (mch->id) free(mch->id);
-    if (mch->file) free(mch->file);
-}
-
-static void free_group(struct group *grp) {
-    if (grp == NULL) return;
-    for ( ; grp; grp = grp->next)
-	free_matches(grp->matches);
-    return;
-}
-
 void clear_policy(void) {
-
-    if (ret.name) free(ret.name);
-    if (ret.id) free(ret.id);
-    if (ret.description) free(ret.description);
-
-    free_group(ret.sels);
-    free_group(ret.vers);
-
-    memset(&ret, 0, sizeof(struct policy));
+    if (deb_obs_init) {
+	obstack_free(&deb_obs, 0);
+	deb_obs_init = 0;
+    }
+    memset(&ret, '\0', sizeof(struct policy));
     return;
 }
 
-struct policy *parsePolicyFile(char *filename) {
+struct policy *parsePolicyFile(const char *filename) {
     char buf[BUFSIZ];
     int done, depth = 0;
     FILE *pol_fs;
+    struct stat st;
 
+    /* clear and initialize */
     parser = XML_ParserCreate(NULL);
+    //clear_policy();
+    obstack_init(&deb_obs);
+    deb_obs_init = 1;
 
     ds_printf(DS_LEV_DEBUG, "parsePolicyFile: parsing `%s'", filename);
 
+    if (stat(filename, &st)) {
+	ds_printf(DS_LEV_ERR, "parsePolicyFile: could not stat %s", filename);
+	return NULL;
+    }
+    if (!S_ISREG(st.st_mode)) {
+	ds_printf(DS_LEV_ERR, "parsePolicyFile: %s is not a regular file", filename);
+	return NULL;
+    }
     if ((pol_fs = fopen(filename, "r")) == NULL) {
 	ds_printf(DS_LEV_ERR, "parsePolicyFile: could not open `%s' (%s)",
 		  filename, strerror(errno));
@@ -253,7 +262,6 @@ struct policy *parsePolicyFile(char *filename) {
     XML_SetElementHandler(parser, startElement, endElement);
 
     parse_err_cnt = 0;
-    clear_policy();
 
     do {
 	size_t len = fread(buf, 1, sizeof(buf), pol_fs);

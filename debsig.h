@@ -37,7 +37,9 @@
 #define REQUIRED_MATCH 2
 #define REJECT_MATCH 3
 
-#define DEBSIG_NS "http://www.debian.org/debsig/1.0/"
+#define VERSION "0.1"
+#define SIG_VERSION "1.0"
+#define DEBSIG_NS "http://www.debian.org/debsig/"SIG_VERSION"/"
 
 struct match {
         struct match *next;

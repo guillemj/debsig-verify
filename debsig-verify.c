@@ -42,6 +42,8 @@ static char originID[2048];
 char *deb = NULL;
 FILE *deb_fs = NULL;
 
+static char *ver_members[] = { "control.tar.gz", "data.tar.gz", 0 };
+
 int checkSigExist(const char *name) {
     char buf[16];
 
@@ -116,7 +118,6 @@ static char *getSigKeyID (const char *deb, const char *type) {
 	dup2(pread[1],1); close(pread[0]); close(pread[1]);
 	dup2(pwrite[0],0); close(pwrite[0]); close(pwrite[1]);
 	execl(GPG_PROG, "gpg", GPG_ARGS, "--list-packets", "-q", "-", NULL);
-	ds_printf(DS_LEV_ERR, "failed to exec %s", GPG_PROG);
 	exit(1);
     }
 
@@ -177,27 +178,57 @@ static char *getSigKeyID (const char *deb, const char *type) {
 
 static int gpgVerify(const char *deb, struct match *mtc, const char *tmp_file) {
     char buf[8192], keyring[8192];
+    int status, p[2], len, t, i;
+    FILE *fs;
+    pid_t pid;
     struct stat st;
 
-    /* If we have an ID for this match, check to make sure it exists, and
-     * matches the signature we are about to check.  */
-    if (mtc->id) {
-	char *m_id = getKeyID(mtc);
-	char *d_id = getSigKeyID(deb, mtc->name);
-	if (m_id == NULL || d_id == NULL || strcmp(m_id, d_id))
-	    return 0;
+    snprintf(keyring, sizeof(keyring) - 1, DEBSIG_KEYRINGS_FMT, originID, mtc->file);
+    if (stat(keyring, &st)) {
+	ds_printf(DS_LEV_VER, "gpgVerify: could not stat %s", keyring);
+	return 0;
     }
 
-    snprintf(keyring, sizeof(keyring) - 1, DEBSIG_KEYRINGS_FMT, originID, mtc->file);
-    if (stat(keyring, &st))
+    pipe(p);
+    if ((fs = fdopen(p[1], "w")) == NULL) {
+	ds_printf(DS_LEV_ERR, "gpgVerify: could not open file stream for pipe");
+	exit(0);
+    }
+
+    if (!(pid = fork())) {
+	dup2(p[0],0); close(p[0]); close(p[1]); close(1); close(2);
+	execl(GPG_PROG, "gpg", GPG_ARGS, "--always-trust", "-q", "--keyring",
+		keyring, "--verify", tmp_file);
+	exit(1);
+    }
+    close(p[0]);
+
+    /* Now pipe our data to gpg */
+    for (i = 0; ver_members[i]; i++) {
+	if ((len = findMember(ver_members[i])) == 0) {
+	    ds_printf(DS_LEV_ERR, "gpgVerify: could not find %s member", ver_members[i]);
+	    exit(1);
+	}
+	t = fread(buf, 1, sizeof(buf), deb_fs);
+	while(len > 0) {
+	    if (t > len)
+		fwrite(buf, 1, len, fs);
+	    else
+		fwrite(buf, 1, t, fs);
+	    len -= t;
+	    t = fread(buf, 1, sizeof(buf), deb_fs);
+	}
+    }
+    if (ferror(fs)) {
+        ds_printf(DS_LEV_ERR, "error writing to gpg");
+        exit(1);
+    }
+    fclose(fs);
+    
+    waitpid(pid, &status, 0);
+    if (!WIFEXITED(status) || WEXITSTATUS(status))
 	return 0;
 
-    /* XXX: remove ar usage */
-    snprintf(buf, sizeof(buf) - 1, "ar p %s control.tar.gz data.tar.gz | "
-	     GPG_PROG" "GPG_ARGS_FMT" --always-trust -q --keyring %s --verify %s - >/dev/null 2>&1",
-	     deb, GPG_ARGS, keyring, tmp_file);
-    if (system(buf))
-	return 0;
     return 1;
 }
 
@@ -214,8 +245,20 @@ static int checkGroupRules(struct group *grp, const char *deb) {
 	return 0;
 
     for (mtc = grp->matches; mtc; mtc = mtc->next) {
+	int len;
+
+	/* If we have an ID for this match, check to make sure it exists, and
+	 * matches the signature we are about to check.  */
+	if (mtc->id) {
+	    char *m_id = getKeyID(mtc);
+	    char *d_id = getSigKeyID(deb, mtc->name);
+	    if (m_id == NULL || d_id == NULL || strcmp(m_id, d_id))
+		return 0;
+	}
+
 	/* This will also position deb_fs to the start of the member */
-	int len = checkSigExist(mtc->name);
+	len = checkSigExist(mtc->name);
+
 	/* If the member exists and we reject it, die now. Also, if it
 	 * doesn't exist, and we require it, die aswell. */
 	if ((!len && mtc->type == REQUIRED_MATCH) ||
@@ -223,6 +266,7 @@ static int checkGroupRules(struct group *grp, const char *deb) {
 	    return 0;
 	}
 
+	/* This would mean this is Optional, so we ignore it for now */
 	if (!len) continue;
 
 	/* Write it to a temp file */
@@ -270,19 +314,50 @@ static int checkGroupRules(struct group *grp, const char *deb) {
     return 1;
 }
 
+static void outputVersion(void) {
+    fprintf(stderr, "Debsig Program Version - "VERSION"\n");
+    fprintf(stderr, "Signature Version - "SIG_VERSION"\n");
+    fprintf(stderr, "Signature Namespace - "DEBSIG_NS"\n");
+    return;
+}
+
 int main(int argc, char *argv[]) {
     struct policy *pol = NULL;
     char buf[8192], pol_file[8192], *tmpID;
     DIR *pd = NULL;
     struct dirent *pd_ent;
     struct group *grp;
+    int i;
 
-    if (argc != 2) {
-	ds_printf(DS_LEV_ERR, "Usage: %s <deb>", argv[0]);
-	exit (1);
+    if (argc < 2)
+	goto usage;
+
+    for (i = 1; i < argc && argv[i][0] == '-'; i++) {
+	if (!strcmp(argv[i], "-q"))
+	    debug_level = DS_LEV_ERR;
+	else if (!strcmp(argv[i], "-v"))
+	    debug_level = DS_LEV_VER;
+	else if (!strcmp(argv[i], "--version")) {
+	    outputVersion();
+	    /* Make sure we exit non-zero if there are any more args. This
+	     * makes sure someone doesn't so something stupid like pass
+	     * --version and a .deb, and expect it to return a validation
+	     * exit status.  */
+	    if (argc > 2)
+		exit(1);
+	    else
+		exit(0);
+	} else
+	    goto usage;
     }
 
-    deb = argv[1];
+    if (i + 1 != argc) { /* There should only be one arg left */
+usage:
+	ds_printf(DS_LEV_ERR, "Usage: %s [ --version ] [ -q | -v ] <deb>", argv[0]);
+	exit(1);
+    }
+
+    deb = argv[i];
     if ((deb_fs = fopen(deb, "r")) == NULL) {
 	ds_printf(DS_LEV_ERR, "could not open %s (%s)", deb, strerror(errno));
 	exit(1);

@@ -316,8 +316,10 @@ static int checkGroupRules(struct group *grp, const char *deb) {
 
 static void outputVersion(void) {
     fprintf(stderr, "Debsig Program Version - "VERSION"\n");
-    fprintf(stderr, "Signature Version - "SIG_VERSION"\n");
-    fprintf(stderr, "Signature Namespace - "DEBSIG_NS"\n");
+    fprintf(stderr, "  Signature Version - "SIG_VERSION"\n");
+    fprintf(stderr, "  Signature Namespace - "DEBSIG_NS"\n");
+    fprintf(stderr, "  Policies Directory - "DEBSIG_POLICIES_DIR"\n");
+    fprintf(stderr, "  Keyrings Directory - "DEBSIG_KEYRINGS_DIR"\n");
     return;
 }
 

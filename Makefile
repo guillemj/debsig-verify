@@ -6,7 +6,7 @@ LDFLAGS = -lxmltok -lxmlparse
 
 ifndef TESTING
 DEBSIG_KEYRINGS_DIR=/usr/share/debsig/keyrings
-DEBSIG_POLICIES_DIR=/etc/debsigs/policies
+DEBSIG_POLICIES_DIR=/etc/debsig/policies
 else
 DEBSIG_KEYRINGS_DIR=$(shell pwd)/testing/keyrings
 DEBSIG_POLICIES_DIR=$(shell pwd)/testing/policies

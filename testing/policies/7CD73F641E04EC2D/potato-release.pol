@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE Policy SYSTEM "http://people.debian.org/~bcollins/debsig-policy.dtd">
+<!DOCTYPE Policy SYSTEM "http://www.debian.org/debsig/1.0/policy.dtd">
 <Policy xmlns="http://www.debian.org/debsig/1.0/">
 
   <Origin Name="Debian" id="7CD73F641E04EC2D" Description="Debian GNU Project Potato Release"/>

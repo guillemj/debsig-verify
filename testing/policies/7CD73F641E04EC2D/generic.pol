@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE Policy SYSTEM "docs/policy.dtd">
+<!DOCTYPE Policy SYSTEM "http://www.debian.org/debsig/1.0/policy.dtd">
 <Policy xmlns="http://www.debian.org/debsig/1.0/">
 
   <!-- This is mainly a sanity check, since our filename is that of the ID

@@ -24,7 +24,11 @@
 #define DEBSIG_POLICIES_DIR_FMT DEBSIG_POLICIES_DIR"/%s"
 #define DEBSIG_KEYRINGS_FMT DEBSIG_KEYRINGS_DIR"/%s/%s"
 
-#define GPG_PROG "/usr/bin/gpg --no-options --no-default-keyring"
+#define GPG_PROG "/usr/bin/gpg"
+
+/* This is so ugly, but easy */
+#define GPG_ARGS_FMT "%s %s"
+#define GPG_ARGS "--no-options", "--no-default-keyring"
 
 #define SIG_MAGIC ":signature packet:"
 #define USER_MAGIC ":user ID packet:"

@@ -57,6 +57,8 @@ Reject		- If this type is present, we fail.
   Type - short string that matches the name of the sig file in the deb.
   File - the name of the file (sans path) that contains the public key for
          this signature.
+  Expiry - Number of days old since this sig was created (not yet
+	   enforced). The sig creation can be no older than this.
   ID - If given, the specific keyID to validate against. Otherwise, any
        key in the keyring specified by "File" will suffice. This is useful
        if you want several important keys in one keyring, and also for

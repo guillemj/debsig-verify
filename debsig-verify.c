@@ -31,6 +31,9 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #include "debsig.h"
 
@@ -38,6 +41,19 @@ static char originID[2048];
 
 char *deb = NULL;
 FILE *deb_fs = NULL;
+
+int checkSigExist(const char *name) {
+    char buf[16];
+
+    if (name == NULL) {
+	ds_printf(DS_LEV_VER, "checkSigExist: NULL values passed");
+	return 0;
+    }
+
+    snprintf(buf, sizeof(buf) - 1, "_gpg%s", name);
+
+    return findMember(buf);
+}
 
 static char *getKeyID (const struct match *mtc) {
     static char buf[2048];
@@ -47,8 +63,8 @@ static char *getKeyID (const struct match *mtc) {
     if (ret == NULL)
 	return NULL;
 
-    snprintf(buf, sizeof(buf) - 1, GPG_PROG" --list-packets -q "DEBSIG_KEYRINGS_FMT,
-	     originID, mtc->file);
+    snprintf(buf, sizeof(buf) - 1, GPG_PROG" "GPG_ARGS_FMT" --list-packets -q "DEBSIG_KEYRINGS_FMT,
+	     GPG_ARGS, originID, mtc->file);
 
     if ((ds = popen(buf, "r")) == NULL) {
 	perror("gpg");
@@ -85,19 +101,52 @@ static char *getKeyID (const struct match *mtc) {
 
 static char *getSigKeyID (const char *deb, const char *type) {
     static char buf[2048];
-    FILE *ds;
+    int pread[2], pwrite[2], len = checkSigExist(type), t;
+    pid_t pid;
+    FILE *ds_read, *ds_write;
     char *c, *ret = NULL;
-/* XXX: fix ar usage */
-    snprintf(buf, sizeof(buf) - 1, "ar p %s _gpg%s | "GPG_PROG" --list-packets -q -",
-	     deb, type);
 
-    if ((ds = popen(buf, "r")) == NULL) {
-	perror("ar | gpg");
+    if (!len)
 	return NULL;
+
+    /* Fork for gpg, keeping a nice pipe to read/write from.  */
+    pipe(pread);pipe(pwrite);
+    if (!(pid = fork())) {
+	/* Here we go */
+	dup2(pread[1],1); close(pread[0]); close(pread[1]);
+	dup2(pwrite[0],0); close(pwrite[0]); close(pwrite[1]);
+	execl(GPG_PROG, "gpg", GPG_ARGS, "--list-packets", "-q", "-", NULL);
+	ds_printf(DS_LEV_ERR, "failed to exec %s", GPG_PROG);
+	exit(1);
     }
 
-    /* :signature packet: algo 17, keyid 7CD73F641E04EC2D */
-    c = fgets(buf, sizeof(buf), ds);
+    /* I like file streams, so sue me :P */
+    if ((ds_read = fdopen(pread[0], "r")) == NULL ||
+	    (ds_write = fdopen(pwrite[1], "w")) == NULL) {
+	ds_printf(DS_LEV_ERR, "error opening file stream for gpg");
+	exit(1);
+    }
+    close(pread[1]); close(pwrite[0]);
+
+    /* First, let's feed gpg our signature. Don't forget, our call to
+     * checkSigExist() above positioned the deb_fs file pointer already.  */
+    t = fread(buf, 1, sizeof(buf), deb_fs);
+    while(len > 0) {
+	if (t > len)
+	    fwrite(buf, 1, len, ds_write);
+	else
+	    fwrite(buf, 1, t, ds_write);
+	len -= t;
+	t = fread(buf, 1, sizeof(buf), deb_fs);
+    }
+    if (ferror(ds_write)) {
+	ds_printf(DS_LEV_ERR, "error writing to gpg");
+	exit(1);
+    }
+    fclose(ds_write);
+
+    /* Now, let's see what gpg has to say about all this */
+    c = fgets(buf, sizeof(buf), ds_read);
     while (c != NULL) {
 	if (!strncmp(buf, SIG_MAGIC, strlen(SIG_MAGIC))) {
 	    if ((c = strchr(buf, '\n')) != NULL)
@@ -109,73 +158,72 @@ static char *getSigKeyID (const char *deb, const char *type) {
 		break;
 	    }
 	}
-	c = fgets(buf, sizeof(buf), ds);
+	c = fgets(buf, sizeof(buf), ds_read);
     }
+    if (ferror(ds_read)) {
+	ds_printf(DS_LEV_ERR, "error reading from gpg");
+	exit(1);
+    }
+    fclose(ds_read);
+    
+    waitpid(pid, NULL, 0);
+    if (ret == NULL)
+	ds_printf(DS_LEV_VER, "getSigKeyID: failed for %s", type);
+    else
+	ds_printf(DS_LEV_VER, "getSigKeyID: returning %s", ret);
 
-    if (pclose(ds)) ret = NULL;
     return ret;
-}
-
-int checkSigExist(const char *name) {
-    char buf[16];
-
-    if (name == NULL) {
-	ds_printf(DS_LEV_VER, "checkSigExist: NULL values passed");
-	return 0;
-    }
-
-    snprintf(buf, sizeof(buf) - 1, "_gpg%s", name);
-
-    return findMember(buf);
 }
 
 static int gpgVerify(const char *deb, struct match *mtc, const char *tmp_file) {
     char buf[8192], keyring[8192];
     struct stat st;
 
-    if (mtc->id && strcmp(getSigKeyID(deb, mtc->name), getKeyID(mtc)))
-	return 0;
+    /* If we have an ID for this match, check to make sure it exists, and
+     * matches the signature we are about to check.  */
+    if (mtc->id) {
+	char *m_id = getKeyID(mtc);
+	char *d_id = getSigKeyID(deb, mtc->name);
+	if (m_id == NULL || d_id == NULL || strcmp(m_id, d_id))
+	    return 0;
+    }
 
     snprintf(keyring, sizeof(keyring) - 1, DEBSIG_KEYRINGS_FMT, originID, mtc->file);
     if (stat(keyring, &st))
 	return 0;
 
+    /* XXX: remove ar usage */
     snprintf(buf, sizeof(buf) - 1, "ar p %s control.tar.gz data.tar.gz | "
-	     GPG_PROG " --always-trust -q --keyring %s --verify %s - >/dev/null 2>&1",
-	     deb, keyring, tmp_file);
+	     GPG_PROG" "GPG_ARGS_FMT" --always-trust -q --keyring %s --verify %s - >/dev/null 2>&1",
+	     deb, GPG_ARGS, keyring, tmp_file);
     if (system(buf))
 	return 0;
     return 1;
 }
 
 static int checkGroupRules(struct group *grp, const char *deb) {
-    FILE *fs, *fg;
+    FILE *fg;
     char buf[2048], tmp_file[32];
     int opt_count = 0, t, fd;
     struct match *mtc;
 
     /* If we don't have any matches, we fail. We don't wont blank,
-     * take-all rules */
+     * take-all rules. This actually gets checked while we parse the
+     * policy file, but we check again for good measure.  */
     if (grp->matches == NULL)
 	return 0;
 
     for (mtc = grp->matches; mtc; mtc = mtc->next) {
-	t = checkSigExist(mtc->name);
+	/* This will also position deb_fs to the start of the member */
+	int len = checkSigExist(mtc->name);
 	/* If the member exists and we reject it, die now. Also, if it
 	 * doesn't exist, and we require it, die aswell. */
-	if ((!t && mtc->type == REQUIRED_MATCH) ||
-		(t && mtc->type == REJECT_MATCH)) {
+	if ((!len && mtc->type == REQUIRED_MATCH) ||
+		(len && mtc->type == REJECT_MATCH)) {
 	    return 0;
 	}
 
-	if (!t) continue;
-
-	/* Open a pipe to the sig data */
-	snprintf(buf, sizeof(buf) - 1, "ar p %s _gpg%s", deb, mtc->name);
-	if ((fs = popen(buf, "r")) == NULL) {
-	    fprintf(stderr, "error executing `ar': %s\n", strerror(errno));
-	    return 0;
-	}
+	if (!len) continue;
 
 	/* Write it to a temp file */
 	strncpy(tmp_file, "/tmp/debsig.XXXXXX", sizeof(tmp_file));
@@ -185,14 +233,14 @@ static int checkGroupRules(struct group *grp, const char *deb) {
 	    return 0;
 	}
 
-	t = fread(buf, 1, sizeof(buf), fs);
-	while(t) {
-	    fwrite(buf, 1, t, fg);
-	    t = fread(buf, 1, sizeof(buf), fs);
-	}
-	if (pclose(fs) == -1) {
-	    fprintf(stderr, "error with pipe to `ar'\n");
-	    return 0;
+	t = fread(buf, 1, sizeof(buf), deb_fs);
+	while(len > 0) {
+	    if (t > len)
+		fwrite(buf, 1, len, fg);
+	    else
+		fwrite(buf, 1, t, fg);
+	    len -= t;
+	    t = fread(buf, 1, sizeof(buf), deb_fs);
 	}
 
 	fclose(fg);
@@ -201,14 +249,23 @@ static int checkGroupRules(struct group *grp, const char *deb) {
 	t = gpgVerify(deb, mtc, tmp_file);
 	unlink(tmp_file);
 
-	if (!t && mtc->type == REQUIRED_MATCH)
+	/* We fail no matter what now. Even if this is an optional match
+	 * rule, by now, we know that the sig exists, so we must fail */
+	if (!t) {
+	    ds_printf(DS_LEV_VER, "checkGroupRules: failed for %s", mtc->name);
 	    return 0;
-	if (t && mtc->type == OPTIONAL_MATCH)
+	}
+
+	/* Kick up the count once for checking later */
+	if (mtc->type == OPTIONAL_MATCH)
 	    opt_count++;
     }
 
-    if (opt_count < grp->min_opt)
+    if (opt_count < grp->min_opt) {
+	ds_printf(DS_LEV_VER, "checkGroupRules: opt passed - %d, opt required %d",
+		  opt_count, grp->min_opt);
 	return 0;
+    }
     
     return 1;
 }
@@ -237,11 +294,6 @@ int main(int argc, char *argv[]) {
 	exit (1);
     }
 
-    if (!checkSigExist("origin")) {
-	fprintf(stderr, "%s does not contain an `origin' sig\n", deb);
-	exit (1);
-    }
-    
     if ((tmpID = getSigKeyID(deb, "origin")) == NULL) {
 	fprintf(stderr, "Sig check for %s failed, could not get Origin ID\n", deb);
 	exit (1);

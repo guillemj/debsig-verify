@@ -5,6 +5,7 @@ debsig-verify (0.2) unstable; urgency=low
     can specify one of the shortnames in the list from the list option.
   * Added manpage for debsig-verify
   * Added some code to free up alloc'd memory used by parsePolicy()
+  * Lots of code cleanups
 
  -- Ben Collins <bcollins@debian.org>  Thu,  7 Dec 2000 21:53:32 -0500
 

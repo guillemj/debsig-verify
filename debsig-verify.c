@@ -251,30 +251,36 @@ int main(int argc, char *argv[]) {
 	if (pol == NULL) continue;
 
 	/* Now let's see if this policy's selection is useful for this .deb  */
+	ds_printf(DS_LEV_VER, "Checking Selection for %s", pol_file);
 	for (grp = pol->sels; grp != NULL; grp = grp->next) {
+	    ds_printf(DS_LEV_VER, "  Checking group...");
 	    if (!checkGroupRules(grp, deb)) {
 		clear_policy();
+		ds_printf(DS_LEV_VER, "  Selection group failed checks");
 		pol = NULL;
 		break;
 	    }
 	}
+
 	if (pol && list_only) {
 	    ds_printf(DS_LEV_ALWAYS, "    Usable: %s", pd_ent->d_name);
 	    list_only++;
-	}
+	} else if (pol)
+	    ds_printf(DS_LEV_VER, "  Selection groups passed, policy is usable");
     }
     closedir(pd);
 
-    if (pol == NULL && list_only <= 1)
+    if (pol == NULL || list_only == 1)
 	/* Damn, can't verify this one */
-	ds_fail_printf("No applicable policies found. Verify failed.\n");
+	ds_fail_printf("No applicable policies found.\n");
 
-    ds_printf(DS_LEV_INFO, "Using Policy file: %s", pol_file);
-    
     if (list_only)
 	exit(0); /* our job is done */
 
+    ds_printf(DS_LEV_INFO, "Using Policy file: %s", pol_file);
+
     /* Now the final test */
+    ds_printf(DS_LEV_VER, "Checking Validation groups...");
     for (grp = pol->vers; grp; grp = grp->next) {
 	if (!checkGroupRules(grp, deb))
 	    ds_fail_printf("Failed validation for %s.", deb);

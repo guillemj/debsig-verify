@@ -1,3 +1,10 @@
+Mon Dec 11 14:35:49 EST 2000  Ben Collins <bcollins@debian.org>
+
+  * debsig-verify.c: main(): Better formatting for the
+    Selection/Verification verbose output.
+  * gpg-parse.c: getKeyID()/getSigKeyID(): Extra verbose output, plus
+    formatting.
+
 Mon Dec 11 11:18:56 EST 2000  Ben Collins <bcollins@debian.org>
 
   * xml-parse.c: increment depthPtr at start of function to get rid of the

@@ -2,9 +2,14 @@ CC = gcc
 CFLAGS = -Wall -g -O2 $(shell xml-config --cflags)
 LDFLAGS = $(shell xml-config --libs)
 
-# Some dirs
+ifndef TESTING
 DEBSIG_KEYRINGS_DIR=/usr/share/debsig/keyrings
 DEBSIG_POLICIES_DIR=/etc/debsigs/policies
+else
+DEBSIG_KEYRINGS_DIR=$(shell pwd)/testing/keyrings
+DEBSIG_POLICIES_DIR=$(shell pwd)/testing/policies
+endif
+
 CFLAGS += -DDEBSIG_POLICIES_DIR=\"$(DEBSIG_POLICIES_DIR)\" \
 -DDEBSIG_KEYRINGS_DIR=\"$(DEBSIG_KEYRINGS_DIR)\"
 

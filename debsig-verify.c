@@ -108,7 +108,7 @@ struct match *parseMatch (xmlDocPtr doc, xmlNodePtr cur) {
 	if ((exp = xmlGetProp(cur, "Expiry")) != NULL)
 	    ma->day_expiry = atoi(exp);
 	/* This field is not required */
-	ma->id = xmlGetProp(cur, "ID");
+	ma->id = xmlGetProp(cur, "id");
 
 	cur = cur->next;
     }
@@ -179,8 +179,8 @@ struct policy *parsePolicyFile(char *filename) {
     if ((ret->name = xmlGetProp(cur, "Name")) == NULL) {
 	fprintf(stderr, "no Name attribute for Origin node\n");
 	goto free_fail;
-    } else if ((ret->id = xmlGetProp(cur, "ID")) == NULL) {
-	fprintf(stderr, "no ID attribute for Origin node\n");
+    } else if ((ret->id = xmlGetProp(cur, "id")) == NULL) {
+	fprintf(stderr, "no `id' attribute for Origin node\n");
 	goto free_fail;
     }
     ret->description = xmlGetProp(cur, "Description");
@@ -472,7 +472,7 @@ int main(int argc, char *argv[]) {
     }
     strncpy(originID, tmpID, sizeof(originID));
 
-    /* Now we have an ID, let's check check the policy to use */
+    /* Now we have an ID, let's check the policy to use */
 
     snprintf(buf, sizeof(buf) - 1, DEBSIG_POLICIES_DIR_FMT, originID);
     if ((pd = opendir(buf)) == NULL) {

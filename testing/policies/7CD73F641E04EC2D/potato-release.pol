@@ -1,17 +1,18 @@
 <?xml version="1.0"?>
-<Policy xmlns="http://www.debian.org/debsig">
+<!DOCTYPE Policy SYSTEM "http://people.debian.org/~bcollins/debsig-policy.dtd">
+<Policy xmlns="http://www.debian.org/debsig/1.0/">
 
-  <Origin Name="Debian" ID="7CD73F641E04EC2D" Description="Debian GNU Project Potato Release"/>
+  <Origin Name="Debian" id="7CD73F641E04EC2D" Description="Debian GNU Project Potato Release"/>
 
   <!-- Since this is potato release, we require the potato sig -->
   <Selection>
-    <Required Type="origin" File="debian-debsig.gpg" ID="7CD73F641E04EC2D"/>
-    <Required Type="release" File="debian-debsig.gpg" ID="7CD73F641E04EC2D"/>
+    <Required Type="origin" File="debian-debsig.gpg" id="7CD73F641E04EC2D"/>
+    <Required Type="release" File="debian-debsig.gpg" id="7CD73F641E04EC2D"/>
   </Selection>
 
   <Verification MinOptional="0">
-    <Required Type="origin" File="debian-debsig.gpg" ID="7CD73F641E04EC2D"/>
-    <Required Type="release" File="debian-debsig.gpg" ID="Ben Collins &lt;bcollins@debian.org&gt;"/>
+    <Required Type="origin" File="debian-debsig.gpg" id="7CD73F641E04EC2D"/>
+    <Required Type="release" File="debian-debsig.gpg" id="Ben Collins &lt;bcollins@debian.org&gt;"/>
     <Optional Type="maint" File="debian-keyring.gpg"/>
   </Verification>
 

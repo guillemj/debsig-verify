@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
-<Policy xmlns="http://www.debian.org/debsig">
+<!DOCTYPE Policy SYSTEM "docs/policy.dtd">
+<Policy xmlns="http://www.debian.org/debsig/1.0/">
 
-  <Origin Name="Debian" ID="7CD73F641E04EC2D" Description="Debian GNU Project"/>
+  <Origin Name="Debian" id="7CD73F641E04EC2D" Description="Debian GNU Project"/>
   <!-- This is mainly a sanity check, since our filename is that of the ID
        anyway. -->
 
@@ -9,14 +10,14 @@
        reject the release Type, since we want a different rule set for
        that. -->
   <Selection>
-    <Required Type="origin" File="debian-debsig.gpg" ID="7CD73F641E04EC2D"/>
+    <Required Type="origin" File="debian-debsig.gpg" id="7CD73F641E04EC2D"/>
     <Reject Type="release"/>
   </Selection>
 
   <!-- Once we decide to use this policy, this must pass in order to verify
        the package. -->
   <Verification MinOptional="0">
-    <Required Type="origin" File="debian-debsig.gpg" ID="7CD73F641E04EC2D"/>
+    <Required Type="origin" File="debian-debsig.gpg" id="7CD73F641E04EC2D"/>
     <Optional Type="maint" File="debian-keyring.gpg"/>
   </Verification>
 

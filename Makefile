@@ -18,7 +18,9 @@ OBJS = xml-parse.o ar-parse.o gpg-parse.o debsig-verify.o misc.o
 CFLAGS += -DDEBSIG_POLICIES_DIR=\"$(DEBSIG_POLICIES_DIR)\" \
 -DDEBSIG_KEYRINGS_DIR=\"$(DEBSIG_KEYRINGS_DIR)\"
 
-all: $(PROGRAM)
+MANPAGES = debsig-verify.1
+
+all: $(PROGRAM) $(MANPAGES)
 
 $(PROGRAM): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LDFLAGS) -o $@
@@ -33,7 +35,11 @@ install: all
 		$(DESTDIR)/usr/share/man/man1/debsig-verify.1
 
 clean:
-	rm -f debsig-verify $(OBJS)
+	rm -f debsig-verify $(OBJS) $(MANPAGES)
 
 %.o: %.c debsig.h
 	$(CC) $(CFLAGS) -c $< -o $@
+
+%.1: docs/%.1.in
+	sed -e 's,@POLICIES_DIR@,$(DEBSIG_POLICIES_DIR),g' \
+		-e 's,@KEYRINGS_DIR@,$(DEBSIG_KEYRINGS_DIR),g' < $< > $@

@@ -89,16 +89,16 @@ verifying the \fBdeb\fR. The program will then use this policy, and only
 this policy, to try and verify the \fBdeb\fR.
 .SH FILES
 .TP
-.BR /etc/debsig/policies/
+.BR @POLICIES_DIR@/
 Directory containing the policy (.pol) definitions.
 .TP
-.BR /etc/debsig/policies/*/*.pol
+.BR @POLICIES_DIR@/*/*.pol
 XML format policy files.
 .TP
-.BR /usr/share/debsig/keyrings/
+.BR @KEYRINGS_DIR@/
 Directory containing the keyrings that coincide with the policies.
 .TP
-.BR /usr/share/debsig/keyrings/*/*.gpg
+.BR @KEYRINGS_DIR@/*/*.gpg
 GPG format keyrings for use by the policies.
 .SH SEE ALSO
 .BR deb (5),

@@ -1,3 +1,12 @@
+Fri Apr 27 15:20:12 EDT 2001  Ben Collins <bcollins@debian.org>
+
+  * debsig.h: s/DEBSIG_NS/DEBSIG_NAMESPACE/
+  * debsig-verify.c: ditto
+  * xml-parse.c: ditto
+
+  * testing/debs/sigtest1_1.0-1_all.deb: Updated to new format
+  * testing/debs/sigtest2_2.0-1_all.deb: ditto
+
 Fri Apr 27 13:53:32 EDT 2001  Ben Collins <bcollins@debian.org>
 
   * debsig.h: Redefine ds_fail_printf with exit values, and macros. Also, add

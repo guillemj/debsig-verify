@@ -223,7 +223,7 @@ static void outputVersion(void) {
     fprintf(stderr, "\
 Debsig Program Version - "VERSION"\n\
   Signature Version - "SIG_VERSION"\n\
-  Signature Namespace - "DEBSIG_NS"\n\
+  Signature Namespace - "DEBSIG_NAMESPACE"\n\
   Policies Directory - "DEBSIG_POLICIES_DIR"\n\
   Keyrings Directory - "DEBSIG_KEYRINGS_DIR"\n");
     return;

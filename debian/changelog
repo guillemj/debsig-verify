@@ -1,3 +1,10 @@
+debsig-verify (0.6.1) unstable; urgency=low
+
+  * debsig-verify(1): updated with exit value doc
+  * testing/debs/ fixed up aswell
+
+ -- Ben Collins <bcollins@debian.org>  Fri, 27 Apr 2001 15:22:25 -0400
+
 debsig-verify (0.6) unstable; urgency=low
 
   * Redesigned ds_fail_printf

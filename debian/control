@@ -1,0 +1,13 @@
+Source: debsig-verify
+Section: admin
+Priority: standard
+Maintainer: Ben Collins <bcollins@debian.org>
+Build-Depends: libxml-dev, debhelper
+Standards-Version: 3.2.0.0
+
+Package: debsig-verify
+Architecture: any
+Depends: ${shlibs:Depends}, gnupg, binutils
+Description: Debian Package Signature Verification Tool
+ This tool inspects and verifies package signatures based on predetermined
+ policies.

@@ -1,2 +1,4 @@
 - Make sure all error checking is done
-- Create some test setups to verify the policies parsing
+- Create some test setups to verify the policy parsing
+- Implement an internal ar archive parser to do away with the binutils dep
+- Is there a GnuPG library we can link against instead of execing gpg?

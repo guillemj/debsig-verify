@@ -1,0 +1,5 @@
+debsig-verify (0.1) unstable; urgency=low
+
+  * Original setup
+
+ -- Ben Collins <bcollins@debian.org>  Mon,  4 Dec 2000 20:21:32 -0500

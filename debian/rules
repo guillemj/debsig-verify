@@ -1,0 +1,41 @@
+#!/usr/bin/make -f
+
+STAMP_DIR = debian
+
+build: $(STAMP_DIR)/build-stamp
+$(STAMP_DIR)/build-stamp:
+	dh_testdir
+	$(MAKE)
+	touch $(STAMP_DIR)/build-stamp
+
+clean:
+	dh_testdir
+	rm -f $(STAMP_DIR)/*-stamp
+	$(MAKE) clean
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+
+	$(MAKE) DESTDIR="$(shell pwd)/debian/tmp" install
+
+binary-indep:
+
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs
+	dh_installdocs docs/policy-syntax.txt
+	dh_installdeb
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_md5sums
+	dh_shlibdeps
+	dh_gencontrol
+	dh_builddeb
+
+binary: binary-indep binary-arch

@@ -33,14 +33,8 @@
 #include <xmlmemory.h>
 #include <parser.h>
 
-#ifndef DEBSIG_DEBUG
-#define DEBSIG_POLICIES_DIR_FMT "/etc/debsigs/policies/%s"
-#define DEBSIG_KEYRINGS_FMT "/usr/share/debsigs/keyrings/%s/%s"
-#else
-#define DS_BASE "/home/bmc/debsig-verify-0.1/"
-#define DEBSIG_POLICIES_DIR_FMT DS_BASE"testing/policies/%s"
-#define DEBSIG_KEYRINGS_FMT DS_BASE"testing/keyrings/%s/%s"
-#endif
+#define DEBSIG_POLICIES_DIR_FMT DEBSIG_POLICIES_DIR"/%s"
+#define DEBSIG_KEYRINGS_FMT DEBSIG_KEYRINGS_DIR"/%s/%s"
 
 #define GPG_PROG "/usr/bin/gpg --no-options --no-default-keyring"
 

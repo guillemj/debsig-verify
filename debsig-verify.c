@@ -38,11 +38,60 @@ char originID[2048];
 char *deb = NULL;
 FILE *deb_fs = NULL;
 
-char *ver_members[] = { "control.tar.gz", "data.tar.gz", 0 };
+char *ver_members[] = { "debian-binary", "control.tar.gz", "data.tar.gz", 0 };
 
 static char *prog_name = NULL;
 
-static int checkGroupRules(struct group *grp, const char *deb) {
+static int checkSelRules(struct group *grp, const char *deb) {
+    int opt_count = 0;
+    struct match *mtc;
+    int len;
+
+    for (mtc = grp->matches; mtc; mtc = mtc->next) {
+
+        ds_printf(DS_LEV_VER, "      Processing `%s' key...", mtc->name);
+
+        /* If we have an ID for this match, check to make sure it exists, and
+         * matches the signature we are about to check.  */
+        if (mtc->id) {
+            char *m_id = getKeyID(mtc);
+            char *d_id = getSigKeyID(deb, mtc->name);
+            if (m_id == NULL || d_id == NULL || strcmp(m_id, d_id))
+                return 0;
+        }
+
+	/* XXX: If the match doesn't specify an ID, we need to check to
+	 * make sure the ID of the signature exists in the keyring
+	 * specified, don't we?
+	 */
+
+        len = checkSigExist(mtc->name);
+
+        /* If the member exists and we reject it, fail now. Also, if it
+         * doesn't exist, and we require it, fail aswell. */
+        if ((!len && mtc->type == REQUIRED_MATCH) ||
+                (len && mtc->type == REJECT_MATCH)) {
+            return 0;
+        }
+        /* This would mean this is Optional, so we ignore it for now */
+        if (!len) continue;
+
+        /* Kick up the count once for checking later */
+        if (mtc->type == OPTIONAL_MATCH)
+            opt_count++;
+    }
+
+    if (opt_count < grp->min_opt) {
+        ds_printf(DS_LEV_DEBUG, "checkSelRules: opt passed - %d, opt required %d",
+                  opt_count, grp->min_opt);
+        return 0;
+    }
+
+    return 1;
+}
+
+
+static int verifyGroupRules(struct group *grp, const char *deb) {
     FILE *fp;
     char buf[2048], tmp_sig[32] = {'\0'}, tmp_data[32] = {'\0'};
     int opt_count = 0, t, i, fd;
@@ -131,7 +180,7 @@ static int checkGroupRules(struct group *grp, const char *deb) {
 	/* We fail no matter what now. Even if this is an optional match
 	 * rule, by now, we know that the sig exists, so we must fail */
 	if (!t) {
-	    ds_printf(DS_LEV_DEBUG, "checkGroupRules: failed for %s", mtc->name);
+	    ds_printf(DS_LEV_DEBUG, "verifyGroupRules: failed for %s", mtc->name);
 	    goto fail_and_close;
 	}
 
@@ -141,7 +190,7 @@ static int checkGroupRules(struct group *grp, const char *deb) {
     }
 
     if (opt_count < grp->min_opt) {
-	ds_printf(DS_LEV_DEBUG, "checkGroupRules: opt passed - %d, opt required %d",
+	ds_printf(DS_LEV_DEBUG, "verifyGroupRules: opt passed - %d, opt required %d",
 		  opt_count, grp->min_opt);
 	goto fail_and_close;
     }
@@ -254,7 +303,7 @@ int main(int argc, char *argv[]) {
 	ds_fail_printf("could not open %s (%s)", deb, strerror(errno));
 
     if (!list_only)
-	ds_printf(DS_LEV_INFO, "Starting verification for: %s", deb);
+	ds_printf(DS_LEV_VER, "Starting verification for: %s", deb);
 
     if (!checkIsDeb())
 	ds_fail_printf("%s does not appear to be a deb format package", deb);
@@ -294,7 +343,7 @@ int main(int argc, char *argv[]) {
 	/* Now let's see if this policy's selection is useful for this .deb  */
 	ds_printf(DS_LEV_VER, "    Checking Selection group(s).");
 	for (grp = pol->sels; grp != NULL; grp = grp->next) {
-	    if (!checkGroupRules(grp, deb)) {
+	    if (!checkSelRules(grp, deb)) {
 		clear_policy();
 		ds_printf(DS_LEV_VER, "    Selection group failed checks.");
 		pol = NULL;
@@ -310,13 +359,13 @@ int main(int argc, char *argv[]) {
     }
     closedir(pd);
 
-    if (pol == NULL || list_only == 1) /* Damn, can't verify this one */
-	ds_fail_printf("No applicable policy found.\n");
+    if ((pol == NULL && !list_only) || list_only == 1) /* Damn, can't verify this one */
+	ds_fail_printf("No applicable policy found.");
 
     if (list_only)
 	exit(0); /* our job is done */
 
-    ds_printf(DS_LEV_INFO, "Using policy file: %s", pol_file);
+    ds_printf(DS_LEV_VER, "Using policy file: %s", pol_file);
 
     /* This should actually be caught in the xml-parsing. */
     if (pol->vers == NULL)
@@ -326,7 +375,7 @@ int main(int argc, char *argv[]) {
     ds_printf(DS_LEV_VER, "    Checking Verification group(s).");
 
     for (grp = pol->vers; grp; grp = grp->next) {
-	if (!checkGroupRules(grp, deb)) {
+	if (!verifyGroupRules(grp, deb)) {
 	    ds_printf(DS_LEV_VER, "    Verification group failed checks.");
 	    ds_fail_printf("Failed verification for %s.", deb);
 	}
@@ -334,8 +383,8 @@ int main(int argc, char *argv[]) {
 
     ds_printf(DS_LEV_VER, "    Verification group(s) passed, deb is validated.");
 
-    ds_printf(DS_LEV_INFO, "Verified using `%s' (%s).", pol->description,
-	    pol->name);
+    ds_printf(DS_LEV_INFO, "Verified package from `%s' (%s)",
+	      pol->description, pol->name);
 
     /* If we get here, then things passed just fine */
     exit(0);

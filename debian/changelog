@@ -1,3 +1,13 @@
+debsig-verify (0.5) unstable; urgency=low
+
+  * Some formatting changes
+  * add "debian-binary" to members that are part of the signed data
+  * For the selection phase, do not actually check the signatures with
+    gpg. Just make sure they exist, and match if the ID is specified
+  * If -d is specified, allow gpg output to stdout/stderr
+
+ -- Ben Collins <bcollins@debian.org>  Sat, 14 Apr 2001 00:41:03 -0400
+
 debsig-verify (0.4) unstable; urgency=low
 
   * Fix execl in gpgVerify()

@@ -242,7 +242,7 @@ struct policy *parsePolicyFile(const char *filename) {
     obstack_init(&deb_obs);
     deb_obs_init = 1;
 
-    ds_printf(DS_LEV_DEBUG, "parsePolicyFile: parsing `%s'", filename);
+    ds_printf(DS_LEV_DEBUG, "    parsePolicyFile: parsing `%s'", filename);
 
     if (stat(filename, &st)) {
 	ds_printf(DS_LEV_ERR, "parsePolicyFile: could not stat %s", filename);
@@ -279,10 +279,10 @@ struct policy *parsePolicyFile(const char *filename) {
     XML_ParserFree(parser);
     fclose(pol_fs);
 
-    ds_printf(DS_LEV_DEBUG, "parsePolicyFile: completed");
+    ds_printf(DS_LEV_DEBUG, "    parsePolicyFile: completed");
 
     if (parse_err_cnt) {
-	ds_printf(DS_LEV_DEBUG, "parsePolicyFile: %d errors during parsing, failed",
+	ds_printf(DS_LEV_DEBUG, "    parsePolicyFile: %d errors during parsing, failed",
 		  parse_err_cnt);
 	clear_policy();
 	return NULL;

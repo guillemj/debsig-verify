@@ -164,8 +164,10 @@ int gpgVerify(const char *data, struct match *mtc, const char *sig) {
     }
 
     if (!(pid = fork())) {
-	close(0); close(1); close(2);
-	execl(GPG_PROG, "gpg", GPG_ARGS, "-q", "--keyring",
+	if (DS_LEV_DEBUG < ds_debug_level) {
+	    close(0); close(1); close(2);
+	}
+	execl(GPG_PROG, "gpg", GPG_ARGS, "--keyring",
 		keyring, "--verify", sig, data, NULL);
 	exit(1);
     }

@@ -1,3 +1,16 @@
+debsig-verify (0.8) unstable; urgency=low
+
+  * QA upload.
+  * Maintainer field set to QA Group.
+  * Standards-Version bumped to 3.9.3.
+  * Add dependency on ${misc:Depends}.
+  * Debhelper compatibility level set to 9. Build dependency on debhelper
+    updated accordingly.
+  * build-{arch,indep} targets added to debian/rules.
+  * Deprecated dh_clean -k replaced with dh_prep.
+
+ -- Emanuele Rocca <ema@debian.org>  Sun, 20 May 2012 09:25:43 +0000
+
 debsig-verify (0.7) unstable; urgency=low
 
   * Upload to main proper

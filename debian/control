@@ -1,13 +1,13 @@
 Source: debsig-verify
 Section: admin
 Priority: standard
-Maintainer: Ben Collins <bcollins@debian.org>
-Build-Depends: libxmltok1-dev, debhelper
-Standards-Version: 3.2.1.0
+Maintainer: Debian QA Group <packages@qa.debian.org>
+Build-Depends: libxmltok1-dev, debhelper (>=9)
+Standards-Version: 3.9.3
 
 Package: debsig-verify
 Architecture: any
-Depends: ${shlibs:Depends}, gnupg
+Depends: ${shlibs:Depends}, ${misc:Depends}, gnupg
 Suggests: debian-keyring
 Description: Debian Package Signature Verification Tool
  This tool inspects and verifies package signatures based on predetermined

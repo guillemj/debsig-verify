@@ -88,10 +88,24 @@ static int checkSelRules(struct group *grp, const char *deb) {
     return 1;
 }
 
+static int
+passthrough(FILE *in, FILE *out, int len)
+{
+    char buf[2048];
+    int t;
+
+    while (len > 0) {
+        t = fread(buf, 1, sizeof(buf), in);
+        fwrite(buf, 1, (t > len) ? len : t, out);
+        len -= t;
+    }
+
+    return len;
+}
 
 static int verifyGroupRules(struct group *grp, const char *deb) {
     FILE *fp;
-    char buf[2048], tmp_sig[32] = {'\0'}, tmp_data[32] = {'\0'};
+    char tmp_sig[32] = {'\0'}, tmp_data[32] = {'\0'};
     int opt_count = 0, t, i, fd;
     struct match *mtc;
     int len;
@@ -119,11 +133,7 @@ static int verifyGroupRules(struct group *grp, const char *deb) {
     for (i = 0; ver_members[i]; i++) {
 	if (!(len = findMember(ver_members[i])))
 	    goto fail_and_close;
-	while(len > 0) {
-	    t = fread(buf, 1, sizeof(buf), deb_fs);
-	    fwrite(buf, 1, (t > len) ? len : t, fp);
-	    len -= t;
-	}
+	len = passthrough(deb_fs, fp, len);
     }
     fclose(fp);
     fd = -1;
@@ -162,11 +172,7 @@ static int verifyGroupRules(struct group *grp, const char *deb) {
 	    goto fail_and_close;
 	}
 
-	while(len > 0) {
-	    t = fread(buf, 1, sizeof(buf), deb_fs);
-	    fwrite(buf, 1, (t > len) ? len : t, fp);
-	    len -= t;
-	}
+	len = passthrough(deb_fs, fp, len);
 	fclose(fp);
 
 	/* Now, let's check with gpg on this one */

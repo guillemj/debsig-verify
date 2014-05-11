@@ -6,7 +6,7 @@ build-indep:
 
 build-arch:
 	dh_testdir
-	$(MAKE)
+	$(MAKE) $(shell dpkg-buildflags --export=cmdline)
 
 clean:
 	dh_testdir

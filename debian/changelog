@@ -12,6 +12,7 @@ debsig-verify (0.9) UNRELEASED; urgency=low
   * Sync Priority with archive override (from standard to optional).
   * Use $(CURDIR) instead of $(shell pwd) in debian/rules.
   * Honour user CPPFLAGS, CFLAGS and LDFLAGS.
+  * Set build flags via dpkg-buildflags.
 
  -- Guillem Jover <guillem@debian.org>  Sun, 11 May 2014 05:35:13 +0200
 

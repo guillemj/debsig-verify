@@ -1,6 +1,6 @@
 Source: debsig-verify
 Section: admin
-Priority: standard
+Priority: optional
 Maintainer: Dpkg Developers <debian-dpkg@lists.debian.org>
 Uploaders: Guillem Jover <guillem@debian.org>
 Build-Depends: libxmltok1-dev, debhelper (>= 9)

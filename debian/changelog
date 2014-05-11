@@ -8,6 +8,7 @@ debsig-verify (0.9) UNRELEASED; urgency=low
   * Stop making build-indep depend on build-stamp in debian/rules.
   * Stop using a build-stamp in debian/rules.
   * Add dh_installman and dh_link commands.
+  * Mark debsig-verify as Enhances dpkg.
 
  -- Guillem Jover <guillem@debian.org>  Sun, 11 May 2014 05:35:13 +0200
 

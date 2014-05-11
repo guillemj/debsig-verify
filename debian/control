@@ -10,6 +10,7 @@ Package: debsig-verify
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, gnupg
 Suggests: debian-keyring
+Enhances: dpkg
 Description: Debian Package Signature Verification Tool
  This tool inspects and verifies package signatures based on predetermined
  policies.

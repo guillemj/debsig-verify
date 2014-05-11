@@ -19,7 +19,7 @@
  * MA 02111-1307, USA.
  */
 
-/* $Id$
+/*
  * routines to parse gpg output
  */
 

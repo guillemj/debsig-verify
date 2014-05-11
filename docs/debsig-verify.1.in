@@ -2,8 +2,6 @@
 .\"
 .\" Covered under the GPL v2
 .\"
-.\" $Id$
-.\"
 .TH DEBSIG-VERIFY 1
 .SH NAME
 debsig-verify \- Verify signatures for a Debian format package

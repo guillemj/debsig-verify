@@ -19,7 +19,7 @@
  * MA 02111-1307, USA.
  */
 
-/* $Id$
+/*
  * processes ar style archives (the format of a .deb package)
  */
 

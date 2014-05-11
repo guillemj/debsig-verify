@@ -19,7 +19,7 @@
  * MA 02111-1307, USA.
  */
 
-/* $Id$
+/*
  * provides the XML parsing code for policy files, via expat (xmltok)
  */
 

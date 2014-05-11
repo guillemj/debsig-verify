@@ -1,2 +1,3 @@
+*.o
 debsig-verify
 debsig-verify.1

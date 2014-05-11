@@ -19,7 +19,7 @@ install: build
 	dh_prep
 	dh_installdirs
 
-	$(MAKE) DESTDIR="$(shell pwd)/debian/debsig-verify" install
+	$(MAKE) DESTDIR="$(CURDIR)/debian/debsig-verify" install
 
 binary-indep:
 

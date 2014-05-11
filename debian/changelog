@@ -18,6 +18,8 @@ debsig-verify (0.9) UNRELEASED; urgency=low
     data.tar.bz2 and data.tar.lzma deb members. Closes: #745563
     Based on a patch by Vivek Das Mohapatra <vivek@etla.org>.
   * Do not unnecessarily link against libxmltok, only libxmlparse.
+  * Start using libdpkg instead of duplicating code:
+    - Add pkg-config and libdpkg-dev to Build-Depends.
 
  -- Guillem Jover <guillem@debian.org>  Sun, 11 May 2014 05:35:13 +0200
 

@@ -15,10 +15,11 @@ PROGRAM = debsig-verify
 OBJS = xml-parse.o ar-parse.o gpg-parse.o debsig-verify.o misc.o
 
 MK_CPPFLAGS = \
+	-DLIBDPKG_VOLATILE_API=1 \
 	-DDEBSIG_POLICIES_DIR=\"$(DEBSIG_POLICIES_DIR)\" \
 	-DDEBSIG_KEYRINGS_DIR=\"$(DEBSIG_KEYRINGS_DIR)\"
-MK_CFLAGS =
-MK_LDFLAGS = -lxmlparse
+MK_CFLAGS = $(shell pkg-config --cflags libdpkg)
+MK_LDFLAGS = $(shell pkg-config --libs libdpkg) -lxmlparse
 
 MANPAGES = debsig-verify.1
 

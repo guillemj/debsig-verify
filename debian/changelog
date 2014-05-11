@@ -4,6 +4,7 @@ debsig-verify (0.9) UNRELEASED; urgency=low
   * Use '' style quoting instead of unpaired `'.
   * Use italics for pathnames and user replacable strings.
   * Add missing space before Build-Depends version.
+  * Bump Standard-Version to 3.9.5 (no changed needed).
 
  -- Guillem Jover <guillem@debian.org>  Sun, 11 May 2014 05:35:13 +0200
 

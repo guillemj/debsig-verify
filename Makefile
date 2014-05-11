@@ -1,6 +1,5 @@
 CC = gcc
 CFLAGS = -Wall -g -O2
-LDFLAGS = -lxmltok -lxmlparse
 
 #TESTING=1
 
@@ -15,15 +14,18 @@ endif
 PROGRAM = debsig-verify
 OBJS = xml-parse.o ar-parse.o gpg-parse.o debsig-verify.o misc.o
 
-CFLAGS += -DDEBSIG_POLICIES_DIR=\"$(DEBSIG_POLICIES_DIR)\" \
--DDEBSIG_KEYRINGS_DIR=\"$(DEBSIG_KEYRINGS_DIR)\"
+MK_CPPFLAGS = \
+	-DDEBSIG_POLICIES_DIR=\"$(DEBSIG_POLICIES_DIR)\" \
+	-DDEBSIG_KEYRINGS_DIR=\"$(DEBSIG_KEYRINGS_DIR)\"
+MK_CFLAGS =
+MK_LDFLAGS = -lxmltok -lxmlparse
 
 MANPAGES = debsig-verify.1
 
 all: $(PROGRAM) $(MANPAGES)
 
 $(PROGRAM): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(LDFLAGS) -o $@
+	$(CC) $(MK_CFLAGS) $(CFLAGS) $(OBJS) $(MK_LDFLAGS) $(LDFLAGS) -o $@
 
 install: all
 	install -d -m755 $(DESTDIR)/usr/bin
@@ -40,7 +42,7 @@ clean:
 	rm -f debsig-verify $(OBJS) $(MANPAGES)
 
 %.o: %.c debsig.h
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(MK_CPPFLAGS) $(CPPFLAGS) $(MK_CFLAGS) $(CFLAGS) -c $< -o $@
 
 %.1: docs/%.1.in
 	sed -e 's,@POLICIES_DIR@,$(DEBSIG_POLICIES_DIR),g' \

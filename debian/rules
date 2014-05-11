@@ -4,9 +4,9 @@ STAMP_DIR = debian
 
 build: build-arch build-indep
 
-build-arch: build-stamp
-build-indep: build-stamp
+build-indep:
 
+build-arch: build-stamp
 build-stamp: $(STAMP_DIR)/build-stamp
 $(STAMP_DIR)/build-stamp:
 	dh_testdir

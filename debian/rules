@@ -1,21 +1,15 @@
 #!/usr/bin/make -f
 
-STAMP_DIR = debian
-
 build: build-arch build-indep
 
 build-indep:
 
-build-arch: build-stamp
-build-stamp: $(STAMP_DIR)/build-stamp
-$(STAMP_DIR)/build-stamp:
+build-arch:
 	dh_testdir
 	$(MAKE)
-	touch $(STAMP_DIR)/build-stamp
 
 clean:
 	dh_testdir
-	rm -f $(STAMP_DIR)/*-stamp
 	$(MAKE) clean
 	dh_clean
 

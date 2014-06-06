@@ -36,7 +36,11 @@ char originID[2048];
 char *deb = NULL;
 FILE *deb_fs = NULL;
 
-char *ver_members[] = { "debian-binary", "control.tar.gz", "data.tar.gz", 0 };
+#define CTAR(x) "control.tar" # x
+#define DTAR(x) "data.tar" # x
+char *ver_magic_member = "debian-binary";
+char *ver_ctrl_members[] = { CTAR(), CTAR(.gz), CTAR(.xz), 0 };
+char *ver_data_members[] = { DTAR(), DTAR(.gz), DTAR(.xz), DTAR(.bz2), DTAR(.lzma), 0 };
 
 static char *prog_name = NULL;
 
@@ -130,11 +134,28 @@ static int verifyGroupRules(struct group *grp, const char *deb) {
 
     /* Now, let's find all the members we need to check and cat them into a
      * single temp file. This is what we pass to gpg.  */
-    for (i = 0; ver_members[i]; i++) {
-	if (!(len = findMember(ver_members[i])))
-	    goto fail_and_close;
+    if (!(len = findMember(ver_magic_member)))
+        goto fail_and_close;
+    len = passthrough(deb_fs, fp, len);
+
+    for (i = 0; ver_ctrl_members[i]; i++) {
+	if (!(len = findMember(ver_ctrl_members[i])))
+	    continue;
 	len = passthrough(deb_fs, fp, len);
+	break;
     }
+    if (!ver_ctrl_members[i])
+	goto fail_and_close;
+
+    for (i = 0; ver_data_members[i]; i++) {
+	if (!(len = findMember(ver_data_members[i])))
+	    continue;
+	len = passthrough(deb_fs, fp, len);
+	break;
+    }
+    if (!ver_data_members[i])
+	goto fail_and_close;
+
     fclose(fp);
     fd = -1;
 
@@ -213,12 +234,32 @@ fail_and_close:
 
 static int checkIsDeb(void) {
     int i;
-    if (!findMember("debian-binary"))
-        return 0;
+    const char *member;
 
-    for (i = 0; ver_members[i]; i++)
-        if (!findMember(ver_members[i]))
-	    return 0;
+    if (!findMember(ver_magic_member)) {
+       ds_printf(DS_LEV_VER, "Missing archive magic member %s", ver_magic_member);
+       return 0;
+    }
+
+    for (i = 0; (member = ver_ctrl_members[i]); i++)
+        if (findMember(member))
+            break;
+    if (!member) {
+        ds_printf(DS_LEV_VER, "Missing archive control member, checked:");
+        for (i = 0; (member = ver_ctrl_members[i]); i++)
+            ds_printf(DS_LEV_VER, "    %s", member);
+        return 0;
+    }
+
+    for (i = 0; (member = ver_data_members[i]); i++)
+        if (findMember(member))
+            break;
+    if (!member) {
+        ds_printf(DS_LEV_VER, "Missing archive data member, checked:");
+        for (i = 0; (member = ver_data_members[i]); i++)
+            ds_printf(DS_LEV_VER, "    %s", member);
+        return 0;
+    }
 
     return 1;
 }

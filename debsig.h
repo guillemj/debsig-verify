@@ -93,4 +93,3 @@ extern int ds_debug_level;
 extern FILE *deb_fs;
 extern char *deb;
 extern char originID[];
-extern char *ver_members[];

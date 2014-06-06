@@ -26,6 +26,7 @@ debsig-verify (0.9) UNRELEASED; urgency=low
   * Check return values from functions marked with warn_unused_result.
   * Fix typos (aswell → as well). Closes: #748539
     Thanks to Tomas Pospisek <tpo_deb@sourcepole.ch>.
+  * Add Vcs-Browser and Vcs-Git fields.
 
  -- Guillem Jover <guillem@debian.org>  Sun, 11 May 2014 05:35:13 +0200
 

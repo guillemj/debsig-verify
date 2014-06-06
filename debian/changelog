@@ -1,4 +1,4 @@
-debsig-verify (0.9) UNRELEASED; urgency=low
+debsig-verify (0.9) unstable; urgency=low
 
   * New maintainer. Closes: #540897
   * Use '' style quoting instead of unpaired `'.
@@ -32,7 +32,7 @@ debsig-verify (0.9) UNRELEASED; urgency=low
     instead of shipping it in the git repository or the release tarballs.
   * Decapitalize package short description.
 
- -- Guillem Jover <guillem@debian.org>  Sun, 11 May 2014 05:35:13 +0200
+ -- Guillem Jover <guillem@debian.org>  Fri, 06 Jun 2014 13:41:13 +0200
 
 debsig-verify (0.8) unstable; urgency=low
 

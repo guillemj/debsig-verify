@@ -33,7 +33,7 @@
 #define REQUIRED_MATCH 2
 #define REJECT_MATCH 3
 
-#define VERSION "0.6"
+#define VERSION "0.9"
 #define SIG_VERSION "1.0"
 #define DEBSIG_NS "http://www.debian.org/debsig/"SIG_VERSION"/"
 

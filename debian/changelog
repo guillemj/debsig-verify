@@ -28,6 +28,8 @@ debsig-verify (0.9) UNRELEASED; urgency=low
     Thanks to Tomas Pospisek <tpo_deb@sourcepole.ch>.
   * Add Vcs-Browser and Vcs-Git fields.
   * Switch to source format “3.0 (native)”.
+  * Create the debian-keyring.gpg testing symlink in a new check target,
+    instead of shipping it in the git repository or the release tarballs.
 
  -- Guillem Jover <guillem@debian.org>  Sun, 11 May 2014 05:35:13 +0200
 

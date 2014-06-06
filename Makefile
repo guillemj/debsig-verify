@@ -39,8 +39,14 @@ install: all
 		install $$mpage $(DESTDIR)/usr/share/man/man$$num/$$mpage; \
 	done
 
+check:
+	# Do not ship this in the tarball or repository.
+	ln -s /usr/share/keyrings/debian-keyring.gpg testing/keyrings/7CD73F641E04EC2D/
+	# XXX: Do some actual testing here.
+
 clean:
 	rm -f debsig-verify $(OBJS) $(MANPAGES)
+	rm -f testing/keyrings/7CD73F641E04EC2D/debian-keyring.gpg
 
 %.o: %.c debsig.h
 	$(CC) $(MK_CPPFLAGS) $(CPPFLAGS) $(MK_CFLAGS) $(CFLAGS) -c $< -o $@

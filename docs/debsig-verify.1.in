@@ -2,12 +2,12 @@
 .\"
 .\" Covered under the GPL v2
 .\"
-.TH DEBSIG-VERIFY 1
+.TH debsig\-verify 1
 .SH NAME
-debsig-verify \- Verify signatures for a Debian format package
+debsig\-verify \- Verify signatures for a Debian format package
 .SH SYNOPSIS
 .TP 6
-\fBdebsig-verify\fR [\fBoptions\fR] <\fBdeb\fR>
+\fBdebsig\-verify\fR [\fBoptions\fR] <\fBdeb\fR>
 .SH DESCRIPTION
 This program is part of a security model that verifies the source and
 validity of a Debian format package (commonly refered to as a \fBdeb\fR).
@@ -58,24 +58,24 @@ constrained. If these rules fail, the program exits with a non-zero
 status. If they pass, then it exits with a zero status.
 .SH OPTIONS
 .TP
-.BR -q
+.BR \-q
 Causes the program to send no output, other than fatal errors. This is
 useful when being called from another program, where you rely on the exit
 value only.
 .TP
-.BR -v
+.BR \-v
 Causes the program to send more output on execution, so as to follow the
 steps it is taking while trying to verify the \fBdeb\fR.
 .TP
-.BR -d
-Outputs even more info than the \fB-v\fR option. This is mainly for
+.BR \-d
+Outputs even more info than the \fB\-v\fR option. This is mainly for
 debugging.
 .TP
-.BR --version
+.BR \-\-version
 Outputs the version information for the program. This includes the policy
 format version. This option does not require any other arguments.
 .TP
-.BR --list-policies
+.BR \-\-list\-policies
 Outputs a list of the policies that passed the \fBSelection\fR phase of
 the verification process. In other words, those that could potentially
 verify the \fBdeb\fR. The output is one line showing the directory selected
@@ -83,9 +83,9 @@ by the \fBorigin\fR signature, and then a single line for any policy files
 in that directory that pass the \fBSelection\fR rules. This option will \fBNOT\fR
 verify the \fBdeb\fR.
 .TP
-.BR --use-policy\ <pol>
+.BR \-\-use\-policy\ <pol>
 This option takes one argument, which is the name of the
-policy file (as shown by the \fB--list-policies\fR option). Note, this is
+policy file (as shown by the \fB\-\-list\-policies\fR option). Note, this is
 just a file, and not a full path. You cannot specifiy arbitrary policies.
 This option is useful if more than one policy applies to potentially
 verifying the \fBdeb\fR. The program will then use this policy, and only

@@ -21,6 +21,7 @@ debsig-verify (0.9) UNRELEASED; urgency=low
   * Start using libdpkg instead of duplicating code:
     - Add pkg-config and libdpkg-dev to Build-Depends.
     - Add a Built-Using field for libdpkg-dev static linking.
+    - Use libdpkg error handling code.
 
  -- Guillem Jover <guillem@debian.org>  Sun, 11 May 2014 05:35:13 +0200
 

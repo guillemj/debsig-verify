@@ -29,6 +29,8 @@
 #include <sys/types.h>
 #include <dirent.h>
 
+#include <dpkg/dpkg.h>
+
 #include "debsig.h"
 
 char originID[2048];
@@ -41,8 +43,6 @@ FILE *deb_fs = NULL;
 char *ver_magic_member = "debian-binary";
 char *ver_ctrl_members[] = { CTAR(), CTAR(.gz), CTAR(.xz), 0 };
 char *ver_data_members[] = { DTAR(), DTAR(.gz), DTAR(.xz), DTAR(.bz2), DTAR(.lzma), 0 };
-
-static char *prog_name = NULL;
 
 static int checkSelRules(struct group *grp, const char *deb) {
     int opt_count = 0;
@@ -287,8 +287,21 @@ Usage: %s [ options ] <deb>\n\n\
    --use-policy <name> Used in conjunction with the above\n\
                        option. This allows you to specify the\n\
                        short name of the policy you wish to try.\n",
-	prog_name);
+	dpkg_get_progname());
         exit(1);
+}
+
+void
+ds_catch_fatal_error(void)
+{
+    pop_error_context(ehflag_bombout);
+    exit(DS_FAIL_INTERNAL);
+}
+
+void
+ds_print_fatal_error(const char *emsg, const void *data)
+{
+    ds_printf(DS_FAIL_INTERNAL, "%s", emsg);
 }
 
 int main(int argc, char *argv[]) {
@@ -299,10 +312,9 @@ int main(int argc, char *argv[]) {
     struct group *grp;
     int i, list_only = 0;
 
-    if ((prog_name = strrchr(argv[0], '/')) == NULL)
-	prog_name = strdup(argv[0]);
-    else
-	prog_name = strdup(prog_name + 1);
+    dpkg_set_progname(argv[0]);
+
+    push_error_context_func(ds_catch_fatal_error, ds_print_fatal_error, NULL);
 
     if (argc < 2)
 	outputUsage();
@@ -431,6 +443,8 @@ int main(int argc, char *argv[]) {
 
     ds_printf(DS_LEV_INFO, "Verified package from '%s' (%s)",
 	      pol->description, pol->name);
+
+    pop_error_context(ehflag_normaltidy);
 
     /* If we get here, then things passed just fine */
     exit(DS_SUCCESS);

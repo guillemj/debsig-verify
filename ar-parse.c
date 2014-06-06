@@ -65,7 +65,7 @@ size_t findMember(const char *name) {
     int len = strlen(name);
 
     if (len > sizeof(arh.ar_name)) {
-	ds_printf(DS_LEV_DEBUG, "findMember: `%s' is too long to be an archive member name",
+	ds_printf(DS_LEV_DEBUG, "findMember: '%s' is too long to be an archive member name",
 		  name);
 	return 0;
     }

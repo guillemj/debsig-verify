@@ -66,19 +66,19 @@ static void startElement(void *userData, const char *name, const char **atts) {
 
     if (!strcmp(name,"Policy")) {
 	if (depth != 0)
-	    parse_error("policy parse error: `Policy' found at wrong level");
+	    parse_error("policy parse error: 'Policy' found at wrong level");
 
 	for (i = 0; atts[i]; i += 2) {
 	    if (!strcmp(atts[i], "xmlns")) {
 		if (strcmp(atts[i+1], DEBSIG_NS))
 		    parse_error("policy name space != " DEBSIG_NS);
 	    } else
-		parse_error("Policy element contains unknown attribute `%s'",
+		parse_error("Policy element contains unknown attribute '%s'",
 			     atts[i]);
 	}
     } else if (!strcmp(name,"Origin")) {
 	if (depth != 1)
-	    parse_error("policy parse error: `Origin' found at wrong level");
+	    parse_error("policy parse error: 'Origin' found at wrong level");
 	
 	for (i = 0; atts[i]; i += 2) {
 	    if (!strcmp(atts[i], "id"))
@@ -88,7 +88,7 @@ static void startElement(void *userData, const char *name, const char **atts) {
 	    else if (!strcmp(atts[i], "Description"))
 		ret.description = obstack_copy0(&deb_obs, atts[i+1], strlen(atts[i+1]));
 	    else
-		parse_error("Origin element contains unknown attribute `%s'",
+		parse_error("Origin element contains unknown attribute '%s'",
 			     atts[i]);
 	}
 
@@ -97,7 +97,7 @@ static void startElement(void *userData, const char *name, const char **atts) {
     } else if (!strcmp(name,"Selection") || !strcmp(name,"Verification")) {
 	struct group *g = NULL;
 	if (depth != 1)
-	    parse_error("policy parse error: `Selection/Verification' found at wrong level");
+	    parse_error("policy parse error: 'Selection/Verification' found at wrong level");
 
 	/* create a new entry, make it the current */
 	cur_grp = (struct group *)obstack_alloc(&deb_obs, sizeof(struct group));
@@ -131,7 +131,7 @@ static void startElement(void *userData, const char *name, const char **atts) {
 		}
 		cur_grp->min_opt = atoi(c);
 	    } else {
-		parse_error("Selection/Verification element contains unknown attribute `%s'",
+		parse_error("Selection/Verification element contains unknown attribute '%s'",
 			     atts[i]);
 	    }
 	}
@@ -177,7 +177,7 @@ static void startElement(void *userData, const char *name, const char **atts) {
 		}
                 cur_m->day_expiry = atoi(c);
             } else {
-                parse_error("Match element contains unknown attribute `%s'",
+                parse_error("Match element contains unknown attribute '%s'",
                              atts[i]);
             }
         }
@@ -240,7 +240,7 @@ struct policy *parsePolicyFile(const char *filename) {
     obstack_init(&deb_obs);
     deb_obs_init = 1;
 
-    ds_printf(DS_LEV_DEBUG, "    parsePolicyFile: parsing `%s'", filename);
+    ds_printf(DS_LEV_DEBUG, "    parsePolicyFile: parsing '%s'", filename);
 
     if (stat(filename, &st)) {
 	ds_printf(DS_LEV_ERR, "parsePolicyFile: could not stat %s", filename);
@@ -251,7 +251,7 @@ struct policy *parsePolicyFile(const char *filename) {
 	return NULL;
     }
     if ((pol_fs = fopen(filename, "r")) == NULL) {
-	ds_printf(DS_LEV_ERR, "parsePolicyFile: could not open `%s' (%s)",
+	ds_printf(DS_LEV_ERR, "parsePolicyFile: could not open '%s' (%s)",
 		  filename, strerror(errno));
 	return NULL;
     }

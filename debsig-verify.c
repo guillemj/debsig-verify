@@ -47,7 +47,7 @@ static int checkSelRules(struct group *grp, const char *deb) {
 
     for (mtc = grp->matches; mtc; mtc = mtc->next) {
 
-        ds_printf(DS_LEV_VER, "      Processing `%s' key...", mtc->name);
+        ds_printf(DS_LEV_VER, "      Processing '%s' key...", mtc->name);
 
         /* If we have an ID for this match, check to make sure it exists, and
          * matches the signature we are about to check.  */
@@ -130,7 +130,7 @@ static int verifyGroupRules(struct group *grp, const char *deb) {
 
     for (mtc = grp->matches; mtc; mtc = mtc->next) {
 
-	ds_printf(DS_LEV_VER, "      Processing `%s' key...", mtc->name);
+	ds_printf(DS_LEV_VER, "      Processing '%s' key...", mtc->name);
 
 	/* If we have an ID for this match, check to make sure it exists, and
 	 * matches the signature we are about to check.  */
@@ -236,7 +236,7 @@ Usage: %s [ options ] <deb>\n\n\
    --version           Output version info, and exit\n\
    --list-policies     Only list policies that can be used to\n\
                        validate this sig. This runs through\n\
-                       `Selection' block of the policies only.\n\
+                       'Selection' block of the policies only.\n\
    --use-policy <name> Used in conjunction with the above\n\
                        option. This allows you to specify the\n\
                        short name of the policy you wish to try.\n",
@@ -382,7 +382,7 @@ int main(int argc, char *argv[]) {
 
     ds_printf(DS_LEV_VER, "    Verification group(s) passed, deb is validated.");
 
-    ds_printf(DS_LEV_INFO, "Verified package from `%s' (%s)",
+    ds_printf(DS_LEV_INFO, "Verified package from '%s' (%s)",
 	      pol->description, pol->name);
 
     /* If we get here, then things passed just fine */

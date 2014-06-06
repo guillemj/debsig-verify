@@ -27,6 +27,7 @@ debsig-verify (0.9) UNRELEASED; urgency=low
   * Fix typos (aswell → as well). Closes: #748539
     Thanks to Tomas Pospisek <tpo_deb@sourcepole.ch>.
   * Add Vcs-Browser and Vcs-Git fields.
+  * Switch to source format “3.0 (native)”.
 
  -- Guillem Jover <guillem@debian.org>  Sun, 11 May 2014 05:35:13 +0200
 

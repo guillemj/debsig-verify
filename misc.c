@@ -1,7 +1,7 @@
 /*
  * debsig-verify - Debian package signature verification tool
  *
- * Copyright (c) 2000 by Ben Collins <bcollins@debian.org>
+ * Copyright © 2000 Ben Collins <bcollins@debian.org>
  *
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

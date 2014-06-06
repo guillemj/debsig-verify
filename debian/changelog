@@ -30,6 +30,7 @@ debsig-verify (0.9) UNRELEASED; urgency=low
   * Switch to source format “3.0 (native)”.
   * Create the debian-keyring.gpg testing symlink in a new check target,
     instead of shipping it in the git repository or the release tarballs.
+  * Decapitalize package short description.
 
  -- Guillem Jover <guillem@debian.org>  Sun, 11 May 2014 05:35:13 +0200
 

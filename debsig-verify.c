@@ -70,7 +70,7 @@ static int checkSelRules(struct group *grp, const char *deb) {
         len = checkSigExist(mtc->name);
 
         /* If the member exists and we reject it, fail now. Also, if it
-         * doesn't exist, and we require it, fail aswell. */
+         * doesn't exist, and we require it, fail as well. */
         if ((!len && mtc->type == REQUIRED_MATCH) ||
                 (len && mtc->type == REJECT_MATCH)) {
             return 0;
@@ -176,7 +176,7 @@ static int verifyGroupRules(struct group *grp, const char *deb) {
 	len = checkSigExist(mtc->name);
 
 	/* If the member exists and we reject it, die now. Also, if it
-	 * doesn't exist, and we require it, die aswell. */
+	 * doesn't exist, and we require it, die as well. */
 	if ((!len && mtc->type == REQUIRED_MATCH) ||
 		(len && mtc->type == REJECT_MATCH)) {
 	    goto fail_and_close;
@@ -279,7 +279,7 @@ static void outputUsage(void) {
 Usage: %s [ options ] <deb>\n\n\
    -q                  Quiet, only output fatal errors\n\
    -v                  Verbose output (mainly debug)\n\
-   -d                  Debug output aswell\n\
+   -d                  Debug output as well\n\
    --version           Output version info, and exit\n\
    --list-policies     Only list policies that can be used to\n\
                        validate this sig. This runs through\n\

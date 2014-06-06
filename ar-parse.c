@@ -28,29 +28,9 @@
 #include <errno.h>
 #include <ar.h>
 
+#include <dpkg/ar.h>
+
 #include "debsig.h"
-
-/* borrowed from dpkg */
-static unsigned long parseLength(const char *inh, size_t len) {
-    char buf[16];
-    unsigned long r;
-    char *endp;
-
-    if (memchr(inh, 0, len))
-	ds_fail_printf(DS_FAIL_INTERNAL, "parseLength: member lenght contains NULL's");
-
-    assert(sizeof(buf) > len);
-    memcpy(buf, inh, len);
-    buf[len]= ' ';
-    *strchr(buf,' ') = 0;
-    r = strtoul(buf,&endp,10);
-
-    if (*endp)
-	ds_fail_printf(DS_FAIL_INTERNAL, "parseLength: archive is corrupt - bad digit `%c' member length",
-		  *endp);
-
-    return r;
-}
 
 /* This function takes a member name as an argument. It then goes through
  * the archive trying to find it. If it does, it returns the size of the
@@ -58,10 +38,12 @@ static unsigned long parseLength(const char *inh, size_t len) {
  * data. Yes, we may have a zero length member in here somewhere, but
  * nothing important is going to be zero length anyway, so we treat it as
  * "non-existant".  */
-size_t findMember(const char *name) {
+off_t
+findMember(const char *name)
+{
     char magic[SARMAG+1];
     struct ar_hdr arh;
-    long mem_len;
+    off_t mem_len;
     int len = strlen(name);
 
     if (len > sizeof(arh.ar_name)) {
@@ -94,12 +76,11 @@ size_t findMember(const char *name) {
 	    return 0;
 	}
 
-	if (memcmp(arh.ar_fmag, ARFMAG, sizeof(arh.ar_fmag)))
+	if (dpkg_ar_member_is_illegal(&arh))
 	    ds_fail_printf(DS_FAIL_INTERNAL, "findMember: archive appears to be corrupt, fmag incorrect");
 
-	if ((mem_len = parseLength(arh.ar_size, sizeof(arh.ar_size))) < 0)
-	    ds_fail_printf(DS_FAIL_INTERNAL,
-			   "findMember: archive appears to be corrupt, negative member length");
+	dpkg_ar_normalize_name(&arh);
+	mem_len = dpkg_ar_member_get_size(deb, &arh);
 
 	/*
 	 * If all looks well, then we return the length of the member, and
@@ -111,9 +92,9 @@ size_t findMember(const char *name) {
 	 * try to be compatible, like dpkg does). We don't support the
 	 * "extended naming" scheme that binutils does.
 	 */
-	if (!strncmp(arh.ar_name, name, len) && (len == sizeof(arh.ar_name) ||
-		    arh.ar_name[len] == '/' || arh.ar_name[len] == ' '))
-	    return (size_t)mem_len;
+	if (strncmp(arh.ar_name, name, len) == 0 &&
+	    strnlen(arh.ar_name, sizeof(arh.ar_name)) == len)
+	    return mem_len;
 
 	/* fseek to the start of the next member, and try again */
 	if (fseek(deb_fs, mem_len + (mem_len & 1), SEEK_CUR) == -1 && ferror(deb_fs))

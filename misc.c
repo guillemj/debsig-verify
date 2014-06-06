@@ -42,7 +42,9 @@ void ds_printf(int level, const char *fmt, ...) {
     return;
 }
 
-int checkSigExist(const char *name) {
+off_t
+checkSigExist(const char *name)
+{
     char buf[16];
 
     if (name == NULL) {

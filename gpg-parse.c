@@ -95,7 +95,8 @@ char *getKeyID (const struct match *mtc) {
 
 char *getSigKeyID (const char *deb, const char *type) {
     static char buf[2048];
-    int pread[2], pwrite[2], len = checkSigExist(type), t;
+    int pread[2], pwrite[2], t;
+    off_t len = checkSigExist(type);
     pid_t pid;
     FILE *ds_read, *ds_write;
     char *c, *ret = NULL;

@@ -92,8 +92,8 @@ static int checkSelRules(struct group *grp, const char *deb) {
     return 1;
 }
 
-static int
-passthrough(FILE *in, FILE *out, int len)
+static off_t
+passthrough(FILE *in, FILE *out, off_t len)
 {
     char buf[2048];
     int t;
@@ -112,7 +112,7 @@ static int verifyGroupRules(struct group *grp, const char *deb) {
     char tmp_sig[32] = {'\0'}, tmp_data[32] = {'\0'};
     int opt_count = 0, t, i, fd;
     struct match *mtc;
-    int len;
+    off_t len;
 
     /* If we don't have any matches, we fail. We don't want blank,
      * take-all rules. This actually gets checked while we parse the

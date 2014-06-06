@@ -23,6 +23,7 @@ debsig-verify (0.9) UNRELEASED; urgency=low
     - Add a Built-Using field for libdpkg-dev static linking.
     - Use libdpkg error handling code.
     - Use libdpkg ar handling. This enables ar large file support (LFS).
+  * Check return values from functions marked with warn_unused_result.
 
  -- Guillem Jover <guillem@debian.org>  Sun, 11 May 2014 05:35:13 +0200
 

@@ -36,8 +36,12 @@ static int gpg_inited = 0;
 /* Crazy damn hack to make sure gpg has created ~/.gnupg, else it will
  * fail first time called */
 static void gpg_init(void) {
+    int rc;
+
     if (gpg_inited) return;
-    system(GPG_PROG" --options /dev/null < /dev/null > /dev/null 2>&1");
+    rc = system(GPG_PROG" --options /dev/null < /dev/null > /dev/null 2>&1");
+    if (rc < 0)
+        ds_fail_printf(DS_FAIL_INTERNAL, "error writing initializing gpg");
     gpg_inited = 1;
 }
 
@@ -107,7 +111,10 @@ char *getSigKeyID (const char *deb, const char *type) {
     gpg_init();
 
     /* Fork for gpg, keeping a nice pipe to read/write from.  */
-    pipe(pread);pipe(pwrite);
+    if (pipe(pread) < 0)
+        ds_fail_printf(DS_FAIL_INTERNAL, "error creating a pipe");
+    if (pipe(pwrite) < 0)
+        ds_fail_printf(DS_FAIL_INTERNAL, "error creating a pipe");
     /* I like file streams, so sue me :P */
     if ((ds_read = fdopen(pread[0], "r")) == NULL ||
 	 (ds_write = fdopen(pwrite[1], "w")) == NULL)

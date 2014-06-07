@@ -255,7 +255,7 @@ struct policy *parsePolicyFile(const char *filename) {
 		  filename, strerror(errno));
 	return NULL;
     }
-    
+
     XML_SetUserData(parser, &depth);
     XML_SetElementHandler(parser, startElement, endElement);
 

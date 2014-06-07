@@ -69,13 +69,13 @@ size_t findMember(const char *name) {
 		  name);
 	return 0;
     }
-    
+
     /* This shouldn't happen, but... */
     if (deb_fs == NULL)
 	ds_fail_printf(DS_FAIL_INTERNAL, "findMember: called while deb_fs == NULL");
 
     rewind(deb_fs);
-    
+
     if (!fgets(magic,sizeof(magic),deb_fs))
 	ds_fail_printf(DS_FAIL_INTERNAL, "findMember: failure to read package (%s)",
 		  strerror(errno));

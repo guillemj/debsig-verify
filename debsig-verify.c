@@ -296,7 +296,7 @@ int main(int argc, char *argv[]) {
 	outputUsage();
 
     deb = argv[i];
-    
+
     if ((deb_fs = fopen(deb, "r")) == NULL)
 	ds_fail_printf(DS_FAIL_INTERNAL, "could not open %s (%s)", deb, strerror(errno));
 

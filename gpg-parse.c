@@ -154,7 +154,7 @@ char *getSigKeyID (const char *deb, const char *type) {
     if (ferror(ds_read))
 	ds_fail_printf(DS_FAIL_INTERNAL, "error reading from gpg");
     fclose(ds_read);
-    
+
     waitpid(pid, NULL, 0);
     if (ret == NULL)
 	ds_printf(DS_LEV_DEBUG, "        getSigKeyID: failed for %s", type);

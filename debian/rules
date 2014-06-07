@@ -29,7 +29,9 @@ binary-arch: build install
 	dh_installchangelogs
 	dh_installdocs docs/policy-syntax.txt docs/policy.dtd
 	dh_installexamples testing/policies/*/*.pol
+	dh_installman
 	dh_installdeb
+	dh_link
 	dh_strip
 	dh_compress
 	dh_fixperms

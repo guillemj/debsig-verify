@@ -18,7 +18,7 @@ MK_CPPFLAGS = \
 	-DDEBSIG_POLICIES_DIR=\"$(DEBSIG_POLICIES_DIR)\" \
 	-DDEBSIG_KEYRINGS_DIR=\"$(DEBSIG_KEYRINGS_DIR)\"
 MK_CFLAGS =
-MK_LDFLAGS = -lxmltok -lxmlparse
+MK_LDFLAGS = -lxmlparse
 
 MANPAGES = debsig-verify.1
 

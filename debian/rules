@@ -1,5 +1,10 @@
 #!/usr/bin/make -f
 
+sourcedep_libdpkg_dev := \
+	$(shell dpkg-query \
+	        --showformat '$${source:Package} (= $${source:Version})' \
+	        --show libdpkg-dev)
+
 build: build-arch build-indep
 
 build-indep:
@@ -37,7 +42,7 @@ binary-arch: build install
 	dh_fixperms
 	dh_md5sums
 	dh_shlibdeps
-	dh_gencontrol
+	dh_gencontrol -- -Vsourcedep:libdpkg-dev='$(sourcedep_libdpkg_dev)'
 	dh_builddeb
 
 binary: binary-indep binary-arch

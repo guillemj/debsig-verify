@@ -11,6 +11,7 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, gnupg
 Suggests: debian-keyring
 Enhances: dpkg
+Built-Using: ${sourcedep:libdpkg-dev}
 Description: Debian Package Signature Verification Tool
  This tool inspects and verifies package signatures based on predetermined
  policies.

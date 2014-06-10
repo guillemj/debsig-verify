@@ -70,8 +70,8 @@ static void startElement(void *userData, const char *name, const char **atts) {
 
 	for (i = 0; atts[i]; i += 2) {
 	    if (!strcmp(atts[i], "xmlns")) {
-		if (strcmp(atts[i+1], DEBSIG_NS))
-		    parse_error("policy name space != " DEBSIG_NS);
+		if (strcmp(atts[i + 1], DEBSIG_NAMESPACE))
+		    parse_error("policy name space != " DEBSIG_NAMESPACE);
 	    } else
 		parse_error("Policy element contains unknown attribute '%s'",
 			     atts[i]);

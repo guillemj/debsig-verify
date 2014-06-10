@@ -90,6 +90,37 @@ just a file, and not a full path. You cannot specifiy arbitrary policies.
 This option is useful if more than one policy applies to potentially
 verifying the \fIdeb\fR. The program will then use this policy, and only
 this policy, to try and verify the \fIdeb\fR.
+.SH EXIT STATUS
+.TP
+.B 0
+The requested operation completed successfully.
+.TP
+.B 1
+General non-success exit value. This occurs for non-verification
+operations.
+.TP
+.B 10
+Either no signatures are contained in the \fBdeb\fR or no \fBorigin\fR
+signature was found.
+.TP
+.B 11
+An \fBorigin\fR signature was found, but it does not have a corresponding
+subdirectory in the policies directory.
+.TP
+.B 12
+The \fBorigin\fR was found, and is present. However, no policies were
+found that passed the selection phase of the process. Thus, no
+verification was performed.
+.TP
+.B 13
+The package failed the verification phase of the process. More than
+likely, this occurs due to a bad signature, or because not all criteria of
+the verification block of the policy were passed.
+.TP
+.B 14
+An internal error occured. This is an unrecoverable error. Either the
+\fBdeb\fR is corrupt, gpg failed abnormally, or some other uncontrollable
+failure.
 .SH FILES
 .TP
 .I @POLICIES_DIR@/

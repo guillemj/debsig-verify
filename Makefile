@@ -18,8 +18,13 @@ MK_CPPFLAGS = \
 	-DLIBDPKG_VOLATILE_API=1 \
 	-DDEBSIG_POLICIES_DIR=\"$(DEBSIG_POLICIES_DIR)\" \
 	-DDEBSIG_KEYRINGS_DIR=\"$(DEBSIG_KEYRINGS_DIR)\"
-MK_CFLAGS = $(shell pkg-config --cflags libdpkg)
-MK_LDFLAGS = $(shell pkg-config --libs libdpkg) -lxmlparse
+MK_CFLAGS = \
+	$(shell getconf LFS_CFLAGS) \
+	$(shell pkg-config --cflags libdpkg)
+MK_LDFLAGS = \
+	$(shell getconf LFS_LDFLAGS) \
+	$(shell pkg-config --libs libdpkg) \
+	-lxmlparse
 
 MANPAGES = debsig-verify.1
 

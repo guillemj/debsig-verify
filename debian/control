@@ -15,5 +15,7 @@ Suggests: debian-keyring
 Enhances: dpkg
 Built-Using: ${sourcedep:libdpkg-dev}
 Description: Debian package signature verification tool
- This tool inspects and verifies package signatures based on predetermined
- policies.
+ This tool inspects and verifies binary package digital signatures based
+ on predetermined policies, complementing repository signatures or allowing
+ to verify the authenticity of a package even after download when detached
+ from a repository.

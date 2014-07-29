@@ -3,6 +3,7 @@ debsig-verify (0.10) UNRELEASED; urgency=low
   * Add exit status codes to the man page.
     Thanks to Ben Collins <bcollins@debian.org>.
   * Enable LFS by passing the correct build flags to the build.
+  * Extend the package long description.
 
  -- Guillem Jover <guillem@debian.org>  Tue, 29 Jul 2014 12:08:47 +0200
 

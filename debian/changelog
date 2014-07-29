@@ -1,4 +1,4 @@
-debsig-verify (0.10) UNRELEASED; urgency=low
+debsig-verify (0.10) unstable; urgency=low
 
   * Add exit status codes to the man page.
     Thanks to Ben Collins <bcollins@debian.org>.
@@ -7,7 +7,7 @@ debsig-verify (0.10) UNRELEASED; urgency=low
   * Add a lintian override for package-contains-empty-directory on
     /usr/share/debsig/keyrings/.
 
- -- Guillem Jover <guillem@debian.org>  Tue, 29 Jul 2014 12:08:47 +0200
+ -- Guillem Jover <guillem@debian.org>  Tue, 29 Jul 2014 12:21:49 +0200
 
 debsig-verify (0.9) unstable; urgency=low
 

@@ -1,0 +1,1 @@
+debsig-verify: package-contains-empty-directory usr/share/debsig/keyrings/

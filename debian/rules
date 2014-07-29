@@ -36,6 +36,7 @@ binary-arch: build install
 	dh_installexamples testing/policies/*/*.pol
 	dh_installman
 	dh_installdeb
+	dh_lintian
 	dh_link
 	dh_strip
 	dh_compress

@@ -4,6 +4,8 @@ debsig-verify (0.10) UNRELEASED; urgency=low
     Thanks to Ben Collins <bcollins@debian.org>.
   * Enable LFS by passing the correct build flags to the build.
   * Extend the package long description.
+  * Add a lintian override for package-contains-empty-directory on
+    /usr/share/debsig/keyrings/.
 
  -- Guillem Jover <guillem@debian.org>  Tue, 29 Jul 2014 12:08:47 +0200
 

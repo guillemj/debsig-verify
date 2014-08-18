@@ -90,6 +90,9 @@ just a file, and not a full path. You cannot specifiy arbitrary policies.
 This option is useful if more than one policy applies to potentially
 verifying the \fIdeb\fR. The program will then use this policy, and only
 this policy, to try and verify the \fIdeb\fR.
+.TP
+.BR \-\-root " \fIdirectory\fP"
+Use a different root directory when looking up for policies and keyrings.
 .SH EXIT STATUS
 .TP
 .B 0

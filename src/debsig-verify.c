@@ -36,6 +36,7 @@
 #include "debsig.h"
 
 char originID[2048];
+char *rootdir = "";
 
 char *deb = NULL;
 FILE *deb_fs = NULL;
@@ -287,6 +288,7 @@ static void outputUsage(void) {
 "      --list-policies      Only list policies that can be used to validate\n"
 "                             this sig. Only runs through 'Selection' block.\n"
 "      --use-policy <name>  Specify the short policy name to use.\n"
+"      --root <dir>         Use an alternative root directory for policy lookup.\n"
 "      --version            Output version info, and exit.\n"
 );
         exit(1);
@@ -348,6 +350,12 @@ int main(int argc, char *argv[]) {
 		ds_printf(DS_LEV_ERR, "--use-policy requires an argument");
 		outputUsage();
 	    }
+	} else if (strcmp(argv[i], "--root") == 0) {
+	    rootdir = argv[++i];
+	    if (i == argc || rootdir[0] == '-') {
+		ds_printf(DS_LEV_ERR, "--root requires an argument");
+		outputUsage();
+	    }
 	} else
 	    outputUsage();
     }
@@ -372,8 +380,7 @@ int main(int argc, char *argv[]) {
     strncpy(originID, tmpID, sizeof(originID));
 
     /* Now we have an ID, let's check the policy to use */
-
-    snprintf(buf, sizeof(buf) - 1, DEBSIG_POLICIES_DIR_FMT, originID);
+    snprintf(buf, sizeof(buf) - 1, DEBSIG_POLICIES_DIR_FMT, rootdir, originID);
     if ((pd = opendir(buf)) == NULL)
 	ds_fail_printf(DS_FAIL_UNKNOWN_ORIGIN,
 		       "Could not open Origin dir %s: %s\n", buf, strerror(errno));

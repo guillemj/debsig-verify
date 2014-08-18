@@ -17,8 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#define DEBSIG_POLICIES_DIR_FMT DEBSIG_POLICIES_DIR"/%s"
-#define DEBSIG_KEYRINGS_FMT DEBSIG_KEYRINGS_DIR"/%s/%s"
+#define DEBSIG_POLICIES_DIR_FMT "%s"DEBSIG_POLICIES_DIR"/%s"
+#define DEBSIG_KEYRINGS_FMT "%s"DEBSIG_KEYRINGS_DIR"/%s/%s"
 
 #define GPG_PROG "/usr/bin/gpg"
 
@@ -92,3 +92,4 @@ extern int ds_debug_level;
 extern FILE *deb_fs;
 extern char *deb;
 extern char originID[];
+extern char *rootdir;

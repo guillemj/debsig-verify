@@ -6,6 +6,8 @@ debsig-verify (0.11) UNRELEASED; urgency=low
   * Add more warning flags to the default compiler flags.
   * Do not use continuation lines in string literals.
   * Reformat and reflow --help output.
+  * Add a --root option to use an alternative root directory.
+    Thanks to Michael Vogt <mvo@ubuntu.com>. Closes: #758525
 
  -- Guillem Jover <guillem@debian.org>  Tue, 19 Aug 2014 10:39:31 +0200
 

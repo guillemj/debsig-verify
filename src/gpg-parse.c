@@ -58,7 +58,7 @@ char *getKeyID (const struct match *mtc) {
     gpg_init();
 
     snprintf(buf, sizeof(buf) - 1, GPG_PROG" "GPG_ARGS_FMT" --list-packets -q "DEBSIG_KEYRINGS_FMT,
-	     GPG_ARGS, originID, mtc->file);
+	     GPG_ARGS, rootdir, originID, mtc->file);
 
     if ((ds = popen(buf, "r")) == NULL) {
 	perror("gpg");
@@ -182,7 +182,8 @@ int gpgVerify(const char *data, struct match *mtc, const char *sig) {
 
     gpg_init();
 
-    snprintf(keyring, sizeof(keyring) - 1, DEBSIG_KEYRINGS_FMT, originID, mtc->file);
+    snprintf(keyring, sizeof(keyring) - 1, DEBSIG_KEYRINGS_FMT,
+             rootdir, originID, mtc->file);
     if (stat(keyring, &st)) {
 	ds_printf(DS_LEV_DEBUG, "gpgVerify: could not stat %s", keyring);
 	return 0;

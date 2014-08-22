@@ -1,3 +1,9 @@
+debsig-verify (0.11) UNRELEASED; urgency=low
+
+  * Update Vcs-Browser git URL to the new cgit scheme.
+
+ -- Guillem Jover <guillem@debian.org>  Tue, 19 Aug 2014 10:39:31 +0200
+
 debsig-verify (0.10) unstable; urgency=low
 
   * Add exit status codes to the man page.

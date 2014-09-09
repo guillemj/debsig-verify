@@ -1,0 +1,52 @@
+debsig-verify - Debian package signature verification tool
+
+This tool inspects and verifies binary package digital signatures based
+on predetermined policies, complementing repository signatures or allowing
+to verify the authenticity of a package even after download when detached
+from a repository.
+
+
+Releases
+--------
+
+The current legacy, stable and development releases can be found at:
+
+  <http://ftp.debian.org/debian/pool/main/d/debsig-verify/>
+
+For older releases check:
+
+  <http://snapshot.debian.org/package/debsig-verify/>
+
+
+Mailing List
+------------
+
+The subscription interface and web archives can be found at:
+
+  <https://lists.debian.org/debian-dpkg/>
+
+The mailing list address is (no subscription required to post):
+
+  debian-dpkg@lists.debian.org
+
+
+Source Repository
+-----------------
+
+  <https://anonscm.debian.org/cgit/dpkg/debsig-verify.git>
+  <git://anonscm.debian.org/dpkg/debsig-verify.git>
+
+
+Building from source
+--------------------
+
+The minimum software required to configure and build debsig-verifu from git
+or a tarball is:
+
+  C89 compiler
+  GNU make
+  pkg-config
+  libdpkg-dev
+  libxmltok1-dev
+
+The build process is done by running just «make».

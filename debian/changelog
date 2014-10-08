@@ -15,6 +15,10 @@ debsig-verify (0.11) UNRELEASED; urgency=low
     user to use --help instead.
   * Add long options for quiet, verbose and debug.
   * Use DS_LEV_ERR instead of DS_FAIL_INTERNAL as ds_printf() level argument.
+  * Use more of libdpkg instead of ad-hoc code, to reduce code duplication,
+    switch to more tested code, and so that the error return codes are
+    checked and acted upon. Closes: #758615
+    - Switch to use subproc module instead of fork() and waitpid().
 
  -- Guillem Jover <guillem@debian.org>  Tue, 19 Aug 2014 10:39:31 +0200
 

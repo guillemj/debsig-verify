@@ -31,6 +31,8 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 
+#include <dpkg/subproc.h>
+
 #include "debsig.h"
 
 static int gpg_inited = 0;
@@ -123,7 +125,8 @@ char *getSigKeyID (const char *deb, const char *type) {
 	 (ds_write = fdopen(pwrite[1], "w")) == NULL)
 	ds_fail_printf(DS_FAIL_INTERNAL, "error opening file stream for gpg");
 
-    if (!(pid = fork())) {
+    pid = subproc_fork();
+    if (pid == 0) {
 	/* Here we go */
 	dup2(pread[1],1); close(pread[0]); close(pread[1]);
 	dup2(pwrite[0],0); close(pwrite[0]); close(pwrite[1]);
@@ -166,7 +169,8 @@ char *getSigKeyID (const char *deb, const char *type) {
 	ds_fail_printf(DS_FAIL_INTERNAL, "error reading from gpg");
     fclose(ds_read);
 
-    waitpid(pid, NULL, 0);
+    subproc_reap(pid, "getSigKeyID", SUBPROC_NOCHECK);
+
     if (ret == NULL)
 	ds_printf(DS_LEV_DEBUG, "        getSigKeyID: failed for %s", type);
     else
@@ -177,8 +181,8 @@ char *getSigKeyID (const char *deb, const char *type) {
 
 int gpgVerify(const char *data, struct match *mtc, const char *sig) {
     char keyring[8192];
-    int status;
     pid_t pid;
+    int rc;
     struct stat st;
 
     gpg_init();
@@ -190,7 +194,8 @@ int gpgVerify(const char *data, struct match *mtc, const char *sig) {
 	return 0;
     }
 
-    if (!(pid = fork())) {
+    pid = subproc_fork();
+    if (pid == 0) {
 	if (DS_LEV_DEBUG < ds_debug_level) {
 	    close(0); close(1); close(2);
 	}
@@ -199,8 +204,8 @@ int gpgVerify(const char *data, struct match *mtc, const char *sig) {
 	exit(1);
     }
 
-    waitpid(pid, &status, 0);
-    if (!WIFEXITED(status) || WEXITSTATUS(status)) {
+    rc = subproc_reap(pid, "gpgVerify", SUBPROC_RETERROR | SUBPROC_RETSIGNO);
+    if (rc != 0) {
 	ds_printf(DS_LEV_DEBUG, "gpgVerify: gpg exited abnormally or with non-zero exit status");
 	return 0;
     }

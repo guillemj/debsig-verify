@@ -37,7 +37,7 @@ AC_PROG_MKDIR_P
 
 # Checks for libraries.
 AC_CHECK_LIB([xmlparse], [XML_ParserCreate])
-PKG_CHECK_MODULES([LIBDPKG], [libdpkg])
+PKG_CHECK_MODULES([LIBDPKG], [libdpkg >= 1.17.14])
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h string.h unistd.h])
@@ -49,7 +49,6 @@ AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 
 # Checks for library functions.
-AC_FUNC_FORK
 AC_FUNC_MALLOC
 AC_FUNC_STRNLEN
 AC_CHECK_FUNCS([dup2 memset strchr strerror strstr])

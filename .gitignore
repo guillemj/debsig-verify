@@ -1,3 +1,21 @@
+# Inherited ignores
 *.o
+*.log
+*.trs
+*~
+.deps/
+Makefile
+Makefile.in
+
+# Top dir ignores
+autom4te.cache/
+build-aux/
+build-tree/
+INSTALL
+configure
+config.*
+aclocal.m4
+stamp-h1
+
 debsig-verify
 debsig-verify.1

@@ -5,17 +5,47 @@ sourcedep_libdpkg_dev := \
 	        --showformat '$${source:Package} (= $${source:Version})' \
 	        --show libdpkg-dev)
 
+# These are used for cross-compiling and for saving the configure script
+# from having to guess our platform (since we know it already)
+DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+
+ifeq ($(DEB_BUILD_GNU_TYPE), $(DEB_HOST_GNU_TYPE))
+	confflags += --build=$(DEB_HOST_GNU_TYPE)
+else
+	confflags += --build=$(DEB_BUILD_GNU_TYPE) --host=$(DEB_HOST_GNU_TYPE)
+endif
+
+# Create configure script if necessary, automake handles rebuilding it.
+configure:
+	dh_testdir
+
+	./autogen
+
+# Configure the build tree
+build-tree/config.status: configure
+	dh_testdir
+
+	install -d build-tree
+	cd build-tree && ../configure $(confflags) \
+		$(shell dpkg-buildflags --export=configure) \
+		--prefix=/usr \
+		--mandir=\$${datadir}/man \
+		--sysconfdir=/etc \
+		--disable-silent-rules
+
 build: build-arch build-indep
 
 build-indep:
 
-build-arch:
+build-arch: build-tree/config.status
 	dh_testdir
-	$(MAKE) $(shell dpkg-buildflags --export=cmdline)
+	$(MAKE) -C build-tree
 
 clean:
 	dh_testdir
-	$(MAKE) clean
+	[ ! -f Makefile ] ||  $(MAKE) distclean
+	rm -rf build-tree
 	dh_clean
 
 install: build
@@ -24,11 +54,11 @@ install: build
 	dh_prep
 	dh_installdirs
 
-	$(MAKE) DESTDIR="$(CURDIR)/debian/debsig-verify" install
+	$(MAKE) -C build-tree DESTDIR="$(CURDIR)/debian/debsig-verify" install
 
 binary-indep:
 
-binary-arch: build install
+binary-arch: install
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs

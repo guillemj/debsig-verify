@@ -21,6 +21,8 @@
  * routines to parse gpg output
  */
 
+#include <config.h>
+
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>

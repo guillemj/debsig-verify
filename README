@@ -37,11 +37,28 @@ Source Repository
   <git://anonscm.debian.org/dpkg/debsig-verify.git>
 
 
+Building from git source
+------------------------
+
+To prepare the debsig-verify source tree from git before starting the build
+process some required software needs to be installed:
+
+  GNU autoconf >= 2.60
+  GNU automake >= 1.11
+
+After installing the needed software, and running the following command on
+the git tree:
+
+  $ ./autogen
+
+the source should be roughly equivalent to the distributed tar source.
+
+
 Building from source
 --------------------
 
-The minimum software required to configure and build debsig-verifu from git
-or a tarball is:
+The minimum software required to configure and build debsig-verify from a
+tarball is:
 
   C89 compiler
   GNU make
@@ -49,4 +66,5 @@ or a tarball is:
   libdpkg-dev
   libxmltok1-dev
 
-The build process is done by running just «make».
+The build process is done by running the usual «./configure; make».
+To see all available configuration options please run «./configure --help».

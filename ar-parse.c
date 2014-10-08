@@ -21,6 +21,8 @@
  * processes ar style archives (the format of a .deb package)
  */
 
+#include <config.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

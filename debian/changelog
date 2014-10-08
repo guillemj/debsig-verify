@@ -14,6 +14,7 @@ debsig-verify (0.11) UNRELEASED; urgency=low
     replace usage error output with a new function that gives a hint to the
     user to use --help instead.
   * Add long options for quiet, verbose and debug.
+  * Use DS_LEV_ERR instead of DS_FAIL_INTERNAL as ds_printf() level argument.
 
  -- Guillem Jover <guillem@debian.org>  Tue, 19 Aug 2014 10:39:31 +0200
 

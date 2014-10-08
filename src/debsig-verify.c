@@ -315,7 +315,7 @@ ds_catch_fatal_error(void)
 void
 ds_print_fatal_error(const char *emsg, const void *data)
 {
-    ds_printf(DS_FAIL_INTERNAL, "%s", emsg);
+    ds_printf(DS_LEV_ERR, "%s", emsg);
 }
 
 int main(int argc, char *argv[]) {

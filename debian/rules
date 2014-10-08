@@ -62,8 +62,8 @@ binary-arch: install
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs
-	dh_installdocs docs/policy-syntax.txt docs/policy.dtd
-	dh_installexamples testing/policies/*/*.pol
+	dh_installdocs doc/policy-syntax.txt doc/policy.dtd
+	dh_installexamples test/policies/*/*.pol
 	dh_installman
 	dh_installdeb
 	dh_lintian

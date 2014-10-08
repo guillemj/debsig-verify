@@ -4,6 +4,7 @@
 *.trs
 *~
 .deps/
+.dirstamp
 Makefile
 Makefile.in
 

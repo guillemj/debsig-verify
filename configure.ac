@@ -2,7 +2,7 @@
 
 AC_PREREQ([2.60])
 AC_INIT([debsig-verify], m4_esyscmd([./get-version]), [debian-dpkg@lists.debian.org])
-AC_CONFIG_SRCDIR([debsig-verify.c])
+AC_CONFIG_SRCDIR([src/debsig-verify.c])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build-aux])
 
@@ -28,7 +28,7 @@ CFLAGS="$CFLAGS -Wold-style-definition"
 AC_USE_SYSTEM_EXTENSIONS
 AC_SYS_LARGEFILE
 
-AM_INIT_AUTOMAKE([1.11 foreign nostdinc no-dist-gzip dist-xz])
+AM_INIT_AUTOMAKE([1.11 foreign nostdinc subdir-objects no-dist-gzip dist-xz])
 AM_SILENT_RULES([yes])
 
 # Checks for programs.

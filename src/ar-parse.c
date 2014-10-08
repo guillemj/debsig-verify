@@ -30,6 +30,7 @@
 #include <errno.h>
 #include <ar.h>
 
+#include <dpkg/dpkg.h>
 #include <dpkg/ar.h>
 
 #include "debsig.h"
@@ -56,13 +57,12 @@ findMember(const char *name)
 
     /* This shouldn't happen, but... */
     if (deb_fs == NULL)
-	ds_fail_printf(DS_FAIL_INTERNAL, "findMember: called while deb_fs == NULL");
+	ohshit("findMember: called while deb_fs == NULL");
 
     rewind(deb_fs);
 
     if (!fgets(magic,sizeof(magic),deb_fs))
-	ds_fail_printf(DS_FAIL_INTERNAL, "findMember: failure to read package (%s)",
-		  strerror(errno));
+	ohshite("findMember: failure to read package");
 
     /* We will fail in main() with this one */
     if (strcmp(magic,ARMAG)) {
@@ -73,13 +73,12 @@ findMember(const char *name)
     while(!feof(deb_fs)) {
 	if (fread(&arh, 1, sizeof(arh),deb_fs) != sizeof(arh)) {
 	    if (ferror(deb_fs))
-		ds_fail_printf(DS_FAIL_INTERNAL, "findMember: error while parsing archive header (%s)",
-			  strerror(errno));
+		ohshite("findMember: error while parsing archive header");
 	    return 0;
 	}
 
 	if (dpkg_ar_member_is_illegal(&arh))
-	    ds_fail_printf(DS_FAIL_INTERNAL, "findMember: archive appears to be corrupt, fmag incorrect");
+	    ohshit("findMember: archive appears to be corrupt, fmag incorrect");
 
 	dpkg_ar_normalize_name(&arh);
 	mem_len = dpkg_ar_member_get_size(deb, &arh);
@@ -100,8 +99,7 @@ findMember(const char *name)
 
 	/* fseek to the start of the next member, and try again */
 	if (fseek(deb_fs, mem_len + (mem_len & 1), SEEK_CUR) == -1 && ferror(deb_fs))
-	    ds_fail_printf(DS_FAIL_INTERNAL,
-			   "findMember: error during file seek (%s)", strerror(errno));
+	    ohshite("findMember: error during file seek");
     }
 
     /* well, nothing found, so let's pass on the bad news */

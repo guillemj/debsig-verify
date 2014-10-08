@@ -31,6 +31,7 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 
+#include <dpkg/dpkg.h>
 #include <dpkg/subproc.h>
 
 #include "debsig.h"
@@ -45,7 +46,7 @@ static void gpg_init(void) {
     if (gpg_inited) return;
     rc = system(GPG_PROG" --options /dev/null < /dev/null > /dev/null 2>&1");
     if (rc < 0)
-        ds_fail_printf(DS_FAIL_INTERNAL, "error writing initializing gpg");
+        ohshite("error writing initializing gpg");
     gpg_inited = 1;
 }
 
@@ -117,13 +118,13 @@ char *getSigKeyID (const char *deb, const char *type) {
 
     /* Fork for gpg, keeping a nice pipe to read/write from.  */
     if (pipe(pread) < 0)
-        ds_fail_printf(DS_FAIL_INTERNAL, "error creating a pipe");
+        ohshite("error creating a pipe");
     if (pipe(pwrite) < 0)
-        ds_fail_printf(DS_FAIL_INTERNAL, "error creating a pipe");
+        ohshite("error creating a pipe");
     /* I like file streams, so sue me :P */
     if ((ds_read = fdopen(pread[0], "r")) == NULL ||
 	 (ds_write = fdopen(pwrite[1], "w")) == NULL)
-	ds_fail_printf(DS_FAIL_INTERNAL, "error opening file stream for gpg");
+	ohshite("error opening file stream for gpg");
 
     pid = subproc_fork();
     if (pid == 0) {
@@ -147,7 +148,7 @@ char *getSigKeyID (const char *deb, const char *type) {
 	t = fread(buf, 1, sizeof(buf), deb_fs);
     }
     if (ferror(ds_write))
-	ds_fail_printf(DS_FAIL_INTERNAL, "error writing to gpg");
+	ohshit("error writing to gpg");
     fclose(ds_write);
 
     /* Now, let's see what gpg has to say about all this */
@@ -166,7 +167,7 @@ char *getSigKeyID (const char *deb, const char *type) {
 	c = fgets(buf, sizeof(buf), ds_read);
     }
     if (ferror(ds_read))
-	ds_fail_printf(DS_FAIL_INTERNAL, "error reading from gpg");
+	ohshit("error reading from gpg");
     fclose(ds_read);
 
     subproc_reap(pid, "getSigKeyID", SUBPROC_NOCHECK);

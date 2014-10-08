@@ -98,7 +98,7 @@ static void startElement(void *userData, const char *name, const char **atts) {
 	/* create a new entry, make it the current */
 	cur_grp = (struct group *)obstack_alloc(&deb_obs, sizeof(struct group));
 	if (cur_grp == NULL)
-	    ds_fail_printf(DS_FAIL_INTERNAL, "out of memory");
+	    ohshit("out of memory");
 	memset(cur_grp, 0, sizeof(struct group));
 
 	if (!strcmp(name,"Selection")) {
@@ -146,7 +146,7 @@ static void startElement(void *userData, const char *name, const char **atts) {
         /* create a new entry, make it the current */
         cur_m = (struct match *)obstack_alloc(&deb_obs, sizeof(struct match));
         if (cur_m == NULL)
-            ds_fail_printf(DS_FAIL_INTERNAL, "out of memory");
+            ohshit("out of memory");
         memset(cur_m, 0, sizeof(struct match));
 
 	if (cur_grp->matches == NULL)

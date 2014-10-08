@@ -20,6 +20,7 @@ debsig-verify (0.11) UNRELEASED; urgency=low
     checked and acted upon. Closes: #758615
     - Switch to use subproc module instead of fork() and waitpid().
     - Switch from xmalloc to m_malloc().
+    - Use ohshit()/ohshite() instead of ds_fail_printf(DS_FAIL_INTERNAL, ...).
 
  -- Guillem Jover <guillem@debian.org>  Tue, 19 Aug 2014 10:39:31 +0200
 

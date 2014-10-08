@@ -402,13 +402,13 @@ int main(int argc, char *argv[]) {
     deb = argv[i];
 
     if ((deb_fs = fopen(deb, "r")) == NULL)
-	ds_fail_printf(DS_FAIL_INTERNAL, "could not open %s (%s)", deb, strerror(errno));
+	ohshite("could not open %s", deb);
 
     if (!list_only)
 	ds_printf(DS_LEV_VER, "Starting verification for: %s", deb);
 
     if (!checkIsDeb())
-	ds_fail_printf(DS_FAIL_INTERNAL, "%s does not appear to be a deb format package", deb);
+	ohshit("%s does not appear to be a deb format package", deb);
 
     if ((tmpID = getSigKeyID(deb, "origin")) == NULL)
 	ds_fail_printf(DS_FAIL_NOSIGS, "Origin Signature check failed. This deb might not be signed.\n");

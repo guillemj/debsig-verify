@@ -19,6 +19,7 @@ debsig-verify (0.11) UNRELEASED; urgency=low
     switch to more tested code, and so that the error return codes are
     checked and acted upon. Closes: #758615
     - Switch to use subproc module instead of fork() and waitpid().
+    - Switch from xmalloc to m_malloc().
 
  -- Guillem Jover <guillem@debian.org>  Tue, 19 Aug 2014 10:39:31 +0200
 

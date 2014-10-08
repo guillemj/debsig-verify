@@ -31,11 +31,12 @@
 #include <sys/stat.h>
 #include <obstack.h>
 
+#include <dpkg/dpkg.h>
 #include <xmltok/xmlparse.h>
 
 #include "debsig.h"
 
-#define obstack_chunk_alloc xmalloc
+#define obstack_chunk_alloc m_malloc
 #define obstack_chunk_free free
 
 static int parse_err_cnt;
@@ -49,13 +50,6 @@ static int deb_obs_init = 0;
 { \
     parse_err_cnt++; \
     ds_printf(DS_LEV_DEBUG , "%d: " fmt , XML_GetCurrentLineNumber(parser) , ## args); \
-}
-
-static void *xmalloc(size_t size) {
-    register void *p = malloc(size);
-    if (p == NULL)
-	ds_fail_printf(DS_FAIL_INTERNAL, "out of memory");
-    return p;
 }
 
 static void startElement(void *userData, const char *name, const char **atts) {

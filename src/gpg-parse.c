@@ -33,20 +33,51 @@
 
 #include <dpkg/dpkg.h>
 #include <dpkg/subproc.h>
+#include <dpkg/path.h>
 
 #include "debsig.h"
 
 static int gpg_inited = 0;
+static char *gpg_tmpdir;
 
-/* Crazy damn hack to make sure gpg has created ~/.gnupg, else it will
- * fail first time called */
-static void gpg_init(void) {
+static void
+cleanup_gpg_tmpdir(void)
+{
+    pid_t pid;
+
+    pid = subproc_fork();
+    if (pid == 0) {
+      execlp("rm", "rm", "-rf", gpg_tmpdir, NULL);
+      ohshite("unable to execute %s (%s)", "rm", "rm -rf");
+    }
+    subproc_reap(pid, "getSigKeyID", SUBPROC_NOCHECK);
+
+    free(gpg_tmpdir);
+    gpg_tmpdir = NULL;
+    gpg_inited = 0;
+}
+
+/* Ensure that gpg has a writable HOME to put its keyrings */
+static void
+gpg_init(void)
+{
     int rc;
 
     if (gpg_inited) return;
-    rc = system(GPG_PROG" --options /dev/null < /dev/null > /dev/null 2>&1");
+
+    gpg_tmpdir = mkdtemp(path_make_temp_template("debsig-verify"));
+    if (gpg_tmpdir == NULL)
+        ohshite("cannot create temporary directory '%s'", gpg_tmpdir);
+
+    rc = setenv("GNUPGHOME", gpg_tmpdir, 1);
     if (rc < 0)
-        ohshite("error writing initializing gpg");
+        ohshite("cannot set environment variable %s to '%s'", "GNUPGHOME",
+                gpg_tmpdir);
+
+    rc = atexit(cleanup_gpg_tmpdir);
+    if (rc != 0)
+       ohshit("cannot set atexit cleanup handler");
+
     gpg_inited = 1;
 }
 

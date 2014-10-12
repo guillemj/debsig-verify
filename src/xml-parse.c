@@ -221,7 +221,6 @@ void clear_policy(void) {
 	deb_obs_init = 0;
     }
     memset(&ret, '\0', sizeof(struct policy));
-    return;
 }
 
 struct policy *parsePolicyFile(const char *filename) {

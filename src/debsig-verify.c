@@ -277,7 +277,6 @@ static void outputVersion(void) {
 "  Signature Namespace - "DEBSIG_NAMESPACE"\n"
 "  Policies Directory - "DEBSIG_POLICIES_DIR"\n"
 "  Keyrings Directory - "DEBSIG_KEYRINGS_DIR"\n");
-    return;
 }
 
 static void

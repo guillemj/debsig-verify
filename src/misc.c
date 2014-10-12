@@ -40,8 +40,6 @@ void ds_printf(int level, const char *fmt, ...) {
 	(void) vprintf (buf, ap);
 	va_end(ap);
     }
-
-    return;
 }
 
 off_t

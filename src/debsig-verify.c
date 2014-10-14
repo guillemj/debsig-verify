@@ -271,7 +271,7 @@ static int checkIsDeb(void) {
 }
 
 static void outputVersion(void) {
-    fprintf(stderr,
+    printf(
 "Debsig Program Version - "VERSION"\n"
 "  Signature Version - "SIG_VERSION"\n"
 "  Signature Namespace - "DEBSIG_NAMESPACE"\n"
@@ -280,10 +280,16 @@ static void outputVersion(void) {
     return;
 }
 
-static void outputUsage(void) {
-    fprintf(stderr, "Usage: %s [<option>...] <deb>\n\n", dpkg_get_progname());
+static void
+outputBadUsage(void)
+{
+    ohshit("Use --help for program usage information.");
+}
 
-    fprintf(stderr,
+static void outputUsage(void) {
+    printf("Usage: %s [<option>...] <deb>\n\n", dpkg_get_progname());
+
+    printf(
 "Options:\n"
 "  -q                       Quiet, only output fatal errors.\n"
 "  -v                       Verbose output (mainly debug).\n"
@@ -297,7 +303,6 @@ static void outputUsage(void) {
 "      --help               Output usage info, and exit.\n"
 "      --version            Output version info, and exit.\n"
 );
-        exit(1);
 }
 
 void
@@ -325,8 +330,10 @@ int main(int argc, char *argv[]) {
 
     push_error_context_func(ds_catch_fatal_error, ds_print_fatal_error, NULL);
 
-    if (argc < 2)
-	outputUsage();
+    if (argc < 2) {
+	ds_printf(DS_LEV_ERR, "missing <deb> filename argument");
+	outputBadUsage();
+    }
 
     for (i = 1; i < argc && argv[i][0] == '-'; i++) {
 	if (!strcmp(argv[i], "-q"))
@@ -336,17 +343,20 @@ int main(int argc, char *argv[]) {
 	else if (!strcmp(argv[i], "-d"))
 	    ds_debug_level = DS_LEV_DEBUG;
 	else if (!strcmp(argv[i], "--version")) {
-	    outputVersion();
 	    /* Make sure we exit non-zero if there are any more args. This
 	     * makes sure someone doesn't do something stupid like pass
 	     * --version and a .deb, and expect it to return a validation
 	     * exit status.  */
-	    if (argc > 2)
+	    if (argc > 2) {
+		ds_printf(DS_LEV_ERR, "--version accepts no arguments");
 		exit(1);
-	    else
-		exit(0);
+	    }
+
+	    outputVersion();
+	    exit(0);
 	} else if (strcmp(argv[i], "--help") == 0) {
 	    outputUsage();
+	    exit(0);
 	} else if (!strcmp(argv[i], "--list-policies")) {
 	    /* Just create a list of policies we can use */
 	    list_only = 1;
@@ -356,7 +366,7 @@ int main(int argc, char *argv[]) {
 	    force_file = argv[++i];
 	    if (i == argc || force_file[0] == '-') {
 		ds_printf(DS_LEV_ERR, "--use-policy requires an argument");
-		outputUsage();
+		outputBadUsage();
 	    }
 	} else if (strcmp(argv[i], "--policies-dir") == 0) {
 	    policies_dir = argv[++i];
@@ -374,14 +384,20 @@ int main(int argc, char *argv[]) {
 	    rootdir = argv[++i];
 	    if (i == argc || rootdir[0] == '-') {
 		ds_printf(DS_LEV_ERR, "--root requires an argument");
-		outputUsage();
+		outputBadUsage();
 	    }
-	} else
+	} else {
+	    ds_printf(DS_LEV_ERR, "unknown argument");
 	    outputUsage();
+	    exit(1);
+	}
     }
 
-    if (i + 1 != argc) /* There should only be one arg left */
-	outputUsage();
+    /* There should only be one arg left. */
+    if (i + 1 != argc) {
+	ds_printf(DS_LEV_ERR, "too many arguments");
+	outputBadUsage();
+    }
 
     deb = argv[i];
 

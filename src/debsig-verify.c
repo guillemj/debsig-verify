@@ -267,29 +267,30 @@ static int checkIsDeb(void) {
 }
 
 static void outputVersion(void) {
-    fprintf(stderr, "\
-Debsig Program Version - "VERSION"\n\
-  Signature Version - "SIG_VERSION"\n\
-  Signature Namespace - "DEBSIG_NAMESPACE"\n\
-  Policies Directory - "DEBSIG_POLICIES_DIR"\n\
-  Keyrings Directory - "DEBSIG_KEYRINGS_DIR"\n");
+    fprintf(stderr,
+"Debsig Program Version - "VERSION"\n"
+"  Signature Version - "SIG_VERSION"\n"
+"  Signature Namespace - "DEBSIG_NAMESPACE"\n"
+"  Policies Directory - "DEBSIG_POLICIES_DIR"\n"
+"  Keyrings Directory - "DEBSIG_KEYRINGS_DIR"\n");
     return;
 }
 
 static void outputUsage(void) {
-        fprintf(stderr, "\
-Usage: %s [ options ] <deb>\n\n\
-   -q                  Quiet, only output fatal errors\n\
-   -v                  Verbose output (mainly debug)\n\
-   -d                  Debug output as well\n\
-   --version           Output version info, and exit\n\
-   --list-policies     Only list policies that can be used to\n\
-                       validate this sig. This runs through\n\
-                       'Selection' block of the policies only.\n\
-   --use-policy <name> Used in conjunction with the above\n\
-                       option. This allows you to specify the\n\
-                       short name of the policy you wish to try.\n",
-	dpkg_get_progname());
+    fprintf(stderr, "Usage: %s [ option ] <deb>\n\n", dpkg_get_progname());
+
+    fprintf(stderr,
+"   -q                  Quiet, only output fatal errors\n"
+"   -v                  Verbose output (mainly debug)\n"
+"   -d                  Debug output as well\n"
+"   --version           Output version info, and exit\n"
+"   --list-policies     Only list policies that can be used to\n"
+"                       validate this sig. This runs through\n"
+"                       'Selection' block of the policies only.\n"
+"   --use-policy <name> Used in conjunction with the above\n"
+"                       option. This allows you to specify the\n"
+"                       short name of the policy you wish to try.\n"
+);
         exit(1);
 }
 

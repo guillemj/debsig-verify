@@ -294,6 +294,7 @@ static void outputUsage(void) {
 "      --policies-dir <dir> Use an alternative policies directory.\n"
 "      --keyrings-dir <dir> Use an alternative keyrings directory.\n"
 "      --root <dir>         Use an alternative root directory for policy lookup.\n"
+"      --help               Output usage info, and exit.\n"
 "      --version            Output version info, and exit.\n"
 );
         exit(1);
@@ -344,6 +345,8 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	    else
 		exit(0);
+	} else if (strcmp(argv[i], "--help") == 0) {
+	    outputUsage();
 	} else if (!strcmp(argv[i], "--list-policies")) {
 	    /* Just create a list of policies we can use */
 	    list_only = 1;

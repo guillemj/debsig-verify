@@ -71,6 +71,9 @@ steps it is taking while trying to verify the \fIdeb\fR.
 Outputs even more info than the \fB\-v\fR option. This is mainly for
 debugging.
 .TP
+.BR \-\-help
+Outputs the usage information for the program.
+.TP
 .BR \-\-version
 Outputs the version information for the program. This includes the policy
 format version. This option does not require any other arguments.

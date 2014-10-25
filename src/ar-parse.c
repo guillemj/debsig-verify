@@ -23,30 +23,38 @@
 
 #include <config.h>
 
+#include <sys/types.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <assert.h>
 #include <errno.h>
 #include <ar.h>
 
 #include <dpkg/dpkg.h>
 #include <dpkg/ar.h>
+#include <dpkg/error.h>
+#include <dpkg/buffer.h>
+#include <dpkg/fdio.h>
 
 #include "debsig.h"
 
 /* This function takes a member name as an argument. It then goes through
  * the archive trying to find it. If it does, it returns the size of the
- * member's data, and leaves the deb_fs file pointer at the start of that
+ * member's data, and leaves the deb_fd file pointer at the start of that
  * data. Yes, we may have a zero length member in here somewhere, but
  * nothing important is going to be zero length anyway, so we treat it as
  * "non-existant".  */
 off_t
 findMember(const char *name)
 {
+    struct dpkg_error err;
     char magic[SARMAG+1];
     struct ar_hdr arh;
     off_t mem_len;
+    ssize_t r;
     int len = strlen(name);
 
     if (len > sizeof(arh.ar_name)) {
@@ -56,13 +64,19 @@ findMember(const char *name)
     }
 
     /* This shouldn't happen, but... */
-    if (deb_fs == NULL)
-	ohshit("findMember: called while deb_fs == NULL");
+    if (deb_fd < 0)
+	ohshit("findMember: called while deb_fd < 0");
 
-    rewind(deb_fs);
+    if (lseek(deb_fd, 0, SEEK_SET) < 0)
+	ohshit("findMember: cannot rewind package");
 
-    if (!fgets(magic,sizeof(magic),deb_fs))
+    r = fd_read(deb_fd, magic, SARMAG);
+    if (r < 0)
 	ohshite("findMember: failure to read package");
+    if (r != SARMAG)
+	ohshit("findMember: unexpected end of package");
+
+    magic[SARMAG] = '\0';
 
     /* We will fail in main() with this one */
     if (strcmp(magic,ARMAG)) {
@@ -70,12 +84,14 @@ findMember(const char *name)
 	return 0;
     }
 
-    while(!feof(deb_fs)) {
-	if (fread(&arh, 1, sizeof(arh),deb_fs) != sizeof(arh)) {
-	    if (ferror(deb_fs))
-		ohshite("findMember: error while parsing archive header");
+    for (;;) {
+	r = fd_read(deb_fd, &arh, sizeof(arh));
+	if (r == 0)
 	    return 0;
-	}
+	if (r < 0)
+	    ohshite("findMember: error while parsing archive header");
+	if (r != sizeof(arh))
+	    ohshit("findMember: unexpected end of package");
 
 	if (dpkg_ar_member_is_illegal(&arh))
 	    ohshit("findMember: archive appears to be corrupt, fmag incorrect");
@@ -97,9 +113,9 @@ findMember(const char *name)
 	    strnlen(arh.ar_name, sizeof(arh.ar_name)) == len)
 	    return mem_len;
 
-	/* fseek to the start of the next member, and try again */
-	if (fseek(deb_fs, mem_len + (mem_len & 1), SEEK_CUR) == -1 && ferror(deb_fs))
-	    ohshite("findMember: error during file seek");
+	/* Skip to the start of the next member, and try again. */
+	if (fd_skip(deb_fd, mem_len + (mem_len & 1), &err) < 0)
+	    ohshit("findMember: error while skiping member data: %s", err.str);
     }
 
     /* well, nothing found, so let's pass on the bad news */

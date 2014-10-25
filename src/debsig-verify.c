@@ -29,9 +29,11 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <fcntl.h>
 #include <dirent.h>
 
 #include <dpkg/dpkg.h>
+#include <dpkg/buffer.h>
 
 #include "debsig.h"
 
@@ -42,7 +44,7 @@ const char *policies_dir = DEBSIG_POLICIES_DIR;
 const char *keyrings_dir = DEBSIG_KEYRINGS_DIR;
 
 char *deb = NULL;
-FILE *deb_fs = NULL;
+int deb_fd = -1;
 
 #define CTAR(x) "control.tar" # x
 #define DTAR(x) "data.tar" # x
@@ -98,23 +100,8 @@ static int checkSelRules(struct group *grp, const char *deb) {
     return 1;
 }
 
-static off_t
-passthrough(FILE *in, FILE *out, off_t len)
-{
-    char buf[2048];
-    int t;
-
-    while (len > 0) {
-        t = fread(buf, 1, sizeof(buf), in);
-        fwrite(buf, 1, (t > len) ? len : t, out);
-        len -= t;
-    }
-
-    return len;
-}
-
 static int verifyGroupRules(struct group *grp, const char *deb) {
-    FILE *fp;
+    struct dpkg_error err;
     char tmp_sig[32] = {'\0'}, tmp_data[32] = {'\0'};
     int opt_count = 0, t, i, fd;
     struct match *mtc;
@@ -128,7 +115,7 @@ static int verifyGroupRules(struct group *grp, const char *deb) {
 
     /* Go ahead and write out our data to a temp file */
     strncpy(tmp_data, "/tmp/debsig-data.XXXXXX", sizeof(tmp_data));
-    if ((fd = mkstemp(tmp_data)) == -1 || (fp = fdopen(fd, "w+")) == NULL) {
+    if ((fd = mkstemp(tmp_data)) == -1) {
 	ds_printf(DS_LEV_ERR, "error creating temp file %s: %s\n",
 		  tmp_data, strerror(errno));
 	if (fd != -1) {
@@ -142,12 +129,16 @@ static int verifyGroupRules(struct group *grp, const char *deb) {
      * single temp file. This is what we pass to gpg.  */
     if (!(len = findMember(ver_magic_member)))
         goto fail_and_close;
-    len = passthrough(deb_fs, fp, len);
+    len = fd_fd_copy(deb_fd, fd, len, &err);
+    if (len < 0)
+	ohshit("verifyGroupRules: cannot copy to temp file: %s", err.str);
 
     for (i = 0; ver_ctrl_members[i]; i++) {
 	if (!(len = findMember(ver_ctrl_members[i])))
 	    continue;
-	len = passthrough(deb_fs, fp, len);
+	len = fd_fd_copy(deb_fd, fd, len, &err);
+	if (len < 0)
+	    ohshit("verifyGroupRules: cannot copy to temp file: %s", err.str);
 	break;
     }
     if (!ver_ctrl_members[i])
@@ -156,13 +147,16 @@ static int verifyGroupRules(struct group *grp, const char *deb) {
     for (i = 0; ver_data_members[i]; i++) {
 	if (!(len = findMember(ver_data_members[i])))
 	    continue;
-	len = passthrough(deb_fs, fp, len);
+	len = fd_fd_copy(deb_fd, fd, len, &err);
+	if (len < 0)
+	    ohshit("verifyGroupRules: cannot copy to temp file: %s", err.str);
 	break;
     }
     if (!ver_data_members[i])
 	goto fail_and_close;
 
-    fclose(fp);
+    if (close(fd))
+        ohshite("error closing temp file %s", tmp_data);
     fd = -1;
 
     for (mtc = grp->matches; mtc; mtc = mtc->next) {
@@ -178,7 +172,7 @@ static int verifyGroupRules(struct group *grp, const char *deb) {
 		goto fail_and_close;
 	}
 
-	/* This will also position deb_fs to the start of the member */
+	/* This will also position deb_fd to the start of the member. */
 	len = checkSigExist(mtc->name);
 
 	/* If the member exists and we reject it, die now. Also, if it
@@ -193,14 +187,18 @@ static int verifyGroupRules(struct group *grp, const char *deb) {
 
 	/* let's get our temp file */
 	strncpy(tmp_sig, "/tmp/debsig-sig.XXXXXX", sizeof(tmp_sig));
-	if ((fd = mkstemp(tmp_sig)) == -1 || (fp = fdopen(fd, "w+")) == NULL) {
+	if ((fd = mkstemp(tmp_sig)) == -1) {
 	    ds_printf(DS_LEV_ERR, "error creating temp file %s: %s\n",
 		      tmp_sig, strerror(errno));
 	    goto fail_and_close;
 	}
 
-	len = passthrough(deb_fs, fp, len);
-	fclose(fp);
+	len = fd_fd_copy(deb_fd, fd, len, &err);
+	if (len < 0)
+	    ohshit("verifyGroupRules: cannot copy to temp file: %s", err.str);
+
+	if (close(fd) < 0)
+	    ohshit("error closing temp file %s", tmp_sig);
 
 	/* Now, let's check with gpg on this one */
 	t = gpgVerify(tmp_data, mtc, tmp_sig);
@@ -399,8 +397,8 @@ int main(int argc, char *argv[]) {
     }
 
     deb = argv[i];
-
-    if ((deb_fs = fopen(deb, "r")) == NULL)
+    deb_fd = open(deb, O_RDONLY);
+    if (deb_fd < 0)
 	ohshite("could not open %s", deb);
 
     if (!list_only)

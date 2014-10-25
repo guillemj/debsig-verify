@@ -33,6 +33,7 @@
 
 #include <dpkg/dpkg.h>
 #include <dpkg/subproc.h>
+#include <dpkg/buffer.h>
 #include <dpkg/path.h>
 
 #include "debsig.h"
@@ -136,10 +137,11 @@ char *getKeyID (const struct match *mtc) {
 
 char *getSigKeyID (const char *deb, const char *type) {
     static char buf[2048];
-    int pread[2], pwrite[2], t;
+    struct dpkg_error err;
+    int pread[2], pwrite[2];
     off_t len = checkSigExist(type);
     pid_t pid;
-    FILE *ds_read, *ds_write;
+    FILE *ds_read;
     char *c, *ret = NULL;
 
     if (!len)
@@ -153,8 +155,7 @@ char *getSigKeyID (const char *deb, const char *type) {
     if (pipe(pwrite) < 0)
         ohshite("error creating a pipe");
     /* I like file streams, so sue me :P */
-    if ((ds_read = fdopen(pread[0], "r")) == NULL ||
-	 (ds_write = fdopen(pwrite[1], "w")) == NULL)
+    if ((ds_read = fdopen(pread[0], "r")) == NULL)
 	ohshite("error opening file stream for gpg");
 
     pid = subproc_fork();
@@ -172,19 +173,12 @@ char *getSigKeyID (const char *deb, const char *type) {
     close(pread[1]); close(pwrite[0]);
 
     /* First, let's feed gpg our signature. Don't forget, our call to
-     * checkSigExist() above positioned the deb_fs file pointer already.  */
-    t = fread(buf, 1, sizeof(buf), deb_fs);
-    while(len > 0) {
-	if (t > len)
-	    fwrite(buf, 1, len, ds_write);
-	else
-	    fwrite(buf, 1, t, ds_write);
-	len -= t;
-	t = fread(buf, 1, sizeof(buf), deb_fs);
-    }
-    if (ferror(ds_write))
-	ohshit("error writing to gpg");
-    fclose(ds_write);
+     * checkSigExist() above positioned the deb_fd file pointer already.  */
+    if (fd_fd_copy(deb_fd, pwrite[1], len, &err) < 0)
+	ohshit("getSigKeyID: error reading signature (%s)", err.str);
+
+    if (close(pwrite[1]) < 0)
+	ohshite("getSigKeyID: error closing gpg write pipe");
 
     /* Now, let's see what gpg has to say about all this */
     c = fgets(buf, sizeof(buf), ds_read);

@@ -86,7 +86,7 @@ do {						\
 } while(0)
 
 extern int ds_debug_level;
-extern FILE *deb_fs;
+extern int deb_fd;
 extern char *deb;
 extern char originID[];
 extern char *rootdir;

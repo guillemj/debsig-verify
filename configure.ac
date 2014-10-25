@@ -51,7 +51,7 @@ AC_TYPE_SIZE_T
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_FUNC_STRNLEN
-AC_CHECK_FUNCS([dup2 memset strchr strerror strstr])
+AC_CHECK_FUNCS([memset strchr strerror strstr])
 
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_HEADERS([config.h])

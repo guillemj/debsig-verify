@@ -160,8 +160,12 @@ char *getSigKeyID (const char *deb, const char *type) {
     pid = subproc_fork();
     if (pid == 0) {
 	/* Here we go */
-	dup2(pread[1],1); close(pread[0]); close(pread[1]);
-	dup2(pwrite[0],0); close(pwrite[0]); close(pwrite[1]);
+	m_dup2(pread[1], 1);
+	close(pread[0]);
+	close(pread[1]);
+	m_dup2(pwrite[0], 0);
+	close(pwrite[0]);
+	close(pwrite[1]);
 	execl(GPG_PROG, "gpg", GPG_ARGS, "--list-packets", "-q", "-", NULL);
 	exit(1);
     }

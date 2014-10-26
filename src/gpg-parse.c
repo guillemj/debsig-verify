@@ -82,7 +82,9 @@ gpg_init(void)
     gpg_inited = 1;
 }
 
-char *getKeyID (const struct match *mtc) {
+char *
+getKeyID(const char *originID, const struct match *mtc)
+{
     static char buf[2048];
     FILE *ds;
     char *c, *d, *ret = mtc->id;
@@ -210,7 +212,10 @@ char *getSigKeyID (const char *deb, const char *type) {
     return ret;
 }
 
-int gpgVerify(const char *data, struct match *mtc, const char *sig) {
+int
+gpgVerify(const char *originID, struct match *mtc,
+          const char *data, const char *sig)
+{
     char keyring[8192];
     pid_t pid;
     int rc;

@@ -23,6 +23,8 @@ debsig-verify (0.11) UNRELEASED; urgency=low
     - Use ohshit()/ohshite() instead of ds_fail_printf(DS_FAIL_INTERNAL, ...).
     - Use m_dup2() instead of raw dup2().
     - Use fdio API instead of ad-hoc file copying.
+    - Use str_match_end() instead of ad-hoc code, which also fixes a warning
+      due to a signed vs unsigned comparison.
   * Remove useless return statements.
   * Use a temporary GNUPGHOME instead of using the users's default.
     Based on a patch by Michael Vogt <mvo@ubuntu.com>. Closes: #758826

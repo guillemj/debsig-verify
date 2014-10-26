@@ -31,6 +31,7 @@ debsig-verify (0.11) UNRELEASED; urgency=low
   * Switch originID from global to function scoped variable.
     Thanks to Michael Vogt <mvo@ubuntu.com>.
   * Switch deb and deb_fd from global to a function scoped struct.
+  * Change len type to size_t to fix a signed vs unsigned comparison warning.
 
  -- Guillem Jover <guillem@debian.org>  Tue, 19 Aug 2014 10:39:31 +0200
 

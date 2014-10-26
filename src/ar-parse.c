@@ -55,7 +55,7 @@ findMember(struct deb_archive *deb, const char *name)
     struct ar_hdr arh;
     off_t mem_len;
     ssize_t r;
-    int len = strlen(name);
+    size_t len = strlen(name);
 
     if (len > sizeof(arh.ar_name)) {
 	ds_printf(DS_LEV_DEBUG, "findMember: '%s' is too long to be an archive member name",

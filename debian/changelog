@@ -35,6 +35,7 @@ debsig-verify (0.11) UNRELEASED; urgency=low
   * Switch deb and deb_fd from global to a function scoped struct.
   * Change len type to size_t to fix a signed vs unsigned comparison warning.
   * Make private functions static.
+  * Make private constant string variables static const.
 
  -- Guillem Jover <guillem@debian.org>  Tue, 19 Aug 2014 10:39:31 +0200
 

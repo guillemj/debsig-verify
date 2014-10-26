@@ -97,6 +97,6 @@ do {						\
 } while(0)
 
 extern int ds_debug_level;
-extern char *rootdir;
+extern const char *rootdir;
 extern const char *policies_dir;
 extern const char *keyrings_dir;

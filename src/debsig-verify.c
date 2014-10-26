@@ -38,16 +38,20 @@
 
 #include "debsig.h"
 
-char *rootdir = "";
+const char *rootdir = "";
 
 const char *policies_dir = DEBSIG_POLICIES_DIR;
 const char *keyrings_dir = DEBSIG_KEYRINGS_DIR;
 
 #define CTAR(x) "control.tar" # x
 #define DTAR(x) "data.tar" # x
-char *ver_magic_member = "debian-binary";
-char *ver_ctrl_members[] = { CTAR(), CTAR(.gz), CTAR(.xz), 0 };
-char *ver_data_members[] = { DTAR(), DTAR(.gz), DTAR(.xz), DTAR(.bz2), DTAR(.lzma), 0 };
+static const char ver_magic_member[] = "debian-binary";
+static const char *ver_ctrl_members[] = {
+	CTAR(), CTAR(.gz), CTAR(.xz), NULL
+};
+static const char *ver_data_members[] = {
+	DTAR(), DTAR(.gz), DTAR(.xz), DTAR(.bz2), DTAR(.lzma), NULL
+};
 
 static int
 checkSelRules(struct deb_archive *deb, const char *originID, struct group *grp)

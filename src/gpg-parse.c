@@ -125,7 +125,8 @@ char *getKeyID (const struct match *mtc) {
 	c = fgets(buf, sizeof(buf), ds);
     }
 
-    pclose(ds);
+    if (pclose(ds) < 0)
+	ohshite("getKeyID: closing GnuPG pipe");
 
     if (ret == NULL)
 	ds_printf(DS_LEV_DEBUG, "        getKeyID: failed for %s", mtc->id);

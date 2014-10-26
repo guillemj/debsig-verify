@@ -307,14 +307,14 @@ static void outputUsage(void) {
 );
 }
 
-void
+static void
 ds_catch_fatal_error(void)
 {
     pop_error_context(ehflag_bombout);
     exit(DS_FAIL_INTERNAL);
 }
 
-void
+static void
 ds_print_fatal_error(const char *emsg, const void *data)
 {
     ds_printf(DS_LEV_ERR, "%s", emsg);

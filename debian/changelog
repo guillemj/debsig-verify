@@ -3,6 +3,7 @@ debsig-verify (0.11) UNRELEASED; urgency=low
   * Update Vcs-Browser git URL to the new cgit scheme.
   * Add a README file.
   * Autoconfiscate build system.
+  * Add more warning flags to the default compiler flags.
 
  -- Guillem Jover <guillem@debian.org>  Tue, 19 Aug 2014 10:39:31 +0200
 

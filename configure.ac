@@ -6,6 +6,25 @@ AC_CONFIG_SRCDIR([debsig-verify.c])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build-aux])
 
+CFLAGS="$CFLAGS -Wall -Wextra -Wno-unused-parameter"
+CFLAGS="$CFLAGS -Wno-missing-field-initializers"
+CFLAGS="$CFLAGS -Wmissing-declarations"
+CFLAGS="$CFLAGS -Wmissing-format-attribute"
+CFLAGS="$CFLAGS -Wformat-security"
+CFLAGS="$CFLAGS -Wpointer-arith"
+CFLAGS="$CFLAGS -Wlogical-op"
+CFLAGS="$CFLAGS -Wvla"
+CFLAGS="$CFLAGS -Winit-self"
+CFLAGS="$CFLAGS -Wwrite-strings"
+CFLAGS="$CFLAGS -Wcast-align"
+CFLAGS="$CFLAGS -Wshadow"
+CFLAGS="$CFLAGS -Wdeclaration-after-statement"
+CFLAGS="$CFLAGS -Wnested-externs"
+CFLAGS="$CFLAGS -Wbad-function-cast"
+CFLAGS="$CFLAGS -Wstrict-prototypes"
+CFLAGS="$CFLAGS -Wmissing-prototypes"
+CFLAGS="$CFLAGS -Wold-style-definition"
+
 AC_USE_SYSTEM_EXTENSIONS
 AC_SYS_LARGEFILE
 

@@ -66,7 +66,7 @@ static int checkSelRules(struct group *grp, const char *deb) {
         if (mtc->id) {
             char *m_id = getKeyID(mtc);
             char *d_id = getSigKeyID(deb, mtc->name);
-            if (m_id == NULL || d_id == NULL || strcmp(m_id, d_id))
+            if (m_id == NULL || d_id == NULL || strcmp(m_id, d_id) != 0)
                 return 0;
         }
 
@@ -168,7 +168,7 @@ static int verifyGroupRules(struct group *grp, const char *deb) {
 	if (mtc->id) {
 	    char *m_id = getKeyID(mtc);
 	    char *d_id = getSigKeyID(deb, mtc->name);
-	    if (m_id == NULL || d_id == NULL || strcmp(m_id, d_id))
+	    if (m_id == NULL || d_id == NULL || strcmp(m_id, d_id) != 0)
 		goto fail_and_close;
 	}
 
@@ -333,13 +333,13 @@ int main(int argc, char *argv[]) {
     }
 
     for (i = 1; i < argc && argv[i][0] == '-'; i++) {
-	if (!strcmp(argv[i], "-v") || strcmp(argv[i], "--verbose") == 0)
+	if (strcmp(argv[i], "-v") == 0|| strcmp(argv[i], "--verbose") == 0)
 	    ds_debug_level = DS_LEV_VER;
-	else if (!strcmp(argv[i], "-q") || strcmp(argv[i], "--quiet") == 0)
+	else if (strcmp(argv[i], "-q") == 0 || strcmp(argv[i], "--quiet") == 0)
 	    ds_debug_level = DS_LEV_ERR;
-	else if (!strcmp(argv[i], "-d") || strcmp(argv[i], "--debug") == 0)
+	else if (strcmp(argv[i], "-d") == 0 || strcmp(argv[i], "--debug") == 0)
 	    ds_debug_level = DS_LEV_DEBUG;
-	else if (!strcmp(argv[i], "--version")) {
+	else if (strcmp(argv[i], "--version") == 0) {
 	    /* Make sure we exit non-zero if there are any more args. This
 	     * makes sure someone doesn't do something stupid like pass
 	     * --version and a .deb, and expect it to return a validation
@@ -354,11 +354,11 @@ int main(int argc, char *argv[]) {
 	} else if (strcmp(argv[i], "--help") == 0) {
 	    outputUsage();
 	    exit(0);
-	} else if (!strcmp(argv[i], "--list-policies")) {
+	} else if (strcmp(argv[i], "--list-policies") == 0) {
 	    /* Just create a list of policies we can use */
 	    list_only = 1;
 	    ds_printf(DS_LEV_ALWAYS, "Listing usable policies");
-	} else if (!strcmp(argv[i], "--use-policy")) {
+	} else if (strcmp(argv[i], "--use-policy") == 0) {
 	    /* We take one arg */
 	    force_file = argv[++i];
 	    if (i == argc || force_file[0] == '-') {
@@ -429,7 +429,7 @@ int main(int argc, char *argv[]) {
 	if (ext == NULL || (ext - pd_ent->d_name) + 4 != strlen(pd_ent->d_name))
 	    continue;
 
-	if (force_file != NULL && strcmp(pd_ent->d_name, force_file))
+	if (force_file != NULL && strcmp(pd_ent->d_name, force_file) != 0)
 	    continue;
 
 	/* Now try to parse the file */

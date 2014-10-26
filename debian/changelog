@@ -27,6 +27,7 @@ debsig-verify (0.11) UNRELEASED; urgency=low
   * Use a temporary GNUPGHOME instead of using the users's default.
     Based on a patch by Michael Vogt <mvo@ubuntu.com>. Closes: #758826
   * Error out if the GnuPG pipe failed on close.
+  * Explicitly check strcmp() return value instead of handling it as a bool.
 
  -- Guillem Jover <guillem@debian.org>  Tue, 19 Aug 2014 10:39:31 +0200
 

@@ -60,28 +60,28 @@ static void startElement(void *userData, const char *name, const char **atts) {
     depth = *depthPtr;
     *depthPtr = depth + 1;
 
-    if (!strcmp(name,"Policy")) {
+    if (strcmp(name, "Policy") == 0) {
 	if (depth != 0)
 	    parse_error("policy parse error: 'Policy' found at wrong level");
 
 	for (i = 0; atts[i]; i += 2) {
-	    if (!strcmp(atts[i], "xmlns")) {
-		if (strcmp(atts[i + 1], DEBSIG_NAMESPACE))
+	    if (strcmp(atts[i], "xmlns") == 0) {
+		if (strcmp(atts[i + 1], DEBSIG_NAMESPACE) != 0)
 		    parse_error("policy name space != " DEBSIG_NAMESPACE);
 	    } else
 		parse_error("Policy element contains unknown attribute '%s'",
 			     atts[i]);
 	}
-    } else if (!strcmp(name,"Origin")) {
+    } else if (strcmp(name, "Origin") == 0) {
 	if (depth != 1)
 	    parse_error("policy parse error: 'Origin' found at wrong level");
 	
 	for (i = 0; atts[i]; i += 2) {
-	    if (!strcmp(atts[i], "id"))
+	    if (strcmp(atts[i], "id") == 0)
 		ret.id = obstack_copy0(&deb_obs, atts[i+1], strlen(atts[i+1]));
-	    else if (!strcmp(atts[i], "Name"))
+	    else if (strcmp(atts[i], "Name") == 0)
 		ret.name = obstack_copy0(&deb_obs, atts[i+1], strlen(atts[i+1]));
-	    else if (!strcmp(atts[i], "Description"))
+	    else if (strcmp(atts[i], "Description") == 0)
 		ret.description = obstack_copy0(&deb_obs, atts[i+1], strlen(atts[i+1]));
 	    else
 		parse_error("Origin element contains unknown attribute '%s'",
@@ -90,7 +90,8 @@ static void startElement(void *userData, const char *name, const char **atts) {
 
 	if (ret.id == NULL || ret.name == NULL)
 	    parse_error("Origin element missing Name or ID attribute");
-    } else if (!strcmp(name,"Selection") || !strcmp(name,"Verification")) {
+    } else if (strcmp(name, "Selection") == 0 ||
+	       strcmp(name, "Verification") == 0) {
 	struct group *g = NULL;
 	if (depth != 1)
 	    parse_error("policy parse error: 'Selection/Verification' found at wrong level");
@@ -101,7 +102,7 @@ static void startElement(void *userData, const char *name, const char **atts) {
 	    ohshit("out of memory");
 	memset(cur_grp, 0, sizeof(struct group));
 
-	if (!strcmp(name,"Selection")) {
+	if (strcmp(name, "Selection") == 0) {
 	    if (ret.sels == NULL)
 		ret.sels = cur_grp;
 	    else
@@ -119,7 +120,7 @@ static void startElement(void *userData, const char *name, const char **atts) {
 	}
 
 	for (i = 0; atts[i]; i += 2) {
-	    if (!strcmp(atts[i], "MinOptional")) {
+	    if (strcmp(atts[i], "MinOptional") == 0) {
 		int t; const char *c = atts[i+1];
 		for (t = 0; c[t]; t++) {
 		    if (!isdigit(c[t]))
@@ -131,8 +132,9 @@ static void startElement(void *userData, const char *name, const char **atts) {
 			     atts[i]);
 	    }
 	}
-    } else if (!strcmp(name,"Required") || !strcmp(name,"Reject") ||
-	       !strcmp(name,"Optional")) {
+    } else if (strcmp(name, "Required") == 0 ||
+	       strcmp(name, "Reject") == 0||
+	       strcmp(name, "Optional") == 0) {
 	struct match *m = NULL, *cur_m = NULL;
 	if (depth != 2)
 	    parse_error("policy parse error: Match element found at wrong level");
@@ -159,13 +161,13 @@ static void startElement(void *userData, const char *name, const char **atts) {
 
 	/* Set the attributes first, so we can sanity check the type after */
         for (i = 0; atts[i]; i += 2) {
-            if (!strcmp(atts[i], "Type")) {
+            if (strcmp(atts[i], "Type") == 0) {
                 cur_m->name = obstack_copy0(&deb_obs, atts[i+1], strlen(atts[i+1]));
-	    } else if (!strcmp(atts[i], "File")) {
+	    } else if (strcmp(atts[i], "File") == 0) {
 		cur_m->file = obstack_copy0(&deb_obs, atts[i+1], strlen(atts[i+1]));;
-	    } else if (!strcmp(atts[i], "id")) {
+	    } else if (strcmp(atts[i], "id") == 0) {
 		cur_m->id = obstack_copy0(&deb_obs, atts[i+1], strlen(atts[i+1]));;
-	    } else if (!strcmp(atts[i], "Expiry")) {
+	    } else if (strcmp(atts[i], "Expiry") == 0) {
 		int t; const char *c = atts[i+1];
 		for (t = 0; c[t]; t++) {
 		    if (!isdigit(c[t]))
@@ -179,11 +181,11 @@ static void startElement(void *userData, const char *name, const char **atts) {
         }
 
 
-        if (!strcmp(name,"Required")) {
+        if (strcmp(name, "Required") == 0) {
 	    cur_m->type = REQUIRED_MATCH;
 	    if (cur_m->name == NULL || cur_m->file == NULL)
 		parse_error("Required must have a Type and File attribute");
-	} else if (!strcmp(name,"Optional")) {
+	} else if (strcmp(name, "Optional") == 0) {
 	    cur_m->type = OPTIONAL_MATCH;
 	    if (cur_m->name == NULL || cur_m->file == NULL)
 		parse_error("Optional must have a Type and File attribute");
@@ -199,7 +201,7 @@ static void endElement(void *userData, const char *name) {
     int *depthPtr = userData;
     *depthPtr -= 1;
 
-    if (!strcmp(name,"Selection") || !strcmp(name,"Verification")) {
+    if (strcmp(name, "Selection") == 0 || strcmp(name, "Verification") == 0) {
 	struct match *m; int i = 0;
 	/* sanity check this block */
 	for (m = cur_grp->matches; m; m = m->next) {

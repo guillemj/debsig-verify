@@ -103,15 +103,15 @@ char *getKeyID (const struct match *mtc) {
 
     c = fgets(buf, sizeof(buf), ds);
     while (c != NULL) {
-	if (!strncmp(buf, USER_MAGIC, strlen(USER_MAGIC))) {
+	if (strncmp(buf, USER_MAGIC, strlen(USER_MAGIC)) == 0) {
 	    if ((c = strchr(buf, '"')) == NULL) continue;
 	    d = c + 1;
 	    if ((c = strchr(d, '"')) == NULL) continue;
 	    *c = '\0';
-	    if (!strcmp(d, mtc->id)) {
+	    if (strcmp(d, mtc->id) == 0) {
 		c = fgets(buf, sizeof(buf), ds);
 		if (c == NULL) continue;
-		if (!strncmp(buf, SIG_MAGIC, strlen(SIG_MAGIC))) {
+		if (strncmp(buf, SIG_MAGIC, strlen(SIG_MAGIC)) == 0) {
 		    if ((c = strchr(buf, '\n')) != NULL)
 			*c = '\0';
 		    d = strstr(buf, "keyid");
@@ -184,7 +184,7 @@ char *getSigKeyID (const char *deb, const char *type) {
     /* Now, let's see what gpg has to say about all this */
     c = fgets(buf, sizeof(buf), ds_read);
     while (c != NULL) {
-	if (!strncmp(buf, SIG_MAGIC, strlen(SIG_MAGIC))) {
+	if (strncmp(buf, SIG_MAGIC, strlen(SIG_MAGIC)) == 0) {
 	    if ((c = strchr(buf, '\n')) != NULL)
 		*c = '\0';
 	    /* This is the only line we care about */

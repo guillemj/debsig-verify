@@ -79,7 +79,7 @@ findMember(const char *name)
     magic[SARMAG] = '\0';
 
     /* We will fail in main() with this one */
-    if (strcmp(magic,ARMAG)) {
+    if (strcmp(magic, ARMAG) != 0) {
 	ds_printf(DS_LEV_DEBUG, "findMember: archive has bad magic");
 	return 0;
     }

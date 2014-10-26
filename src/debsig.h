@@ -33,6 +33,11 @@
 #define SIG_VERSION "1.0"
 #define DEBSIG_NAMESPACE "http://www.debian.org/debsig/"SIG_VERSION"/"
 
+struct deb_archive {
+	const char *name;
+	int fd;
+};
+
 struct match {
         struct match *next;
         int type;
@@ -57,11 +62,14 @@ struct policy {
 };
 
 struct policy *parsePolicyFile(const char *filename);
-off_t findMember(const char *name);
-off_t checkSigExist(const char *name);
+off_t
+findMember(struct deb_archive *deb, const char *name);
+off_t
+checkSigExist(struct deb_archive *deb, const char *name);
 char *
 getKeyID(const char *originID, const struct match *mtc);
-char *getSigKeyID (const char *deb, const char *type);
+char *
+getSigKeyID(struct deb_archive *deb, const char *type);
 int
 gpgVerify(const char *originID, struct match *mtc,
           const char *data, const char *sig);
@@ -89,8 +97,6 @@ do {						\
 } while(0)
 
 extern int ds_debug_level;
-extern int deb_fd;
-extern char *deb;
 extern char *rootdir;
 extern const char *policies_dir;
 extern const char *keyrings_dir;

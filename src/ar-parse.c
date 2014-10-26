@@ -48,7 +48,7 @@
  * nothing important is going to be zero length anyway, so we treat it as
  * "non-existant".  */
 off_t
-findMember(const char *name)
+findMember(struct deb_archive *deb, const char *name)
 {
     struct dpkg_error err;
     char magic[SARMAG+1];
@@ -64,13 +64,13 @@ findMember(const char *name)
     }
 
     /* This shouldn't happen, but... */
-    if (deb_fd < 0)
+    if (deb->fd < 0)
 	ohshit("findMember: called while deb_fd < 0");
 
-    if (lseek(deb_fd, 0, SEEK_SET) < 0)
+    if (lseek(deb->fd, 0, SEEK_SET) < 0)
 	ohshit("findMember: cannot rewind package");
 
-    r = fd_read(deb_fd, magic, SARMAG);
+    r = fd_read(deb->fd, magic, SARMAG);
     if (r < 0)
 	ohshite("findMember: failure to read package");
     if (r != SARMAG)
@@ -85,7 +85,7 @@ findMember(const char *name)
     }
 
     for (;;) {
-	r = fd_read(deb_fd, &arh, sizeof(arh));
+	r = fd_read(deb->fd, &arh, sizeof(arh));
 	if (r == 0)
 	    return 0;
 	if (r < 0)
@@ -97,7 +97,7 @@ findMember(const char *name)
 	    ohshit("findMember: archive appears to be corrupt, fmag incorrect");
 
 	dpkg_ar_normalize_name(&arh);
-	mem_len = dpkg_ar_member_get_size(deb, &arh);
+	mem_len = dpkg_ar_member_get_size(deb->name, &arh);
 
 	/*
 	 * If all looks well, then we return the length of the member, and
@@ -114,7 +114,7 @@ findMember(const char *name)
 	    return mem_len;
 
 	/* Skip to the start of the next member, and try again. */
-	if (fd_skip(deb_fd, mem_len + (mem_len & 1), &err) < 0)
+	if (fd_skip(deb->fd, mem_len + (mem_len & 1), &err) < 0)
 	    ohshit("findMember: error while skiping member data: %s", err.str);
     }
 

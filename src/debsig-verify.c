@@ -42,9 +42,6 @@ char *rootdir = "";
 const char *policies_dir = DEBSIG_POLICIES_DIR;
 const char *keyrings_dir = DEBSIG_KEYRINGS_DIR;
 
-char *deb = NULL;
-int deb_fd = -1;
-
 #define CTAR(x) "control.tar" # x
 #define DTAR(x) "data.tar" # x
 char *ver_magic_member = "debian-binary";
@@ -52,7 +49,7 @@ char *ver_ctrl_members[] = { CTAR(), CTAR(.gz), CTAR(.xz), 0 };
 char *ver_data_members[] = { DTAR(), DTAR(.gz), DTAR(.xz), DTAR(.bz2), DTAR(.lzma), 0 };
 
 static int
-checkSelRules(const char *originID, struct group *grp, const char *deb)
+checkSelRules(struct deb_archive *deb, const char *originID, struct group *grp)
 {
     int opt_count = 0;
     struct match *mtc;
@@ -76,7 +73,7 @@ checkSelRules(const char *originID, struct group *grp, const char *deb)
 	 * specified, don't we?
 	 */
 
-        len = checkSigExist(mtc->name);
+        len = checkSigExist(deb, mtc->name);
 
         /* If the member exists and we reject it, fail now. Also, if it
          * doesn't exist, and we require it, fail as well. */
@@ -102,7 +99,7 @@ checkSelRules(const char *originID, struct group *grp, const char *deb)
 }
 
 static int
-verifyGroupRules(const char *originID, struct group *grp, const char *deb)
+verifyGroupRules(struct deb_archive *deb, const char *originID, struct group *grp)
 {
     struct dpkg_error err;
     char tmp_sig[32] = {'\0'}, tmp_data[32] = {'\0'};
@@ -130,16 +127,17 @@ verifyGroupRules(const char *originID, struct group *grp, const char *deb)
 
     /* Now, let's find all the members we need to check and cat them into a
      * single temp file. This is what we pass to gpg.  */
-    if (!(len = findMember(ver_magic_member)))
+    if (!(len = findMember(deb, ver_magic_member)))
         goto fail_and_close;
-    len = fd_fd_copy(deb_fd, fd, len, &err);
+    len = fd_fd_copy(deb->fd, fd, len, &err);
     if (len < 0)
 	ohshit("verifyGroupRules: cannot copy to temp file: %s", err.str);
 
     for (i = 0; ver_ctrl_members[i]; i++) {
-	if (!(len = findMember(ver_ctrl_members[i])))
+	len = findMember(deb, ver_ctrl_members[i]);
+	if (!len)
 	    continue;
-	len = fd_fd_copy(deb_fd, fd, len, &err);
+	len = fd_fd_copy(deb->fd, fd, len, &err);
 	if (len < 0)
 	    ohshit("verifyGroupRules: cannot copy to temp file: %s", err.str);
 	break;
@@ -148,9 +146,10 @@ verifyGroupRules(const char *originID, struct group *grp, const char *deb)
 	goto fail_and_close;
 
     for (i = 0; ver_data_members[i]; i++) {
-	if (!(len = findMember(ver_data_members[i])))
+	len = findMember(deb, ver_data_members[i]);
+	if (!len)
 	    continue;
-	len = fd_fd_copy(deb_fd, fd, len, &err);
+	len = fd_fd_copy(deb->fd, fd, len, &err);
 	if (len < 0)
 	    ohshit("verifyGroupRules: cannot copy to temp file: %s", err.str);
 	break;
@@ -175,8 +174,8 @@ verifyGroupRules(const char *originID, struct group *grp, const char *deb)
 		goto fail_and_close;
 	}
 
-	/* This will also position deb_fd to the start of the member. */
-	len = checkSigExist(mtc->name);
+	/* This will also position deb->fd to the start of the member. */
+	len = checkSigExist(deb, mtc->name);
 
 	/* If the member exists and we reject it, die now. Also, if it
 	 * doesn't exist, and we require it, die as well. */
@@ -196,7 +195,7 @@ verifyGroupRules(const char *originID, struct group *grp, const char *deb)
 	    goto fail_and_close;
 	}
 
-	len = fd_fd_copy(deb_fd, fd, len, &err);
+	len = fd_fd_copy(deb->fd, fd, len, &err);
 	if (len < 0)
 	    ohshit("verifyGroupRules: cannot copy to temp file: %s", err.str);
 
@@ -239,17 +238,19 @@ fail_and_close:
     return 0;
 }
 
-static int checkIsDeb(void) {
+static int
+checkIsDeb(struct deb_archive *deb)
+{
     int i;
     const char *member;
 
-    if (!findMember(ver_magic_member)) {
+    if (!findMember(deb, ver_magic_member)) {
        ds_printf(DS_LEV_VER, "Missing archive magic member %s", ver_magic_member);
        return 0;
     }
 
     for (i = 0; (member = ver_ctrl_members[i]); i++)
-        if (findMember(member))
+        if (findMember(deb, member))
             break;
     if (!member) {
         ds_printf(DS_LEV_VER, "Missing archive control member, checked:");
@@ -259,7 +260,7 @@ static int checkIsDeb(void) {
     }
 
     for (i = 0; (member = ver_data_members[i]); i++)
-        if (findMember(member))
+        if (findMember(deb, member))
             break;
     if (!member) {
         ds_printf(DS_LEV_VER, "Missing archive data member, checked:");
@@ -319,6 +320,7 @@ ds_print_fatal_error(const char *emsg, const void *data)
 }
 
 int main(int argc, char *argv[]) {
+    struct deb_archive deb = { .name = NULL, .fd = -1, };
     struct policy *pol = NULL;
     char originID[2048];
     char buf[8192], pol_file[8192], *tmpID, *force_file = NULL;
@@ -400,18 +402,18 @@ int main(int argc, char *argv[]) {
 	outputBadUsage();
     }
 
-    deb = argv[i];
-    deb_fd = open(deb, O_RDONLY);
-    if (deb_fd < 0)
-	ohshite("could not open %s", deb);
+    deb.name = argv[i];
+    deb.fd = open(deb.name, O_RDONLY);
+    if (deb.fd < 0)
+	ohshite("could not open %s", deb.name);
 
     if (!list_only)
-	ds_printf(DS_LEV_VER, "Starting verification for: %s", deb);
+	ds_printf(DS_LEV_VER, "Starting verification for: %s", deb.name);
 
-    if (!checkIsDeb())
-	ohshit("%s does not appear to be a deb format package", deb);
+    if (!checkIsDeb(&deb))
+	ohshit("%s does not appear to be a deb format package", deb.name);
 
-    if ((tmpID = getSigKeyID(deb, "origin")) == NULL)
+    if ((tmpID = getSigKeyID(&deb, "origin")) == NULL)
 	ds_fail_printf(DS_FAIL_NOSIGS, "Origin Signature check failed. This deb might not be signed.\n");
 
     strncpy(originID, tmpID, sizeof(originID));
@@ -446,7 +448,7 @@ int main(int argc, char *argv[]) {
 	/* Now let's see if this policy's selection is useful for this .deb  */
 	ds_printf(DS_LEV_VER, "    Checking Selection group(s).");
 	for (grp = pol->sels; grp != NULL; grp = grp->next) {
-	    if (!checkSelRules(originID, grp, deb)) {
+	    if (!checkSelRules(&deb, originID, grp)) {
 		clear_policy();
 		ds_printf(DS_LEV_VER, "    Selection group failed checks.");
 		pol = NULL;
@@ -478,9 +480,9 @@ int main(int argc, char *argv[]) {
     ds_printf(DS_LEV_VER, "    Checking Verification group(s).");
 
     for (grp = pol->vers; grp; grp = grp->next) {
-	if (!verifyGroupRules(originID, grp, deb)) {
+	if (!verifyGroupRules(&deb, originID, grp)) {
 	    ds_printf(DS_LEV_VER, "    Verification group failed checks.");
-	    ds_fail_printf(DS_FAIL_BADSIG, "Failed verification for %s.", deb);
+	    ds_fail_printf(DS_FAIL_BADSIG, "Failed verification for %s.", deb.name);
 	}
     }
 

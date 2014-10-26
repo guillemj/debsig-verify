@@ -43,7 +43,7 @@ void ds_printf(int level, const char *fmt, ...) {
 }
 
 off_t
-checkSigExist(const char *name)
+checkSigExist(struct deb_archive *deb, const char *name)
 {
     char buf[16];
 
@@ -54,5 +54,5 @@ checkSigExist(const char *name)
 
     snprintf(buf, sizeof(buf) - 1, "_gpg%s", name);
 
-    return findMember(buf);
+    return findMember(deb, buf);
 }

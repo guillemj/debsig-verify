@@ -13,6 +13,7 @@ debsig-verify (0.11) UNRELEASED; urgency=low
   * Do not print --version and --help on stderr and make them exit 0. And
     replace usage error output with a new function that gives a hint to the
     user to use --help instead.
+  * Add long options for quiet, verbose and debug.
 
  -- Guillem Jover <guillem@debian.org>  Tue, 19 Aug 2014 10:39:31 +0200
 

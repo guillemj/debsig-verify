@@ -58,16 +58,16 @@ constrained. If these rules fail, the program exits with a non-zero
 status. If they pass, then it exits with a zero status.
 .SH OPTIONS
 .TP
-.BR \-q
+.BR \-q ", " \-\-quiet
 Causes the program to send no output, other than fatal errors. This is
 useful when being called from another program, where you rely on the exit
 value only.
 .TP
-.BR \-v
+.BR \-v ", " \-\-verbose
 Causes the program to send more output on execution, so as to follow the
 steps it is taking while trying to verify the \fIdeb\fR.
 .TP
-.BR \-d
+.BR \-d ", " \-\-debug
 Outputs even more info than the \fB\-v\fR option. This is mainly for
 debugging.
 .TP

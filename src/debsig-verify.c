@@ -291,9 +291,9 @@ static void outputUsage(void) {
 
     printf(
 "Options:\n"
-"  -q                       Quiet, only output fatal errors.\n"
-"  -v                       Verbose output (mainly debug).\n"
-"  -d                       Debug output as well.\n"
+"  -q, --quiet              Quiet, only output fatal errors.\n"
+"  -v, --verbose            Verbose output (mainly debug).\n"
+"  -d, --debug              Debug output as well.\n"
 "      --list-policies      Only list policies that can be used to validate\n"
 "                             this sig. Only runs through 'Selection' block.\n"
 "      --use-policy <name>  Specify the short policy name to use.\n"
@@ -336,11 +336,11 @@ int main(int argc, char *argv[]) {
     }
 
     for (i = 1; i < argc && argv[i][0] == '-'; i++) {
-	if (!strcmp(argv[i], "-q"))
-	    ds_debug_level = DS_LEV_ERR;
-	else if (!strcmp(argv[i], "-v"))
+	if (!strcmp(argv[i], "-v") || strcmp(argv[i], "--verbose") == 0)
 	    ds_debug_level = DS_LEV_VER;
-	else if (!strcmp(argv[i], "-d"))
+	else if (!strcmp(argv[i], "-q") || strcmp(argv[i], "--quiet") == 0)
+	    ds_debug_level = DS_LEV_ERR;
+	else if (!strcmp(argv[i], "-d") || strcmp(argv[i], "--debug") == 0)
 	    ds_debug_level = DS_LEV_DEBUG;
 	else if (!strcmp(argv[i], "--version")) {
 	    /* Make sure we exit non-zero if there are any more args. This

@@ -1,3 +1,5 @@
+SUBDIRS = . test
+
 DEBSIG_KEYRINGS_DIR = $(datadir)/debsig/keyrings
 DEBSIG_POLICIES_DIR = $(sysconfdir)/debsig/policies
 

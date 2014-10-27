@@ -1,0 +1,11 @@
+AT_BANNER([Command-line options])
+
+AT_SETUP([debsig-verify --version])
+AT_KEYWORDS([debsig-verify command-line])
+AT_CHECK([debsig-verify --version], [], [ignore])
+AT_CLEANUP()
+
+AT_SETUP([debsig-verify --help])
+AT_KEYWORDS([debsig-verify command-line])
+AT_CHECK([debsig-verify --help], [], [ignore])
+AT_CLEANUP()

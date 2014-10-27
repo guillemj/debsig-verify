@@ -42,13 +42,21 @@ build-arch: build-tree/config.status
 	dh_testdir
 	$(MAKE) -C build-tree
 
+# Run the test suites
+check: build
+	dh_testdir
+
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+	$(MAKE) -C build-tree VERBOSE=1 check
+endif
+
 clean:
 	dh_testdir
 	[ ! -f Makefile ] ||  $(MAKE) distclean
 	rm -rf build-tree
 	dh_clean
 
-install: build
+install: check
 	dh_testdir
 	dh_testroot
 	dh_prep

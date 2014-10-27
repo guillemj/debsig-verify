@@ -3,6 +3,7 @@
 AC_PREREQ([2.60])
 AC_INIT([debsig-verify], m4_esyscmd([./get-version]), [debian-dpkg@lists.debian.org])
 AC_CONFIG_SRCDIR([src/debsig-verify.c])
+AC_CONFIG_TESTDIR([test])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build-aux])
 
@@ -34,6 +35,7 @@ AM_SILENT_RULES([yes])
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_MKDIR_P
+AM_MISSING_PROG([AUTOM4TE], [autom4te]) dnl Needed by autotest
 
 # Checks for libraries.
 AC_CHECK_LIB([xmlparse], [XML_ParserCreate])
@@ -53,6 +55,10 @@ AC_FUNC_MALLOC
 AC_FUNC_STRNLEN
 AC_CHECK_FUNCS([memset strchr strerror strstr])
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([
+	Makefile
+	test/Makefile
+	test/atlocal
+])
 AC_CONFIG_HEADERS([config.h])
 AC_OUTPUT

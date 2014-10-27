@@ -1,0 +1,6 @@
+AT_INIT()
+AT_COLOR_TESTS()
+
+AT_TESTED([debsig-verify])
+
+m4_include([debsig-cmd.at])

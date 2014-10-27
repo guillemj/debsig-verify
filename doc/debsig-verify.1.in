@@ -91,6 +91,12 @@ This option is useful if more than one policy applies to potentially
 verifying the \fIdeb\fR. The program will then use this policy, and only
 this policy, to try and verify the \fIdeb\fR.
 .TP
+.BR \-\-policies\-dir " \fIdirectory\fP"
+Use a different directory when looking up for policies.
+.TP
+.BR \-\-keyrings\-dir " \fIdirectory\fP"
+Use a different directory when looking up for keyrings.
+.TP
 .BR \-\-root " \fIdirectory\fP"
 Use a different root directory when looking up for policies and keyrings.
 .SH EXIT STATUS

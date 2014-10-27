@@ -17,9 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#define DEBSIG_POLICIES_DIR_FMT "%s"DEBSIG_POLICIES_DIR"/%s"
-#define DEBSIG_KEYRINGS_FMT "%s"DEBSIG_KEYRINGS_DIR"/%s/%s"
-
 #define GPG_PROG "/usr/bin/gpg"
 
 /* This is so ugly, but easy */
@@ -93,3 +90,5 @@ extern FILE *deb_fs;
 extern char *deb;
 extern char originID[];
 extern char *rootdir;
+extern const char *policies_dir;
+extern const char *keyrings_dir;

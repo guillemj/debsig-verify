@@ -12,3 +12,57 @@ export TZ
 
 # Define helper variables and functions
 TESTDATA="@abs_top_srcdir@/test"
+TESTPOLICIES="$TESTDATA/policies"
+TESTKEYRINGS="$TESTDATA/keyrings"
+TESTKEYID="FAD46790DE88C7E2"
+TESTGNUPG="gnupg"
+
+DEBSIG="debsig-verify -v -d --policies-dir $TESTPOLICIES --keyrings-dir $TESTKEYRINGS"
+
+debsig_setup_gnupg ()
+{
+  mkdir -p $TESTGNUPG
+  chmod go-rwx $TESTGNUPG
+  cp -a $TESTDATA/keyrings/$TESTKEYID/* $TESTGNUPG/
+}
+
+debsig_make_deb ()
+{
+  local debname="$1"
+  local debversion="$2"
+  local debdir="${debname}_${debversion}"
+  local debpkg="${debdir}.deb"
+
+  # Make a .deb package.
+  mkdir -p $debdir/DEBIAN
+  cat > $debdir/DEBIAN/control <<EOF
+Package: $debname
+Version: $debversion
+Architecture: all
+Maintainer: Dpkg Developers <debian-dpkg@lists.debian.org>
+Description: Signature Test Package
+EOF
+  mkdir -p $debdir/usr/share/doc/
+  echo "Debsig testing deb" > $debdir/usr/share/doc/README
+  dpkg-deb -b "$debdir" "$debpkg"
+}
+
+debsig_make_sig_bad ()
+{
+  local debpkg="$1_$2.deb"
+
+  # Add a bogus signature to a .deb package.
+  debsig_setup_gnupg
+  gpg --home $TESTGNUPG  --detach-sig >_gpgorigin <"$debpkg"
+  ar q "$debpkg" _gpgorigin
+}
+
+debsig_make_sig ()
+{
+  local debpkg="$1_$2.deb"
+
+  # Add signature to a .deb package.
+  debsig_setup_gnupg
+  ar p "$debpkg" | gpg --home $TESTGNUPG --detach-sig >_gpgorigin
+  ar q "$debpkg" _gpgorigin
+}

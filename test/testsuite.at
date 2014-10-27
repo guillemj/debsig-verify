@@ -3,4 +3,9 @@ AT_COLOR_TESTS()
 
 AT_TESTED([debsig-verify])
 
+m4_define([DEBSIG_MAKE_DEB], [debsig_make_deb "$1" "$2"])
+m4_define([DEBSIG_MAKE_SIG], [debsig_make_sig "$1" "$2"])
+m4_define([DEBSIG_MAKE_SIG_BAD], [debsig_make_sig_bad "$1" "$2"])
+
 m4_include([debsig-cmd.at])
+m4_include([debsig-sig.at])

@@ -37,6 +37,8 @@ debsig-verify (0.11) UNRELEASED; urgency=low
   * Make private functions static.
   * Make private constant string variables static const.
   * Add new autotest functional testsuite.
+  * Add test cases for signature checks.
+    Based on a patch by Michael Vogt <mvo@ubuntu.com>.
 
  -- Guillem Jover <guillem@debian.org>  Tue, 19 Aug 2014 10:39:31 +0200
 

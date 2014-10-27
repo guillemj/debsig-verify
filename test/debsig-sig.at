@@ -1,0 +1,36 @@
+AT_BANNER([Binary .deb packages])
+
+AT_SETUP([deb does not validate, no signature])
+AT_KEYWORDS([debsig-verify deb])
+DEBSIG_MAKE_DEB([debraw], [1.0])
+AT_CHECK([$DEBSIG debraw_1.0.deb], [10], [ignore])
+AT_CLEANUP()
+
+AT_SETUP([deb does not validate, signed, no policy dir])
+AT_KEYWORDS([debsig-verify deb])
+DEBSIG_MAKE_DEB([debsig], [1.0])
+DEBSIG_MAKE_SIG([debsig], [1.0])
+AT_CHECK([$DEBSIG --policies-dir "nonexistent" debsig_1.0.deb], [11], [ignore])
+AT_CLEANUP()
+
+AT_SETUP([deb does not validate, signed, no policy file])
+AT_KEYWORDS([debsig-verify deb])
+DEBSIG_MAKE_DEB([debsig], [1.0])
+DEBSIG_MAKE_SIG([debsig], [1.0])
+AT_CHECK([mkdir -p policies/$TESTKEYID
+$DEBSIG --policies-dir "policies" debsig_1.0.deb], [12], [ignore])
+AT_CLEANUP()
+
+AT_SETUP([deb does not validate, bogus signature])
+AT_KEYWORDS([debsig-verify deb])
+DEBSIG_MAKE_DEB([debsig], [1.0])
+DEBSIG_MAKE_SIG_BAD([debsig], [1.0])
+AT_CHECK([$DEBSIG debsig_1.0.deb], [13], [ignore], [ignore])
+AT_CLEANUP()
+
+AT_SETUP([deb does validate])
+AT_KEYWORDS([debsig-verify deb])
+DEBSIG_MAKE_DEB([debsig], [1.0])
+DEBSIG_MAKE_SIG([debsig], [1.0])
+AT_CHECK([$DEBSIG debsig_1.0.deb], [], [ignore], [ignore])
+AT_CLEANUP()

@@ -8,7 +8,11 @@ EXTRA_DIST += $(TESTSUITE)
 
 TESTSUITE_AT = testsuite.at
 TESTSUITE_AT += debsig-cmd.at
+TESTSUITE_AT += debsig-sig.at
 EXTRA_DIST += $(TESTSUITE_AT)
+
+EXTRA_DIST += policies/FAD46790DE88C7E2
+EXTRA_DIST += keyrings/FAD46790DE88C7E2
 
 DISTCLEANFILES = atconfig
 

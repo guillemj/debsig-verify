@@ -39,6 +39,7 @@ debsig-verify (0.11) UNRELEASED; urgency=low
   * Add new autotest functional testsuite.
   * Add test cases for signature checks.
     Based on a patch by Michael Vogt <mvo@ubuntu.com>.
+  * Update copyright holders and years.
 
  -- Guillem Jover <guillem@debian.org>  Tue, 19 Aug 2014 10:39:31 +0200
 

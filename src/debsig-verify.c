@@ -277,19 +277,17 @@ static void outputVersion(void) {
 }
 
 static void outputUsage(void) {
-    fprintf(stderr, "Usage: %s [ option ] <deb>\n\n", dpkg_get_progname());
+    fprintf(stderr, "Usage: %s [<option>...] <deb>\n\n", dpkg_get_progname());
 
     fprintf(stderr,
-"   -q                  Quiet, only output fatal errors\n"
-"   -v                  Verbose output (mainly debug)\n"
-"   -d                  Debug output as well\n"
-"   --version           Output version info, and exit\n"
-"   --list-policies     Only list policies that can be used to\n"
-"                       validate this sig. This runs through\n"
-"                       'Selection' block of the policies only.\n"
-"   --use-policy <name> Used in conjunction with the above\n"
-"                       option. This allows you to specify the\n"
-"                       short name of the policy you wish to try.\n"
+"Options:\n"
+"  -q                       Quiet, only output fatal errors.\n"
+"  -v                       Verbose output (mainly debug).\n"
+"  -d                       Debug output as well.\n"
+"      --list-policies      Only list policies that can be used to validate\n"
+"                             this sig. Only runs through 'Selection' block.\n"
+"      --use-policy <name>  Specify the short policy name to use.\n"
+"      --version            Output version info, and exit.\n"
 );
         exit(1);
 }

@@ -38,17 +38,19 @@ build: build-arch build-indep
 
 build-indep:
 
-build-arch: build-tree/config.status
-	dh_testdir
-	$(MAKE) -C build-tree
-
-# Run the test suites
-check: build
+# XXX: We need to use a build stamp because the test suite uses GnuPG, which
+# is Set-Uid-Root on non-Linux systems, which breaks it when using also
+# fakeroot.
+build-arch: build-tree/build-arch-stamp
+build-tree/build-arch-stamp: build-tree/config.status
 	dh_testdir
 
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	$(MAKE) -C build-tree VERBOSE=1 check
+else
+	$(MAKE) -C build-tree
 endif
+	touch $@
 
 clean:
 	dh_testdir
@@ -56,7 +58,7 @@ clean:
 	rm -rf build-tree
 	dh_clean
 
-install: check
+install-arch: build-arch
 	dh_testdir
 	dh_testroot
 	dh_prep
@@ -66,7 +68,7 @@ install: check
 
 binary-indep:
 
-binary-arch: install
+binary-arch: install-arch
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs

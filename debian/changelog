@@ -1,3 +1,12 @@
+debsig-verify (0.12) UNRELEASED; urgency=medium
+
+  * Merge the testsuite execution into the debian/rules build-arch target,
+    and use a build stamp file so that we do not invoke it from a binary
+    target. The latter is going to be run as root possibly via fakeroot,
+    and as GnuPG is set-uid-root on non-Linux systems, it fails there.
+
+ -- Guillem Jover <guillem@debian.org>  Tue, 28 Oct 2014 06:12:01 +0100
+
 debsig-verify (0.11) unstable; urgency=medium
 
   * Update Vcs-Browser git URL to the new cgit scheme.

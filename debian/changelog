@@ -1,11 +1,11 @@
-debsig-verify (0.13) UNRELEASED; urgency=low
+debsig-verify (0.13) unstable; urgency=medium
 
   * Disable all current GnuPG warnings, as these do not concern us, because
     we only use gpg for verification purposes, so we should not be handling
     sensitive material anyway. This fixes failures in the testsuite on
     GNU/Hurd due to unexpected output in stderr.
 
- -- Guillem Jover <guillem@debian.org>  Tue, 28 Oct 2014 17:58:01 +0100
+ -- Guillem Jover <guillem@debian.org>  Tue, 28 Oct 2014 18:03:29 +0100
 
 debsig-verify (0.12) unstable; urgency=medium
 

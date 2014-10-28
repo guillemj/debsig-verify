@@ -1,4 +1,4 @@
-debsig-verify (0.11) UNRELEASED; urgency=low
+debsig-verify (0.11) unstable; urgency=medium
 
   * Update Vcs-Browser git URL to the new cgit scheme.
   * Add a README file.
@@ -42,7 +42,7 @@ debsig-verify (0.11) UNRELEASED; urgency=low
   * Update copyright holders and years.
   * Bump Standard-Version to 3.9.6 (no changed needed).
 
- -- Guillem Jover <guillem@debian.org>  Tue, 19 Aug 2014 10:39:31 +0200
+ -- Guillem Jover <guillem@debian.org>  Tue, 28 Oct 2014 04:01:53 +0100
 
 debsig-verify (0.10) unstable; urgency=low
 

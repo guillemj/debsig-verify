@@ -21,8 +21,10 @@
 #define GPG_PROG "/usr/bin/gpg"
 
 /* This is so ugly, but easy */
-#define GPG_ARGS_FMT "%s %s %s"
-#define GPG_ARGS "--no-options", "--no-default-keyring", "--batch"
+#define GPG_ARGS_FMT "%s %s %s %s %s %s"
+#define GPG_ARGS "--no-options", "--no-default-keyring", "--batch", \
+                 "--no-secmem-warning", "--no-permission-warning", \
+                 "--no-mdc-warning"
 
 #define SIG_MAGIC ":signature packet:"
 #define USER_MAGIC ":user ID packet:"

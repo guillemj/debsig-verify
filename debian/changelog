@@ -1,4 +1,4 @@
-debsig-verify (0.12) UNRELEASED; urgency=medium
+debsig-verify (0.12) unstable; urgency=medium
 
   * Merge the testsuite execution into the debian/rules build-arch target,
     and use a build stamp file so that we do not invoke it from a binary
@@ -7,7 +7,7 @@ debsig-verify (0.12) UNRELEASED; urgency=medium
   * Mark targets as .PHONY in debian/rules.
   * Explicitly Build-Depend on gnupg for the testsuite.
 
- -- Guillem Jover <guillem@debian.org>  Tue, 28 Oct 2014 06:12:01 +0100
+ -- Guillem Jover <guillem@debian.org>  Tue, 28 Oct 2014 06:24:28 +0100
 
 debsig-verify (0.11) unstable; urgency=medium
 

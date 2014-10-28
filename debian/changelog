@@ -4,6 +4,7 @@ debsig-verify (0.12) UNRELEASED; urgency=medium
     and use a build stamp file so that we do not invoke it from a binary
     target. The latter is going to be run as root possibly via fakeroot,
     and as GnuPG is set-uid-root on non-Linux systems, it fails there.
+  * Mark targets as .PHONY in debian/rules.
 
  -- Guillem Jover <guillem@debian.org>  Tue, 28 Oct 2014 06:12:01 +0100
 

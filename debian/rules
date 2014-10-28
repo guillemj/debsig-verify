@@ -52,6 +52,8 @@ else
 endif
 	touch $@
 
+.PHONY: build build-indep build-arch
+
 clean:
 	dh_testdir
 	[ ! -f Makefile ] ||  $(MAKE) distclean
@@ -65,6 +67,8 @@ install-arch: build-arch
 	dh_installdirs
 
 	$(MAKE) -C build-tree DESTDIR="$(CURDIR)/debian/debsig-verify" install
+
+.PHONY: install-arch clean
 
 binary-indep:
 
@@ -87,3 +91,5 @@ binary-arch: install-arch
 	dh_builddeb
 
 binary: binary-indep binary-arch
+
+.PHONY: binary binary-indep binary-arch

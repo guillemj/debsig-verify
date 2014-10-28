@@ -5,6 +5,7 @@ debsig-verify (0.12) UNRELEASED; urgency=medium
     target. The latter is going to be run as root possibly via fakeroot,
     and as GnuPG is set-uid-root on non-Linux systems, it fails there.
   * Mark targets as .PHONY in debian/rules.
+  * Explicitly Build-Depend on gnupg for the testsuite.
 
  -- Guillem Jover <guillem@debian.org>  Tue, 28 Oct 2014 06:12:01 +0100
 

@@ -1,3 +1,9 @@
+debsig-verify (0.14) UNRELEASED; urgency=low
+
+  * Assume at least C89 and POSIX.1-2001.
+
+ -- Guillem Jover <guillem@debian.org>  Fri, 31 Oct 2014 00:01:39 +0100
+
 debsig-verify (0.13) unstable; urgency=medium
 
   * Disable all current GnuPG warnings, as these do not concern us, because

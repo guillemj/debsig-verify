@@ -44,13 +44,13 @@ PKG_CHECK_MODULES([LIBDPKG], [libdpkg >= 1.17.14])
 # Checks for header files.
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_FUNC_OBSTACK
 AC_TYPE_OFF_T
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 
 # Checks for library functions.
 AC_FUNC_STRNLEN
+AC_FUNC_OBSTACK
 
 AC_CONFIG_FILES([
 	Makefile

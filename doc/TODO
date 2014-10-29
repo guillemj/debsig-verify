@@ -1,31 +1,21 @@
-- Is there a GnuPG library we can link against instead of execing gpg?
-  * Yes, there is PGG, but it is merely a wrapper around the GPG binary. A
-    very good wrapper, but it is hugely overweight for what I need.
-    Basically this may be a dead issue. Otherwise, I should probably start
+* Is there a GnuPG library we can link against instead of execing gpg?
+  - Yes, there is PGG, but it is merely a wrapper around the GPG binary. A
+    very good wrapper, but it is hugely overweight for what we need.
+    Basically this may be a dead issue. Otherwise, we should probably start
     using the --with-colon and --status-fd output for better parsing of
     the verify and keyring output.
 
-- Figure out how to integrate this with the package tools (apt, dpkg
-  etc..)
+* Figure out how to integrate this more tigthly with the package tools
+  (apt, dpkg etc..).
 
-- Expiry still needs to be handled
+* Expiry still needs to be handled.
 
-- Add some more info to the verbose output.
+* Add some more info to the verbose output.
   STATUS: in progress
 
-- Testing setup. This is the way I envision it. Basically we have
-  directories with sample data. Each directory contains some related parts
-  of a Debian file (control.tar.gz, data.tar.gz), signatures and
-  policy's/keyrings. We then have some XML files (god I love XML :) that
-  describe the tests. This includes which parts to use to build the debs,
-  which policies to configure for checking it, and the expected outcome of
-  the checks. Need a program that parses this and performs the jobs. One
-  drawback is, how can we tell debsig-verify where to find the polices and
-  keyrings, since it is hardcoded? Should we allow command line options to
-  override this?
+* Obviously this needs more code auditing.
+  - The code uses static buffers and length constrained functions (snprintf,
+    strncmp) where ever possible, but in some cases it might make sense to
+    switch them to dynamically allocated buffers instead.
 
-- Obviously this needs some serious auditing, not matter how good I think
-  my coding is. Generally I've used static buffers and length constrained
-  functions (snprintf, strncmp) where ever possible.
-
-- i18n
+* I18n and l10n.

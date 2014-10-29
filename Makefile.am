@@ -32,7 +32,6 @@ src_debsig_verify_SOURCES = \
 EXTRA_DIST = \
 	autogen \
 	get-version \
-	doc/TODO \
 	doc/debsig-verify.1.in \
 	doc/policy-syntax.txt \
 	doc/policy.dtd \

@@ -7,7 +7,9 @@ AC_CONFIG_TESTDIR([test])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build-aux])
 
-CFLAGS="$CFLAGS -Wall -Wextra -Wno-unused-parameter"
+CFLAGS="$CFLAGS -Wall"
+CFLAGS="$CFLAGS -Wextra"
+CFLAGS="$CFLAGS -Wno-unused-parameter"
 CFLAGS="$CFLAGS -Wno-missing-field-initializers"
 CFLAGS="$CFLAGS -Wmissing-declarations"
 CFLAGS="$CFLAGS -Wmissing-format-attribute"

@@ -87,7 +87,7 @@ by the \fBorigin\fR signature, and then a single line for any policy files
 in that directory that pass the \fBSelection\fR rules. This option will \fBNOT\fR
 verify the \fIdeb\fR.
 .TP
-.BR \-\-use\-policy\ <pol>
+.BR \-\-use\-policy " \fIpolicy\fP"
 This option takes one argument, which is the name of the
 policy file (as shown by the \fB\-\-list\-policies\fR option). Note, this is
 just a file, and not a full path. You cannot specifiy arbitrary policies.
@@ -148,6 +148,6 @@ Directory containing the keyrings that coincide with the policies.
 .I @KEYRINGS_DIR@/*/*.gpg
 GPG format keyrings for use by the policies.
 .SH SEE ALSO
-.BR deb (5),
+.BR deb (5).
 .SH AUTHOR
 Ben Collins <bcollins@debian.org>

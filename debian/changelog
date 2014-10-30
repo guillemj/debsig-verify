@@ -1,6 +1,7 @@
 debsig-verify (0.14) UNRELEASED; urgency=low
 
   * Assume at least C89 and POSIX.1-2001.
+  * Fix man page formatting.
 
  -- Guillem Jover <guillem@debian.org>  Fri, 31 Oct 2014 00:01:39 +0100
 

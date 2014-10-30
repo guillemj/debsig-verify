@@ -146,7 +146,7 @@ XML format policy files.
 Directory containing the keyrings that coincide with the policies.
 .TP
 .I @KEYRINGS_DIR@/*/*.gpg
-GPG format keyrings for use by the policies.
+GnuPG format keyrings for use by the policies.
 .SH SEE ALSO
 .BR deb (5).
 .SH AUTHOR

@@ -35,6 +35,7 @@
 
 #include <dpkg/dpkg.h>
 #include <dpkg/string.h>
+#include <dpkg/path.h>
 #include <dpkg/buffer.h>
 
 #include "debsig.h"
@@ -108,7 +109,7 @@ static int
 verifyGroupRules(struct deb_archive *deb, const char *originID, struct group *grp)
 {
     struct dpkg_error err;
-    char tmp_sig[32] = {'\0'}, tmp_data[32] = {'\0'};
+    char *tmp_sig, *tmp_data;
     int opt_count = 0, t, i, fd;
     struct match *mtc;
     off_t len;
@@ -120,7 +121,7 @@ verifyGroupRules(struct deb_archive *deb, const char *originID, struct group *gr
 	return 0;
 
     /* Go ahead and write out our data to a temp file */
-    strncpy(tmp_data, "/tmp/debsig-data.XXXXXX", sizeof(tmp_data));
+    tmp_data = path_make_temp_template("debsig-data");
     if ((fd = mkstemp(tmp_data)) == -1) {
 	ds_printf(DS_LEV_ERR, "error creating temp file %s: %s\n",
 		  tmp_data, strerror(errno));
@@ -128,6 +129,7 @@ verifyGroupRules(struct deb_archive *deb, const char *originID, struct group *gr
 	    close(fd);
 	    unlink(tmp_data);
 	}
+	free(tmp_data);
 	return 0;
     }
 
@@ -194,7 +196,7 @@ verifyGroupRules(struct deb_archive *deb, const char *originID, struct group *gr
 	if (!len) continue;
 
 	/* let's get our temp file */
-	strncpy(tmp_sig, "/tmp/debsig-sig.XXXXXX", sizeof(tmp_sig));
+	tmp_sig = path_make_temp_template("debsig-sig");
 	if ((fd = mkstemp(tmp_sig)) == -1) {
 	    ds_printf(DS_LEV_ERR, "error creating temp file %s: %s\n",
 		      tmp_sig, strerror(errno));
@@ -213,6 +215,7 @@ verifyGroupRules(struct deb_archive *deb, const char *originID, struct group *gr
 
 	fd = -1;
 	unlink(tmp_sig);
+	free(tmp_sig);
 
 	/* We fail no matter what now. Even if this is an optional match
 	 * rule, by now, we know that the sig exists, so we must fail */
@@ -233,13 +236,16 @@ verifyGroupRules(struct deb_archive *deb, const char *originID, struct group *gr
     }
 
     unlink(tmp_data);
+    free(tmp_data);
     return 1;
 
 fail_and_close:
     unlink(tmp_data);
+    free(tmp_data);
     if (fd != -1) {
 	close(fd);
 	unlink(tmp_sig);
+	free(tmp_sig);
     }
     return 0;
 }

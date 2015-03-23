@@ -6,6 +6,8 @@ debsig-verify (0.14) UNRELEASED; urgency=low
   * Add missing man page .TH fields.
   * Use https instead of git or http in URLs.
   * Add new test case covering key to name id mapping.
+  * Switch to use more of libdpkg instead of ad-hoc code:
+    - Use path_make_temp_template().
 
  -- Guillem Jover <guillem@debian.org>  Fri, 31 Oct 2014 00:01:39 +0100
 

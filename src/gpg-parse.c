@@ -173,7 +173,7 @@ getSigKeyID(struct deb_archive *deb, const char *type)
 	m_dup2(pwrite[0], 0);
 	close(pwrite[0]);
 	close(pwrite[1]);
-	execl(GPG_PROG, "gpg", GPG_ARGS, "--list-packets", "-q", "-", NULL);
+	execlp(GPG_PROG, "gpg", GPG_ARGS, "--list-packets", "-q", "-", NULL);
 	exit(1);
     }
     close(pread[1]); close(pwrite[0]);
@@ -238,7 +238,7 @@ gpgVerify(const char *originID, struct match *mtc,
 	if (DS_LEV_DEBUG < ds_debug_level) {
 	    close(0); close(1); close(2);
 	}
-	execl(GPG_PROG, "gpg", GPG_ARGS, "--keyring",
+	execlp(GPG_PROG, "gpg", GPG_ARGS, "--keyring",
 		keyring, "--verify", sig, data, NULL);
 	exit(1);
     }

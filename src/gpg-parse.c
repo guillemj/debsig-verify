@@ -41,6 +41,7 @@
 
 static int gpg_inited = 0;
 static char *gpg_tmpdir;
+static const char *gpg_prog = "gpg";
 
 static void
 cleanup_gpg_tmpdir(void)
@@ -63,9 +64,14 @@ cleanup_gpg_tmpdir(void)
 static void
 gpg_init(void)
 {
+    const char *prog;
     int rc;
 
     if (gpg_inited) return;
+
+    prog = getenv("DEBSIG_GNUPG_PROGRAM");
+    if (prog)
+      gpg_prog = prog;
 
     gpg_tmpdir = mkdtemp(path_make_temp_template("debsig-verify"));
     if (gpg_tmpdir == NULL)
@@ -96,8 +102,8 @@ getKeyID(const char *originID, const struct match *mtc)
     gpg_init();
 
     snprintf(buf, sizeof(buf) - 1,
-	     GPG_PROG" "GPG_ARGS_FMT" --list-packets -q %s%s/%s/%s",
-	     GPG_ARGS, rootdir, keyrings_dir, originID, mtc->file);
+	     "%s "GPG_ARGS_FMT" --list-packets -q %s%s/%s/%s",
+	     gpg_prog, GPG_ARGS, rootdir, keyrings_dir, originID, mtc->file);
 
     if ((ds = popen(buf, "r")) == NULL) {
 	perror("gpg");
@@ -173,7 +179,7 @@ getSigKeyID(struct deb_archive *deb, const char *type)
 	m_dup2(pwrite[0], 0);
 	close(pwrite[0]);
 	close(pwrite[1]);
-	execlp(GPG_PROG, "gpg", GPG_ARGS, "--list-packets", "-q", "-", NULL);
+	execlp(gpg_prog, "gpg", GPG_ARGS, "--list-packets", "-q", "-", NULL);
 	exit(1);
     }
     close(pread[1]); close(pwrite[0]);
@@ -238,7 +244,7 @@ gpgVerify(const char *originID, struct match *mtc,
 	if (DS_LEV_DEBUG < ds_debug_level) {
 	    close(0); close(1); close(2);
 	}
-	execlp(GPG_PROG, "gpg", GPG_ARGS, "--keyring",
+	execlp(gpg_prog, "gpg", GPG_ARGS, "--keyring",
 		keyring, "--verify", sig, data, NULL);
 	exit(1);
     }

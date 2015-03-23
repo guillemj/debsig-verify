@@ -134,6 +134,10 @@ the verification block of the policy were passed.
 An internal error occurred. This is an unrecoverable error. Either the
 \fBdeb\fR is corrupt, gpg failed abnormally, or some other uncontrollable
 failure.
+.SH ENVIRONMENT
+.TP
+.B DEBSIG_GNUPG_PROGRAM
+The name (or pathname) of the GnuPG program to use.
 .SH FILES
 .TP
 .I @POLICIES_DIR@/

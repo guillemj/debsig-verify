@@ -9,6 +9,8 @@ debsig-verify (0.14) UNRELEASED; urgency=low
   * Switch to use more of libdpkg instead of ad-hoc code:
     - Use path_make_temp_template().
   * Do not use an absolute pathname to the GnuPG program.
+  * Make the GnuPG program configurable through the DEBSIG_GNUPG_PROGRAM
+    environment variable.
 
  -- Guillem Jover <guillem@debian.org>  Fri, 31 Oct 2014 00:01:39 +0100
 

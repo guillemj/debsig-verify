@@ -18,8 +18,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#define GPG_PROG "gpg"
-
 /* This is so ugly, but easy */
 #define GPG_ARGS_FMT "%s %s %s %s %s %s"
 #define GPG_ARGS "--no-options", "--no-default-keyring", "--batch", \

@@ -8,6 +8,8 @@ debsig-verify (0.14) UNRELEASED; urgency=low
   * Add new test case covering key to name id mapping.
   * Switch to use more of libdpkg instead of ad-hoc code:
     - Use path_make_temp_template().
+    - Switch from popen() to subproc_fork() and execlp(), to avoid shell
+      invocation and unsafe argument passing.
   * Do not use an absolute pathname to the GnuPG program.
   * Make the GnuPG program configurable through the DEBSIG_GNUPG_PROGRAM
     environment variable.

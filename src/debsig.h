@@ -19,7 +19,6 @@
  */
 
 /* This is so ugly, but easy */
-#define GPG_ARGS_FMT "%s %s %s %s %s %s"
 #define GPG_ARGS "--no-options", "--no-default-keyring", "--batch", \
                  "--no-secmem-warning", "--no-permission-warning", \
                  "--no-mdc-warning"

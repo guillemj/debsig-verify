@@ -93,6 +93,9 @@ char *
 getKeyID(const char *originID, const struct match *mtc)
 {
     static char buf[2048];
+    char *keyring;
+    pid_t pid;
+    int pipefd[2];
     FILE *ds;
     char *c, *d, *ret = mtc->id;
 
@@ -101,11 +104,24 @@ getKeyID(const char *originID, const struct match *mtc)
 
     gpg_init();
 
-    snprintf(buf, sizeof(buf) - 1,
-	     "%s "GPG_ARGS_FMT" --list-packets -q %s%s/%s/%s",
-	     gpg_prog, GPG_ARGS, rootdir, keyrings_dir, originID, mtc->file);
+    m_asprintf(&keyring, "%s%s/%s/%s", rootdir, keyrings_dir, originID,
+               mtc->file);
 
-    if ((ds = popen(buf, "r")) == NULL) {
+    m_pipe(pipefd);
+    pid = subproc_fork();
+    if (pid == 0) {
+        m_dup2(pipefd[1], STDOUT_FILENO);
+        close(pipefd[0]);
+        close(pipefd[1]);
+        execlp(gpg_prog, "gpg", GPG_ARGS, "--list-packets", "-q", keyring, NULL);
+        ohshite("unable to execute %s (%s)", "gpg", gpg_prog);
+    }
+    close(pipefd[1]);
+
+    free(keyring);
+
+    ds = fdopen(pipefd[0], "r");
+    if (ds == NULL) {
 	perror("gpg");
 	return NULL;
     }
@@ -133,9 +149,9 @@ getKeyID(const char *originID, const struct match *mtc)
 	}
 	c = fgets(buf, sizeof(buf), ds);
     }
+    fclose(ds);
 
-    if (pclose(ds) < 0)
-	ohshite("getKeyID: closing GnuPG pipe");
+    subproc_reap(pid, "getKeyID", SUBPROC_NORMAL);
 
     if (ret == NULL)
 	ds_printf(DS_LEV_DEBUG, "        getKeyID: failed for %s", mtc->id);

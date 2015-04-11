@@ -18,11 +18,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* This is so ugly, but easy */
-#define GPG_ARGS "--no-options", "--no-default-keyring", "--batch", \
-                 "--no-secmem-warning", "--no-permission-warning", \
-                 "--no-mdc-warning"
-
 #define SIG_MAGIC ":signature packet:"
 #define USER_MAGIC ":user ID packet:"
 

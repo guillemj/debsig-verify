@@ -34,6 +34,7 @@
 
 #include <dpkg/dpkg.h>
 #include <dpkg/subproc.h>
+#include <dpkg/command.h>
 #include <dpkg/buffer.h>
 #include <dpkg/path.h>
 
@@ -89,6 +90,15 @@ gpg_init(void)
     gpg_inited = 1;
 }
 
+static void
+command_gpg_init(struct command *cmd)
+{
+    command_init(cmd, gpg_prog, "gpg");
+    command_add_args(cmd, "--no-options", "--no-default-keyring", "--batch",
+                          "--no-secmem-warning", "--no-permission-warning",
+                          "--no-mdc-warning", NULL);
+}
+
 char *
 getKeyID(const char *originID, const struct match *mtc)
 {
@@ -110,11 +120,15 @@ getKeyID(const char *originID, const struct match *mtc)
     m_pipe(pipefd);
     pid = subproc_fork();
     if (pid == 0) {
+        struct command cmd;
+
         m_dup2(pipefd[1], STDOUT_FILENO);
         close(pipefd[0]);
         close(pipefd[1]);
-        execlp(gpg_prog, "gpg", GPG_ARGS, "--list-packets", "-q", keyring, NULL);
-        ohshite("unable to execute %s (%s)", "gpg", gpg_prog);
+
+        command_gpg_init(&cmd);
+        command_add_args(&cmd, "--list-packets", "-q", keyring, NULL);
+        command_exec(&cmd);
     }
     close(pipefd[1]);
 
@@ -188,6 +202,8 @@ getSigKeyID(struct deb_archive *deb, const char *type)
 
     pid = subproc_fork();
     if (pid == 0) {
+        struct command cmd;
+
 	/* Here we go */
 	m_dup2(pread[1], 1);
 	close(pread[0]);
@@ -195,8 +211,10 @@ getSigKeyID(struct deb_archive *deb, const char *type)
 	m_dup2(pwrite[0], 0);
 	close(pwrite[0]);
 	close(pwrite[1]);
-	execlp(gpg_prog, "gpg", GPG_ARGS, "--list-packets", "-q", "-", NULL);
-	exit(1);
+
+	command_gpg_init(&cmd);
+	command_add_args(&cmd, "--list-packets", "-q", "-", NULL);
+	command_exec(&cmd);
     }
     close(pread[1]); close(pwrite[0]);
 
@@ -257,12 +275,15 @@ gpgVerify(const char *originID, struct match *mtc,
 
     pid = subproc_fork();
     if (pid == 0) {
+        struct command cmd;
+
 	if (DS_LEV_DEBUG < ds_debug_level) {
 	    close(0); close(1); close(2);
 	}
-	execlp(gpg_prog, "gpg", GPG_ARGS, "--keyring",
-		keyring, "--verify", sig, data, NULL);
-	exit(1);
+
+        command_gpg_init(&cmd);
+        command_add_args(&cmd, "--keyring", keyring, "--verify", sig, data, NULL);
+        command_exec(&cmd);
     }
 
     rc = subproc_reap(pid, "gpgVerify", SUBPROC_RETERROR | SUBPROC_RETSIGNO);

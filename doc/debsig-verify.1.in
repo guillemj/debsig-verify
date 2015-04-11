@@ -3,7 +3,7 @@
 .\"
 .\" Covered under the GPL v2
 .\"
-.TH debsig\-verify 1
+.TH debsig\-verify 1 "%RELEASE_DATE%" "%PACKAGE_VERSION%" "dpkg suite"
 .SH NAME
 debsig\-verify \- Verify signatures for a Debian format package
 .SH SYNOPSIS

@@ -46,7 +46,9 @@ EXTRA_DIST = \
 
 do_man_subst = $(AM_V_GEN) \
 	sed -e 's,@POLICIES_DIR@,$(DEBSIG_POLICIES_DIR),g' \
-	    -e 's,@KEYRINGS_DIR@,$(DEBSIG_KEYRINGS_DIR),g'
+	    -e 's,@KEYRINGS_DIR@,$(DEBSIG_KEYRINGS_DIR),g' \
+	    -e 's,%RELEASE_DATE%,$(RELEASE_DATE),g' \
+	    -e 's,%PACKAGE_VERSION%,$(PACKAGE_VERSION),g'
 
 doc/%.1: doc/%.1.in
 	$(MKDIR_P) doc

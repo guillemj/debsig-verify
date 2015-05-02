@@ -33,8 +33,13 @@ The mailing list address is (no subscription required to post):
 Source Repository
 -----------------
 
+The master repository can be browsed at:
+
   <https://anonscm.debian.org/cgit/dpkg/debsig-verify.git>
-  <git://anonscm.debian.org/dpkg/debsig-verify.git>
+
+and cloned from:
+
+  <https://anonscm.debian.org/dpkg/debsig-verify.git>
 
 
 Building from git source

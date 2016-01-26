@@ -90,7 +90,7 @@ verify the \fIdeb\fR.
 .BR \-\-use\-policy " \fIpolicy\fP"
 This option takes one argument, which is the name of the
 policy file (as shown by the \fB\-\-list\-policies\fR option). Note, this is
-just a file, and not a full path. You cannot specifiy arbitrary policies.
+just a file, and not a full path. You cannot specify arbitrary policies.
 This option is useful if more than one policy applies to potentially
 verifying the \fIdeb\fR. The program will then use this policy, and only
 this policy, to try and verify the \fIdeb\fR.
@@ -131,7 +131,7 @@ likely, this occurs due to a bad signature, or because not all criteria of
 the verification block of the policy were passed.
 .TP
 .B 14
-An internal error occured. This is an unrecoverable error. Either the
+An internal error occurred. This is an unrecoverable error. Either the
 \fBdeb\fR is corrupt, gpg failed abnormally, or some other uncontrollable
 failure.
 .SH FILES

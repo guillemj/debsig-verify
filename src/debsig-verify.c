@@ -114,6 +114,9 @@ verifyGroupRules(struct deb_archive *deb, const char *originID, struct group *gr
     struct match *mtc;
     off_t len;
 
+    /* Set umask for a more controlled environment. */
+    umask(022);
+
     /* If we don't have any matches, we fail. We don't want blank,
      * take-all rules. This actually gets checked while we parse the
      * policy file, but we check again for good measure.  */

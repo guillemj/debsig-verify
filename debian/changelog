@@ -14,6 +14,7 @@ debsig-verify (0.14) UNRELEASED; urgency=low
   * Do not use an absolute pathname to the GnuPG program.
   * Make the GnuPG program configurable through the DEBSIG_GNUPG_PROGRAM
     environment variable.
+  * Fix handling of a possibly non-terminated origin ID string.
 
  -- Guillem Jover <guillem@debian.org>  Fri, 31 Oct 2014 00:01:39 +0100
 

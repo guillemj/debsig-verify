@@ -334,8 +334,8 @@ ds_print_fatal_error(const char *emsg, const void *data)
 int main(int argc, char *argv[]) {
     struct deb_archive deb = { .name = NULL, .fd = -1, };
     struct policy *pol = NULL;
-    char originID[2048];
-    char buf[8192], pol_file[8192], *tmpID, *force_file = NULL;
+    char *originID;
+    char buf[8192], pol_file[8192], *force_file = NULL;
     DIR *pd = NULL;
     struct dirent *pd_ent;
     struct group *grp;
@@ -425,10 +425,9 @@ int main(int argc, char *argv[]) {
     if (!checkIsDeb(&deb))
 	ohshit("%s does not appear to be a deb format package", deb.name);
 
-    if ((tmpID = getSigKeyID(&deb, "origin")) == NULL)
+    originID = getSigKeyID(&deb, "origin");
+    if (originID == NULL)
 	ds_fail_printf(DS_FAIL_NOSIGS, "Origin Signature check failed. This deb might not be signed.\n");
-
-    strncpy(originID, tmpID, sizeof(originID));
 
     /* Now we have an ID, let's check the policy to use */
     snprintf(buf, sizeof(buf) - 1, "%s%s/%s", rootdir, policies_dir, originID);

@@ -241,11 +241,8 @@ verifyGroupRules(struct deb_archive *deb, const char *originID, struct group *gr
 fail_and_close:
     unlink(tmp_data);
     free(tmp_data);
-    if (fd != -1) {
+    if (fd != -1)
 	close(fd);
-	unlink(tmp_sig);
-	free(tmp_sig);
-    }
     return 0;
 }
 

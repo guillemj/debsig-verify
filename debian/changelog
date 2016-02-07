@@ -17,6 +17,7 @@ debsig-verify (0.14) UNRELEASED; urgency=low
   * Fix handling of a possibly non-terminated origin ID string.
   * Fix a file TOCTOU issue in the XML parser.
   * Set umask() for mkstemp() calls.
+  * Do not free() nor unlink() an uninitialized string.
 
  -- Guillem Jover <guillem@debian.org>  Fri, 31 Oct 2014 00:01:39 +0100
 

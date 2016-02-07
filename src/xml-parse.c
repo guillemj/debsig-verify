@@ -240,17 +240,20 @@ struct policy *parsePolicyFile(const char *filename) {
 
     ds_printf(DS_LEV_DEBUG, "    parsePolicyFile: parsing '%s'", filename);
 
-    if (stat(filename, &st)) {
+    pol_fs = fopen(filename, "r");
+    if (pol_fs == NULL) {
+	ds_printf(DS_LEV_ERR, "parsePolicyFile: could not open '%s' (%s)",
+		  filename, strerror(errno));
+	return NULL;
+    }
+    if (fstat(fileno(pol_fs), &st)) {
 	ds_printf(DS_LEV_ERR, "parsePolicyFile: could not stat %s", filename);
+	fclose(pol_fs);
 	return NULL;
     }
     if (!S_ISREG(st.st_mode)) {
 	ds_printf(DS_LEV_ERR, "parsePolicyFile: %s is not a regular file", filename);
-	return NULL;
-    }
-    if ((pol_fs = fopen(filename, "r")) == NULL) {
-	ds_printf(DS_LEV_ERR, "parsePolicyFile: could not open '%s' (%s)",
-		  filename, strerror(errno));
+	fclose(pol_fs);
 	return NULL;
     }
 

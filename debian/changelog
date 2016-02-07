@@ -15,6 +15,7 @@ debsig-verify (0.14) UNRELEASED; urgency=low
   * Make the GnuPG program configurable through the DEBSIG_GNUPG_PROGRAM
     environment variable.
   * Fix handling of a possibly non-terminated origin ID string.
+  * Fix a file TOCTOU issue in the XML parser.
 
  -- Guillem Jover <guillem@debian.org>  Fri, 31 Oct 2014 00:01:39 +0100
 

@@ -125,10 +125,6 @@ verifyGroupRules(struct deb_archive *deb, const char *originID, struct group *gr
     if ((fd = mkstemp(tmp_data)) == -1) {
 	ds_printf(DS_LEV_ERR, "error creating temp file %s: %s\n",
 		  tmp_data, strerror(errno));
-	if (fd != -1) {
-	    close(fd);
-	    unlink(tmp_data);
-	}
 	free(tmp_data);
 	return 0;
     }

@@ -107,9 +107,9 @@ getKeyID(const char *originID, const struct match *mtc)
     pid_t pid;
     int pipefd[2];
     FILE *ds;
-    char *c, *d, *ret = mtc->id;
+    char *c, *d, *ret = NULL;
 
-    if (ret == NULL)
+    if (mtc->id == NULL)
 	return NULL;
 
     gpg_init();
@@ -167,10 +167,12 @@ getKeyID(const char *originID, const struct match *mtc)
 
     subproc_reap(pid, "getKeyID", SUBPROC_NORMAL);
 
-    if (ret == NULL)
-	ds_printf(DS_LEV_DEBUG, "        getKeyID: failed for %s", mtc->id);
-    else
+    if (ret == NULL) {
+	ds_printf(DS_LEV_DEBUG, "        getKeyID: no match, falling back to %s", mtc->id);
+	ret = mtc->id;
+    } else {
 	ds_printf(DS_LEV_DEBUG, "        getKeyID: mapped %s -> %s", mtc->id, ret);
+    }
 
     return ret;
 }

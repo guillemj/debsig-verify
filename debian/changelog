@@ -18,6 +18,7 @@ debsig-verify (0.14) UNRELEASED; urgency=low
   * Fix a file TOCTOU issue in the XML parser.
   * Set umask() for mkstemp() calls.
   * Do not free() nor unlink() an uninitialized string.
+  * Fix printing debug message on unmatched key IDs in getKeyID().
 
  -- Guillem Jover <guillem@debian.org>  Fri, 31 Oct 2014 00:01:39 +0100
 

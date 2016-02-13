@@ -1,4 +1,4 @@
-debsig-verify (0.14) UNRELEASED; urgency=low
+debsig-verify (0.14) unstable; urgency=low
 
   * Assume at least C89 and POSIX.1-2001.
   * Fix man page formatting.
@@ -21,7 +21,7 @@ debsig-verify (0.14) UNRELEASED; urgency=low
   * Fix printing debug message on unmatched key IDs in getKeyID().
   * Update copyright years.
 
- -- Guillem Jover <guillem@debian.org>  Fri, 31 Oct 2014 00:01:39 +0100
+ -- Guillem Jover <guillem@debian.org>  Sat, 13 Feb 2016 11:32:58 +0100
 
 debsig-verify (0.13) unstable; urgency=medium
 

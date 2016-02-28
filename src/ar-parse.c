@@ -116,7 +116,7 @@ findMember(struct deb_archive *deb, const char *name)
 
 	/* Skip to the start of the next member, and try again. */
 	if (fd_skip(deb->fd, mem_len + (mem_len & 1), &err) < 0)
-	    ohshit("findMember: error while skiping member data: %s", err.str);
+	    ohshit("findMember: error while skipping member data: %s", err.str);
     }
 
     /* well, nothing found, so let's pass on the bad news */

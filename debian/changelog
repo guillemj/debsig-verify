@@ -1,3 +1,9 @@
+debsig-verify (0.15) UNRELEASED; urgency=medium
+
+  * Fix typo in error message, reported by lintian.
+
+ -- Guillem Jover <guillem@debian.org>  Wed, 01 Jun 2016 00:52:01 +0200
+
 debsig-verify (0.14) unstable; urgency=low
 
   * Assume at least C89 and POSIX.1-2001.

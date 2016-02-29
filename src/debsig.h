@@ -56,7 +56,8 @@ struct policy {
         struct group *vers;
 };
 
-struct policy *parsePolicyFile(const char *filename);
+struct policy *
+parsePolicyFile(const char *filename);
 off_t
 findMember(struct deb_archive *deb, const char *name);
 off_t
@@ -68,7 +69,8 @@ getSigKeyID(struct deb_archive *deb, const char *type);
 int
 gpgVerify(const char *originID, struct match *mtc,
           const char *data, const char *sig);
-void clear_policy(void);
+void
+clear_policy(void);
 
 /* Debugging and failures */
 #define DS_LEV_ALWAYS 3
@@ -83,7 +85,8 @@ void clear_policy(void);
 #define DS_FAIL_NOPOLICIES	12
 #define DS_FAIL_BADSIG		13
 #define DS_FAIL_INTERNAL	14
-extern void ds_printf(int level, const char *fmt, ...)
+void
+ds_printf(int level, const char *fmt, ...)
 	__attribute__ ((__format__ (__printf__, 2, 3)));
 #define ds_fail_printf(myexit, fmt, args...)	\
 do {						\

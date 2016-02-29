@@ -68,7 +68,8 @@ gpg_init(void)
     const char *prog;
     int rc;
 
-    if (gpg_inited) return;
+    if (gpg_inited)
+        return;
 
     prog = getenv("DEBSIG_GNUPG_PROGRAM");
     if (prog)
@@ -143,13 +144,18 @@ getKeyID(const char *originID, const struct match *mtc)
     c = fgets(buf, sizeof(buf), ds);
     while (c != NULL) {
 	if (strncmp(buf, USER_MAGIC, strlen(USER_MAGIC)) == 0) {
-	    if ((c = strchr(buf, '"')) == NULL) continue;
+	    c = strchr(buf, '"');
+	    if (c == NULL)
+		continue;
 	    d = c + 1;
-	    if ((c = strchr(d, '"')) == NULL) continue;
+	    c = strchr(d, '"');
+	    if (c == NULL)
+		continue;
 	    *c = '\0';
 	    if (strcmp(d, mtc->id) == 0) {
 		c = fgets(buf, sizeof(buf), ds);
-		if (c == NULL) continue;
+		if (c == NULL)
+		    continue;
 		if (strncmp(buf, SIG_MAGIC, strlen(SIG_MAGIC)) == 0) {
 		    if ((c = strchr(buf, '\n')) != NULL)
 			*c = '\0';

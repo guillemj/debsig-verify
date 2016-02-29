@@ -52,7 +52,7 @@ off_t
 findMember(struct deb_archive *deb, const char *name)
 {
     struct dpkg_error err;
-    char magic[SARMAG+1];
+    char magic[SARMAG + 1];
     struct ar_hdr arh;
     off_t mem_len;
     ssize_t r;

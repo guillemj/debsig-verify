@@ -63,7 +63,6 @@ checkSelRules(struct deb_archive *deb, const char *originID, struct group *grp)
     int len;
 
     for (mtc = grp->matches; mtc; mtc = mtc->next) {
-
         ds_printf(DS_LEV_VER, "      Processing '%s' key...", mtc->name);
 
         /* If we have an ID for this match, check to make sure it exists, and
@@ -89,7 +88,8 @@ checkSelRules(struct deb_archive *deb, const char *originID, struct group *grp)
             return 0;
         }
         /* This would mean this is Optional, so we ignore it for now */
-        if (!len) continue;
+        if (!len)
+            continue;
 
         /* Kick up the count once for checking later */
         if (mtc->type == OPTIONAL_MATCH)
@@ -169,7 +169,6 @@ verifyGroupRules(struct deb_archive *deb, const char *originID, struct group *gr
     fd = -1;
 
     for (mtc = grp->matches; mtc; mtc = mtc->next) {
-
 	ds_printf(DS_LEV_VER, "      Processing '%s' key...", mtc->name);
 
 	/* If we have an ID for this match, check to make sure it exists, and
@@ -192,7 +191,8 @@ verifyGroupRules(struct deb_archive *deb, const char *originID, struct group *gr
 	}
 
 	/* This would mean this is Optional, so we ignore it for now */
-	if (!len) continue;
+	if (!len)
+            continue;
 
 	/* let's get our temp file */
 	tmp_sig = path_make_temp_template("debsig-sig");
@@ -280,7 +280,9 @@ checkIsDeb(struct deb_archive *deb)
     return 1;
 }
 
-static void outputVersion(void) {
+static void
+outputVersion(void)
+{
     printf(
 "Debsig Program Version - "VERSION"\n"
 "  Signature Version - "SIG_VERSION"\n"
@@ -295,7 +297,9 @@ outputBadUsage(void)
     ohshit("Use --help for program usage information.");
 }
 
-static void outputUsage(void) {
+static void
+outputUsage(void)
+{
     printf("Usage: %s [<option>...] <deb>\n\n", dpkg_get_progname());
 
     printf(
@@ -327,7 +331,9 @@ ds_print_fatal_error(const char *emsg, const void *data)
     ds_printf(DS_LEV_ERR, "%s", emsg);
 }
 
-int main(int argc, char *argv[]) {
+int
+main(int argc, char *argv[])
+{
     struct deb_archive deb = { .name = NULL, .fd = -1, };
     struct policy *pol = NULL;
     char *originID;
@@ -449,7 +455,8 @@ int main(int argc, char *argv[]) {
 	ds_printf(DS_LEV_VER, "  Parsing policy file: %s", pol_file);
 	pol = parsePolicyFile(pol_file);
 
-	if (pol == NULL) continue;
+	if (pol == NULL)
+	    continue;
 
 	/* Now let's see if this policy's selection is useful for this .deb  */
 	ds_printf(DS_LEV_VER, "    Checking Selection group(s).");

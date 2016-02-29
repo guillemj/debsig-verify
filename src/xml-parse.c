@@ -53,7 +53,9 @@ static int deb_obs_init = 0;
     ds_printf(DS_LEV_DEBUG , "%d: " fmt , XML_GetCurrentLineNumber(parser) , ## args); \
 }
 
-static void startElement(void *userData, const char *name, const char **atts) {
+static void
+startElement(void *userData, const char *name, const char **atts)
+{
     int i, depth;
     int *depthPtr = userData;
 
@@ -79,11 +81,11 @@ static void startElement(void *userData, const char *name, const char **atts) {
 	
 	for (i = 0; atts[i]; i += 2) {
 	    if (strcmp(atts[i], "id") == 0)
-		ret.id = obstack_copy0(&deb_obs, atts[i+1], strlen(atts[i+1]));
+		ret.id = obstack_copy0(&deb_obs, atts[i + 1], strlen(atts[i + 1]));
 	    else if (strcmp(atts[i], "Name") == 0)
-		ret.name = obstack_copy0(&deb_obs, atts[i+1], strlen(atts[i+1]));
+		ret.name = obstack_copy0(&deb_obs, atts[i + 1], strlen(atts[i + 1]));
 	    else if (strcmp(atts[i], "Description") == 0)
-		ret.description = obstack_copy0(&deb_obs, atts[i+1], strlen(atts[i+1]));
+		ret.description = obstack_copy0(&deb_obs, atts[i + 1], strlen(atts[i + 1]));
 	    else
 		parse_error("Origin element contains unknown attribute '%s'",
 			     atts[i]);
@@ -94,6 +96,7 @@ static void startElement(void *userData, const char *name, const char **atts) {
     } else if (strcmp(name, "Selection") == 0 ||
 	       strcmp(name, "Verification") == 0) {
 	struct group *g = NULL;
+
 	if (depth != 1)
 	    parse_error("policy parse error: 'Selection/Verification' found at wrong level");
 
@@ -122,7 +125,9 @@ static void startElement(void *userData, const char *name, const char **atts) {
 
 	for (i = 0; atts[i]; i += 2) {
 	    if (strcmp(atts[i], "MinOptional") == 0) {
-		int t; const char *c = atts[i+1];
+		int t;
+		const char *c = atts[i + 1];
+
 		for (t = 0; c[t]; t++) {
 		    if (!isdigit(c[t]))
 			parse_error("MinOptional requires a numerical value");
@@ -137,6 +142,7 @@ static void startElement(void *userData, const char *name, const char **atts) {
 	       strcmp(name, "Reject") == 0||
 	       strcmp(name, "Optional") == 0) {
 	struct match *m = NULL, *cur_m = NULL;
+
 	if (depth != 2)
 	    parse_error("policy parse error: Match element found at wrong level");
 
@@ -163,13 +169,15 @@ static void startElement(void *userData, const char *name, const char **atts) {
 	/* Set the attributes first, so we can sanity check the type after */
         for (i = 0; atts[i]; i += 2) {
             if (strcmp(atts[i], "Type") == 0) {
-                cur_m->name = obstack_copy0(&deb_obs, atts[i+1], strlen(atts[i+1]));
+                cur_m->name = obstack_copy0(&deb_obs, atts[i + 1], strlen(atts[i + 1]));
 	    } else if (strcmp(atts[i], "File") == 0) {
-		cur_m->file = obstack_copy0(&deb_obs, atts[i+1], strlen(atts[i+1]));;
+		cur_m->file = obstack_copy0(&deb_obs, atts[i + 1], strlen(atts[i + 1]));;
 	    } else if (strcmp(atts[i], "id") == 0) {
-		cur_m->id = obstack_copy0(&deb_obs, atts[i+1], strlen(atts[i+1]));;
+		cur_m->id = obstack_copy0(&deb_obs, atts[i + 1], strlen(atts[i + 1]));;
 	    } else if (strcmp(atts[i], "Expiry") == 0) {
-		int t; const char *c = atts[i+1];
+		int t;
+		const char *c = atts[i + 1];
+
 		for (t = 0; c[t]; t++) {
 		    if (!isdigit(c[t]))
 			parse_error("Expiry requires a numerical value");
@@ -198,12 +206,16 @@ static void startElement(void *userData, const char *name, const char **atts) {
     }
 }
 
-static void endElement(void *userData, const char *name) {
+static void
+endElement(void *userData, const char *name)
+{
     int *depthPtr = userData;
     *depthPtr -= 1;
 
     if (strcmp(name, "Selection") == 0 || strcmp(name, "Verification") == 0) {
-	struct match *m; int i = 0;
+	struct match *m;
+	int i = 0;
+
 	/* sanity check this block */
 	for (m = cur_grp->matches; m; m = m->next) {
 	    if (m->type == OPTIONAL_MATCH ||
@@ -218,7 +230,9 @@ static void endElement(void *userData, const char *name) {
     }
 }
 
-void clear_policy(void) {
+void
+clear_policy(void)
+{
     if (deb_obs_init) {
 	obstack_free(&deb_obs, 0);
 	deb_obs_init = 0;
@@ -226,7 +240,9 @@ void clear_policy(void) {
     memset(&ret, '\0', sizeof(struct policy));
 }
 
-struct policy *parsePolicyFile(const char *filename) {
+struct policy *
+parsePolicyFile(const char *filename)
+{
     char buf[BUFSIZ];
     int done, depth = 0;
     FILE *pol_fs;
@@ -264,6 +280,7 @@ struct policy *parsePolicyFile(const char *filename) {
 
     do {
 	size_t len = fread(buf, 1, sizeof(buf), pol_fs);
+
 	done = len < sizeof(buf);
 	if (!XML_Parse(parser, buf, len, done)) {
 	    ds_printf(DS_LEV_DEBUG,

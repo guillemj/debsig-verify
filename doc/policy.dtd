@@ -7,7 +7,7 @@
 
 <!ELEMENT Policy (Origin, Selection*, Verification+)>
 
-    <!ATTLIST Policy xmlns CDATA #FIXED "http://www.debian.org/debsig/1.0/">
+    <!ATTLIST Policy xmlns CDATA #FIXED "https://www.debian.org/debsig/1.0/">
 
 <!ELEMENT Origin EMPTY>
 

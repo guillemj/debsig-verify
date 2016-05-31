@@ -1,5 +1,6 @@
 #!/usr/bin/make -f
 
+DEB_BUILD_MAINT_OPTIONS = hardening=+all
 DEB_CFLAGS_MAINT_PREPEND = -Wall
 
 include /usr/share/dpkg/default.mk

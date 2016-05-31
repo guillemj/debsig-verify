@@ -5,6 +5,7 @@ debsig-verify (0.15) UNRELEASED; urgency=medium
   * Bump Standard-Version to 3.9.8 (no changes needed).
   * Use https for debsig policy DTD.
   * Fix coding style.
+  * Switch to the dpkg makefile fragments in debian/rules.
 
  -- Guillem Jover <guillem@debian.org>  Wed, 01 Jun 2016 00:52:01 +0200
 

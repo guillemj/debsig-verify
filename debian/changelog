@@ -7,6 +7,7 @@ debsig-verify (0.15) UNRELEASED; urgency=medium
   * Fix coding style.
   * Switch to the dpkg makefile fragments in debian/rules.
   * Enable all hardening flags.
+  * Switch to use the new libdpkg 1.18.8 ar API.
 
  -- Guillem Jover <guillem@debian.org>  Wed, 01 Jun 2016 00:52:01 +0200
 

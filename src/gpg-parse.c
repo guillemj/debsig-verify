@@ -184,7 +184,7 @@ getKeyID(const char *originID, const struct match *mtc)
 }
 
 char *
-getSigKeyID(struct deb_archive *deb, const char *type)
+getSigKeyID(struct dpkg_ar *deb, const char *type)
 {
     static char buf[2048];
     struct dpkg_error err;

@@ -56,7 +56,7 @@ static const char *ver_data_members[] = {
 };
 
 static int
-checkSelRules(struct deb_archive *deb, const char *originID, struct group *grp)
+checkSelRules(struct dpkg_ar *deb, const char *originID, struct group *grp)
 {
     int opt_count = 0;
     struct match *mtc;
@@ -106,7 +106,7 @@ checkSelRules(struct deb_archive *deb, const char *originID, struct group *grp)
 }
 
 static int
-verifyGroupRules(struct deb_archive *deb, const char *originID, struct group *grp)
+verifyGroupRules(struct dpkg_ar *deb, const char *originID, struct group *grp)
 {
     struct dpkg_error err;
     char *tmp_sig, *tmp_data;
@@ -247,7 +247,7 @@ fail_and_close:
 }
 
 static int
-checkIsDeb(struct deb_archive *deb)
+checkIsDeb(struct dpkg_ar *deb)
 {
     int i;
     const char *member;
@@ -334,7 +334,7 @@ ds_print_fatal_error(const char *emsg, const void *data)
 int
 main(int argc, char *argv[])
 {
-    struct deb_archive deb = { .name = NULL, .fd = -1, };
+    struct dpkg_ar *deb;
     struct policy *pol = NULL;
     char *originID;
     char buf[8192], pol_file[8192], *force_file = NULL;
@@ -416,18 +416,15 @@ main(int argc, char *argv[])
 	outputBadUsage();
     }
 
-    deb.name = argv[i];
-    deb.fd = open(deb.name, O_RDONLY);
-    if (deb.fd < 0)
-	ohshite("could not open %s", deb.name);
+    deb = dpkg_ar_open(argv[i]);
 
     if (!list_only)
-	ds_printf(DS_LEV_VER, "Starting verification for: %s", deb.name);
+	ds_printf(DS_LEV_VER, "Starting verification for: %s", deb->name);
 
-    if (!checkIsDeb(&deb))
-	ohshit("%s does not appear to be a deb format package", deb.name);
+    if (!checkIsDeb(deb))
+	ohshit("%s does not appear to be a deb format package", deb->name);
 
-    originID = getSigKeyID(&deb, "origin");
+    originID = getSigKeyID(deb, "origin");
     if (originID == NULL)
 	ds_fail_printf(DS_FAIL_NOSIGS, "Origin Signature check failed. This deb might not be signed.\n");
 
@@ -461,7 +458,7 @@ main(int argc, char *argv[])
 	/* Now let's see if this policy's selection is useful for this .deb  */
 	ds_printf(DS_LEV_VER, "    Checking Selection group(s).");
 	for (grp = pol->sels; grp != NULL; grp = grp->next) {
-	    if (!checkSelRules(&deb, originID, grp)) {
+	    if (!checkSelRules(deb, originID, grp)) {
 		clear_policy();
 		ds_printf(DS_LEV_VER, "    Selection group failed checks.");
 		pol = NULL;
@@ -493,9 +490,9 @@ main(int argc, char *argv[])
     ds_printf(DS_LEV_VER, "    Checking Verification group(s).");
 
     for (grp = pol->vers; grp; grp = grp->next) {
-	if (!verifyGroupRules(&deb, originID, grp)) {
+	if (!verifyGroupRules(deb, originID, grp)) {
 	    ds_printf(DS_LEV_VER, "    Verification group failed checks.");
-	    ds_fail_printf(DS_FAIL_BADSIG, "Failed verification for %s.", deb.name);
+	    ds_fail_printf(DS_FAIL_BADSIG, "Failed verification for %s.", deb->name);
 	}
     }
 

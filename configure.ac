@@ -41,7 +41,7 @@ AM_MISSING_PROG([AUTOM4TE], [autom4te]) dnl Needed by autotest
 
 # Checks for libraries.
 AC_CHECK_LIB([xmlparse], [XML_ParserCreate])
-PKG_CHECK_MODULES([LIBDPKG], [libdpkg >= 1.17.14])
+PKG_CHECK_MODULES([LIBDPKG], [libdpkg >= 1.18.8])
 
 # Checks for header files.
 

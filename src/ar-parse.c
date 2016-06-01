@@ -49,7 +49,7 @@
  * nothing important is going to be zero length anyway, so we treat it as
  * "non-existant".  */
 off_t
-findMember(struct deb_archive *deb, const char *name)
+findMember(struct dpkg_ar *deb, const char *name)
 {
     struct dpkg_error err;
     char magic[SARMAG + 1];
@@ -98,7 +98,7 @@ findMember(struct deb_archive *deb, const char *name)
 	    ohshit("findMember: archive appears to be corrupt, fmag incorrect");
 
 	dpkg_ar_normalize_name(&arh);
-	mem_len = dpkg_ar_member_get_size(deb->name, &arh);
+	mem_len = dpkg_ar_member_get_size(deb, &arh);
 
 	/*
 	 * If all looks well, then we return the length of the member, and

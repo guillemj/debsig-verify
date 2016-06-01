@@ -46,7 +46,7 @@ ds_printf(int level, const char *fmt, ...)
 }
 
 off_t
-checkSigExist(struct deb_archive *deb, const char *name)
+checkSigExist(struct dpkg_ar *deb, const char *name)
 {
     char buf[16];
 

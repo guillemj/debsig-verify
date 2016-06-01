@@ -18,6 +18,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <dpkg/ar.h>
+
 #define SIG_MAGIC ":signature packet:"
 #define USER_MAGIC ":user ID packet:"
 
@@ -27,11 +29,6 @@
 
 #define SIG_VERSION "1.0"
 #define DEBSIG_NAMESPACE "https://www.debian.org/debsig/"SIG_VERSION"/"
-
-struct deb_archive {
-	const char *name;
-	int fd;
-};
 
 struct match {
         struct match *next;
@@ -59,13 +56,13 @@ struct policy {
 struct policy *
 parsePolicyFile(const char *filename);
 off_t
-findMember(struct deb_archive *deb, const char *name);
+findMember(struct dpkg_ar *deb, const char *name);
 off_t
-checkSigExist(struct deb_archive *deb, const char *name);
+checkSigExist(struct dpkg_ar *deb, const char *name);
 char *
 getKeyID(const char *originID, const struct match *mtc);
 char *
-getSigKeyID(struct deb_archive *deb, const char *type);
+getSigKeyID(struct dpkg_ar *deb, const char *type);
 int
 gpgVerify(const char *originID, struct match *mtc,
           const char *data, const char *sig);

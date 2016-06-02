@@ -100,6 +100,12 @@ command_gpg_init(struct command *cmd)
                           "--no-mdc-warning", NULL);
 }
 
+enum keyid_state {
+    KEYID_UNKNOWN,
+    KEYID_USER,
+    KEYID_SIG,
+};
+
 char *
 getKeyID(const char *originID, const struct match *mtc)
 {
@@ -109,6 +115,7 @@ getKeyID(const char *originID, const struct match *mtc)
     int pipefd[2];
     FILE *ds;
     char *c, *d, *ret = NULL;
+    enum keyid_state state = KEYID_UNKNOWN;
 
     if (mtc->id == NULL)
 	return NULL;
@@ -141,9 +148,14 @@ getKeyID(const char *originID, const struct match *mtc)
 	return NULL;
     }
 
-    c = fgets(buf, sizeof(buf), ds);
-    while (c != NULL) {
-	if (strncmp(buf, USER_MAGIC, strlen(USER_MAGIC)) == 0) {
+    while ((c = fgets(buf, sizeof(buf), ds)) != NULL) {
+	/* Skip comments. */
+	if (buf[0] == '#')
+	    continue;
+
+	if (state == KEYID_UNKNOWN) {
+	    if (strncmp(buf, USER_MAGIC, strlen(USER_MAGIC)) != 0)
+		continue;
 	    c = strchr(buf, '"');
 	    if (c == NULL)
 		continue;
@@ -152,22 +164,24 @@ getKeyID(const char *originID, const struct match *mtc)
 	    if (c == NULL)
 		continue;
 	    *c = '\0';
-	    if (strcmp(d, mtc->id) == 0) {
-		c = fgets(buf, sizeof(buf), ds);
-		if (c == NULL)
-		    continue;
-		if (strncmp(buf, SIG_MAGIC, strlen(SIG_MAGIC)) == 0) {
-		    if ((c = strchr(buf, '\n')) != NULL)
-			*c = '\0';
-		    d = strstr(buf, "keyid");
-		    if (d) {
-			ret = d + 6;
-			break;
-		    }
-		}
+	    if (strcmp(d, mtc->id) != 0)
+		continue;
+	    /* User match found. */
+	    state = KEYID_USER;
+	} else if (state == KEYID_USER) {
+	    if (strncmp(buf, SIG_MAGIC, strlen(SIG_MAGIC)) != 0)
+		continue;
+	    if ((c = strchr(buf, '\n')) != NULL)
+		*c = '\0';
+	    d = strstr(buf, "keyid");
+	    if (d) {
+		ret = d + 6;
+		/* Keyid match found. */
+		break;
 	    }
+	    /* Reset state. */
+	    state = KEYID_UNKNOWN;
 	}
-	c = fgets(buf, sizeof(buf), ds);
     }
     fclose(ds);
 
@@ -235,8 +249,7 @@ getSigKeyID(struct dpkg_ar *deb, const char *type)
 	ohshite("getSigKeyID: error closing gpg write pipe");
 
     /* Now, let's see what gpg has to say about all this */
-    c = fgets(buf, sizeof(buf), ds_read);
-    while (c != NULL) {
+    while ((c = fgets(buf, sizeof(buf), ds_read)) != NULL) {
 	if (strncmp(buf, SIG_MAGIC, strlen(SIG_MAGIC)) == 0) {
 	    if ((c = strchr(buf, '\n')) != NULL)
 		*c = '\0';
@@ -247,7 +260,6 @@ getSigKeyID(struct dpkg_ar *deb, const char *type)
 		break;
 	    }
 	}
-	c = fgets(buf, sizeof(buf), ds_read);
     }
     if (ferror(ds_read))
 	ohshit("error reading from gpg");

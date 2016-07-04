@@ -17,7 +17,7 @@ else
 endif
 
 # Create configure script if necessary, automake handles rebuilding it.
-configure:
+configure: configure.ac
 	dh_testdir
 
 	./autogen

@@ -9,6 +9,7 @@ debsig-verify (0.15) UNRELEASED; urgency=medium
   * Enable all hardening flags.
   * Switch to use the new libdpkg 1.18.8 ar API.
   * Fix parsing of GnuPG 2.x --list-packets output.
+  * Move debian/copyright paragraph referencing GPL-2 file to a Comment field.
 
  -- Guillem Jover <guillem@debian.org>  Wed, 01 Jun 2016 00:52:01 +0200
 

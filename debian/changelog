@@ -11,6 +11,7 @@ debsig-verify (0.15) UNRELEASED; urgency=medium
   * Fix parsing of GnuPG 2.x --list-packets output.
   * Move debian/copyright paragraph referencing GPL-2 file to a Comment field.
   * Make configure.ac a dependency of the configure target in debian/rules.
+  * Fix test suite with GnuPG 2.x.
 
  -- Guillem Jover <guillem@debian.org>  Wed, 01 Jun 2016 00:52:01 +0200
 

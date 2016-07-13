@@ -15,15 +15,46 @@ TESTDATA="@abs_top_srcdir@/test"
 TESTPOLICIES="$TESTDATA/policies"
 TESTKEYRINGS="$TESTDATA/keyrings"
 TESTKEYID="FAD46790DE88C7E2"
-TESTGNUPG="gnupg"
 
 DEBSIG="debsig-verify -v -d --policies-dir $TESTPOLICIES --keyrings-dir $TESTKEYRINGS"
 
+GPG=gpg
+GPGOPTS="--ignore-time-conflict --no-options --no-default-keyring
+         --no-auto-check-trustdb --trust-model=always"
+
+# Check if we need to manage the agent ourselves.
+if gpgconf -n --kill gpg-agent >/dev/null 2>&1; then
+  GPGAGENT_MANAGED=true
+else
+  GPGAGENT_MANAGED=false
+fi
+
+trap debsig_teardown_gnupg EXIT HUP INT QUIT TERM
+
 debsig_setup_gnupg ()
 {
-  mkdir -p $TESTGNUPG
-  chmod go-rwx $TESTGNUPG
-  cp -a $TESTDATA/keyrings/$TESTKEYID/* $TESTGNUPG/
+  # Create the GnuPG home directory.
+  export GNUPGHOME=$(mktemp --tmpdir -d debsig-test-tmp.XXXXXXXXXX)
+  TESTGNUPG=$GNUPGHOME
+  chmod 0700 $GNUPGHOME
+
+  # For recent GnuPG versions, start the agent explicitly.
+  if $GPGAGENT_MANAGED; then
+    gpgconf --launch gpg-agent
+  fi
+
+  # Import the keys.
+  $GPG $GPGOPTS -v --batch --import $TESTKEYRINGS/$TESTKEYID/pubring.gpg
+  $GPG $GPGOPTS -v --batch --import $TESTKEYRINGS/$TESTKEYID/secring.gpg
+}
+
+debsig_teardown_gnupg ()
+{
+  if $GPGAGENT_MANAGED; then
+    gpgconf --kill gpg-agent
+  fi
+  rm -rf "$TESTGNUPG"
+  unset GNUPGHOME
 }
 
 debsig_make_deb ()
@@ -53,8 +84,9 @@ debsig_make_sig_bad ()
 
   # Add a bogus signature to a .deb package.
   debsig_setup_gnupg
-  gpg --home $TESTGNUPG  --detach-sig >_gpgorigin <"$debpkg"
+  $GPG $GPGOPTS --detach-sig >_gpgorigin <"$debpkg"
   ar q "$debpkg" _gpgorigin
+  debsig_teardown_gnupg
 }
 
 debsig_make_sig ()
@@ -63,6 +95,7 @@ debsig_make_sig ()
 
   # Add signature to a .deb package.
   debsig_setup_gnupg
-  ar p "$debpkg" | gpg --home $TESTGNUPG --detach-sig >_gpgorigin
+  ar p "$debpkg" | $GPG $GPGOPTS --detach-sig >_gpgorigin
   ar q "$debpkg" _gpgorigin
+  debsig_teardown_gnupg
 }

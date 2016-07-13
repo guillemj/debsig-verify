@@ -1,4 +1,4 @@
-debsig-verify (0.15) UNRELEASED; urgency=medium
+debsig-verify (0.15) unstable; urgency=medium
 
   * Fix typo in error message, reported by lintian.
   * Fix typo in man page, reported by lintian.
@@ -13,7 +13,7 @@ debsig-verify (0.15) UNRELEASED; urgency=medium
   * Make configure.ac a dependency of the configure target in debian/rules.
   * Fix test suite with GnuPG 2.x.
 
- -- Guillem Jover <guillem@debian.org>  Wed, 01 Jun 2016 00:52:01 +0200
+ -- Guillem Jover <guillem@debian.org>  Thu, 14 Jul 2016 00:45:33 +0200
 
 debsig-verify (0.14) unstable; urgency=low
 

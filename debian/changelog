@@ -1,6 +1,7 @@
 debsig-verify (0.15) UNRELEASED; urgency=medium
 
   * Fix typo in error message, reported by lintian.
+  * Fix typo in man page, reported by lintian.
 
  -- Guillem Jover <guillem@debian.org>  Wed, 01 Jun 2016 00:52:01 +0200
 

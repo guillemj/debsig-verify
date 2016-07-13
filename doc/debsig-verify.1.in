@@ -11,7 +11,7 @@ debsig\-verify \- Verify signatures for a Debian format package
 .RI [ option "...] " deb
 .SH DESCRIPTION
 This program is part of a security model that verifies the source and
-validity of a Debian format package (commonly refered to as a \fIdeb\fR).
+validity of a Debian format package (commonly referred to as a \fIdeb\fR).
 .PP
 This program implements the verification specs defined in the document,
 "\fBPackage Verification with dpkg: Implementation\fR",

@@ -2,7 +2,7 @@
  * debsig-verify - Debian package signature verification tool
  *
  * Copyright © 2000 Ben Collins <bcollins@debian.org>
- * Copyright © 2014 Guillem Jover <guillem@debian.org>
+ * Copyright © 2014, 2016-2017 Guillem Jover <guillem@debian.org>
  *
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ findMember(struct dpkg_ar *deb, const char *name)
 {
     struct dpkg_error err;
     char magic[SARMAG + 1];
-    struct ar_hdr arh;
+    struct dpkg_ar_hdr arh;
     off_t mem_len;
     ssize_t r;
     size_t len = strlen(name);

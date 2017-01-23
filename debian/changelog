@@ -5,6 +5,8 @@ debsig-verify (0.16) UNRELEASED; urgency=medium
   * Mark gnupg Build-Depends as <!nocheck>.
   * Adapt for libdpkg 1.18.11 ar API changes.
   * Enable more compilation warnings from configure.
+  * Switch to a single git repository URL in README for browsing and cloning
+    to fix previously broken cloning URL.
 
  -- Guillem Jover <guillem@debian.org>  Mon, 23 Jan 2017 22:38:04 +0100
 

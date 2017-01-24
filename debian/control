@@ -21,6 +21,7 @@ Depends:
  gnupg,
 Suggests:
  debian-keyring,
+ debsigs,
 Enhances:
  dpkg,
 Built-Using: ${sourcedep:libdpkg-dev}

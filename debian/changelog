@@ -1,6 +1,7 @@
 debsig-verify (0.16) UNRELEASED; urgency=medium
 
   * Wrap dependency fields in debian/control.
+  * Add debsigs to Suggests.
 
  -- Guillem Jover <guillem@debian.org>  Mon, 23 Jan 2017 22:38:04 +0100
 

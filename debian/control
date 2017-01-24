@@ -5,15 +5,24 @@ Maintainer: Dpkg Developers <debian-dpkg@lists.debian.org>
 Uploaders: Guillem Jover <guillem@debian.org>
 Vcs-Browser: https://anonscm.debian.org/cgit/dpkg/debsig-verify.git
 Vcs-Git: https://anonscm.debian.org/git/dpkg/debsig-verify.git
-Build-Depends: debhelper (>= 9), pkg-config, libdpkg-dev (>= 1.18.8),
- libxmltok1-dev, gnupg
+Build-Depends:
+ debhelper (>= 9),
+ pkg-config,
+ libdpkg-dev (>= 1.18.8),
+ libxmltok1-dev,
+ gnupg,
 Standards-Version: 3.9.8
 
 Package: debsig-verify
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, gnupg
-Suggests: debian-keyring
-Enhances: dpkg
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+ gnupg,
+Suggests:
+ debian-keyring,
+Enhances:
+ dpkg,
 Built-Using: ${sourcedep:libdpkg-dev}
 Description: Debian package signature verification tool
  This tool inspects and verifies binary package digital signatures based

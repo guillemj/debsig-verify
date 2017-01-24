@@ -1,4 +1,4 @@
-debsig-verify (0.16) UNRELEASED; urgency=medium
+debsig-verify (0.16) unstable; urgency=medium
 
   * Wrap dependency fields in debian/control.
   * Add debsigs to Suggests.
@@ -8,7 +8,7 @@ debsig-verify (0.16) UNRELEASED; urgency=medium
   * Switch to a single git repository URL in README for browsing and cloning
     to fix previously broken cloning URL.
 
- -- Guillem Jover <guillem@debian.org>  Mon, 23 Jan 2017 22:38:04 +0100
+ -- Guillem Jover <guillem@debian.org>  Tue, 24 Jan 2017 02:10:20 +0100
 
 debsig-verify (0.15) unstable; urgency=medium
 

@@ -10,7 +10,7 @@ Build-Depends:
  pkg-config,
  libdpkg-dev (>= 1.18.8),
  libxmltok1-dev,
- gnupg,
+ gnupg <!nocheck>,
 Standards-Version: 3.9.8
 
 Package: debsig-verify

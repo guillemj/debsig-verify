@@ -50,7 +50,7 @@ Verification	- Once we commit to using this Policy, the matching rules
 
   MinOptional	- This is the minimum number of Optional types that must be
 		  present and verified for this group. This is given as an
-		  attribute to the Verfication and Selection nodes.
+		  attribute to the Verification and Selection nodes.
 
 There are three types of matching rules within the two blocks.
 

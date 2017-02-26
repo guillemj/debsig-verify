@@ -1,3 +1,9 @@
+debsig-verify (0.17) UNRELEASED; urgency=medium
+
+  * Spelling fixes. Thanks to Josh Soref <jsoref@gmail.com>.
+
+ -- Guillem Jover <guillem@debian.org>  Thu, 09 Mar 2017 03:55:44 +0100
+
 debsig-verify (0.16) unstable; urgency=medium
 
   * Wrap dependency fields in debian/control.
@@ -224,7 +230,7 @@ debsig-verify (0.2) unstable; urgency=low
   * Added some code to free up alloc'd memory used by parsePolicy()
   * Lots of code cleanups
   * Added a -d option for debug output
-  * Change to use "gpg --verify <sig> <file>" intead of stdin. The newest
+  * Change to use "gpg --verify <sig> <file>" instead of stdin. The newest
     gpg changed this behavior to fix a security issue.
   * Use obstack to alloc policy data in xml-parts.c
 

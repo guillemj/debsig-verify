@@ -5,7 +5,7 @@
     using the --with-colon and --status-fd output for better parsing of
     the verify and keyring output.
 
-* Figure out how to integrate this more tigthly with the package tools
+* Figure out how to integrate this more tightly with the package tools
   (apt, dpkg etc..).
 
 * Expiry still needs to be handled.

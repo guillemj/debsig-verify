@@ -6,7 +6,7 @@ Uploaders: Guillem Jover <guillem@debian.org>
 Vcs-Browser: https://anonscm.debian.org/cgit/dpkg/debsig-verify.git
 Vcs-Git: https://anonscm.debian.org/git/dpkg/debsig-verify.git
 Build-Depends:
- debhelper (>= 9),
+ debhelper (>= 10),
  pkg-config,
  libdpkg-dev (>= 1.18.11),
  libexpat1-dev,

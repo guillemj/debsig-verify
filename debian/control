@@ -11,7 +11,7 @@ Build-Depends:
  libdpkg-dev (>= 1.18.11),
  libexpat1-dev,
  gnupg <!nocheck>,
-Standards-Version: 3.9.8
+Standards-Version: 4.0.1
 
 Package: debsig-verify
 Architecture: any

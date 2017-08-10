@@ -1,6 +1,9 @@
 debsig-verify (0.17) UNRELEASED; urgency=medium
 
   * Spelling fixes. Thanks to Josh Soref <jsoref@gmail.com>.
+  * Switch from libxmltok (expat 1.x) to libexpat (expat 2.x). The latter
+    package is slightly bigger, but that is offset by being used by many
+    more package, and more importantly being maintained upstream.
 
  -- Guillem Jover <guillem@debian.org>  Thu, 09 Mar 2017 03:55:44 +0100
 

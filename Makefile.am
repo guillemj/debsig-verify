@@ -15,7 +15,7 @@ AM_CFLAGS = \
 	$(nil)
 LDADD = \
 	$(LIBDPKG_LIBS) \
-	-lxmlparse
+	-lexpat
 
 
 bin_PROGRAMS = src/debsig-verify

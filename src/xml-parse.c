@@ -19,7 +19,7 @@
  */
 
 /*
- * provides the XML parsing code for policy files, via expat (xmltok)
+ * Provides the XML parsing code for policy files, via expat.
  */
 
 #include <config.h>
@@ -33,7 +33,7 @@
 #include <obstack.h>
 
 #include <dpkg/dpkg.h>
-#include <xmltok/xmlparse.h>
+#include <expat.h>
 
 #include "debsig.h"
 
@@ -50,7 +50,7 @@ static int deb_obs_init = 0;
 #define parse_error(fmt, args...) \
 { \
     parse_err_cnt++; \
-    ds_printf(DS_LEV_DEBUG , "%d: " fmt , XML_GetCurrentLineNumber(parser) , ## args); \
+    ds_printf(DS_LEV_DEBUG , "%lu: " fmt , XML_GetCurrentLineNumber(parser) , ## args); \
 }
 
 static void
@@ -284,7 +284,7 @@ parsePolicyFile(const char *filename)
 	done = len < sizeof(buf);
 	if (!XML_Parse(parser, buf, len, done)) {
 	    ds_printf(DS_LEV_DEBUG,
-		"%s at line %d",
+		"%s at line %lu",
 		XML_ErrorString(XML_GetErrorCode(parser)),
 		XML_GetCurrentLineNumber(parser));
 	    parse_err_cnt++;

@@ -65,7 +65,7 @@ tarball is:
   GNU make
   pkg-config
   libdpkg-dev
-  libxmltok1-dev
+  libexpat1-dev
 
 The build process is done by running the usual «./configure; make check».
 To see all available configuration options please run «./configure --help».

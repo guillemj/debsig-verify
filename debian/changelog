@@ -1,6 +1,9 @@
 debsig-verify (0.18) UNRELEASED; urgency=medium
 
   * Pass --no-auto-check-trustdb to the gpg invocations.
+  * Add gpg as a alternative dependencies to gnupg, and gpg-agent or
+    gnupg-agent as new Build-Depends, now that the package has been split
+    in a more fine-grained way.
 
  -- Guillem Jover <guillem@debian.org>  Tue, 15 Aug 2017 16:47:52 +0200
 

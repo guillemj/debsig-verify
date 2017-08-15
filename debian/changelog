@@ -1,3 +1,9 @@
+debsig-verify (0.18) UNRELEASED; urgency=medium
+
+  * Pass --no-auto-check-trustdb to the gpg invocations.
+
+ -- Guillem Jover <guillem@debian.org>  Tue, 15 Aug 2017 16:47:52 +0200
+
 debsig-verify (0.17) unstable; urgency=medium
 
   * Spelling fixes. Thanks to Josh Soref <jsoref@gmail.com>.

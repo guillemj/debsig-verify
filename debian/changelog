@@ -5,6 +5,7 @@ debsig-verify (0.18) UNRELEASED; urgency=medium
     gnupg-agent as new Build-Depends, now that the package has been split
     in a more fine-grained way.
   * Use UTC0 instead of UTC when setting TZ.
+  * Bump Standard-Version to 4.1.1 (no changes needed).
 
  -- Guillem Jover <guillem@debian.org>  Tue, 15 Aug 2017 16:47:52 +0200
 

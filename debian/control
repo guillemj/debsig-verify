@@ -5,6 +5,7 @@ Maintainer: Dpkg Developers <debian-dpkg@lists.debian.org>
 Uploaders: Guillem Jover <guillem@debian.org>
 Vcs-Browser: https://anonscm.debian.org/cgit/dpkg/debsig-verify.git
 Vcs-Git: https://anonscm.debian.org/git/dpkg/debsig-verify.git
+Standards-Version: 4.1.1
 Build-Depends:
  debhelper (>= 10),
  pkg-config,
@@ -13,7 +14,6 @@ Build-Depends:
  gpg <!nocheck> | gnupg <!nocheck>,
 # We need the agent for the test suite as we are handling a secret keyring.
  gpg-agent <!nocheck> | gnupg-agent <!nocheck>,
-Standards-Version: 4.0.1
 
 Package: debsig-verify
 Architecture: any

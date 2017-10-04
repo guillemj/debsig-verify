@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -e
+
+# Configure
+debian/rules build-tree/config.status
+
+# Run the install-time test suite
+make -C build-tree installcheck

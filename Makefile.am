@@ -42,6 +42,8 @@ EXTRA_DIST = \
 	debian/lintian-overrides \
 	debian/rules \
 	debian/source/format \
+	debian/tests/control \
+	debian/tests/functional \
 	$(nil)
 
 do_man_subst = $(AM_V_GEN) \

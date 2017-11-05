@@ -1,4 +1,4 @@
-debsig-verify (0.18) UNRELEASED; urgency=medium
+debsig-verify (0.18) unstable; urgency=medium
 
   * Pass --no-auto-check-trustdb to the gpg invocations.
   * Add gpg as a alternative dependencies to gnupg, and gpg-agent or
@@ -10,7 +10,7 @@ debsig-verify (0.18) UNRELEASED; urgency=medium
   * Set Rules-Requires-Root to no.
   * Set distribution tarball format to ustar.
 
- -- Guillem Jover <guillem@debian.org>  Tue, 15 Aug 2017 16:47:52 +0200
+ -- Guillem Jover <guillem@debian.org>  Sun, 05 Nov 2017 23:46:13 +0100
 
 debsig-verify (0.17) unstable; urgency=medium
 

@@ -36,7 +36,7 @@ CFLAGS="$CFLAGS -Wold-style-definition"
 AC_USE_SYSTEM_EXTENSIONS
 AC_SYS_LARGEFILE
 
-AM_INIT_AUTOMAKE([1.11 foreign nostdinc subdir-objects no-dist-gzip dist-xz])
+AM_INIT_AUTOMAKE([1.11 foreign nostdinc subdir-objects tar-ustar no-dist-gzip dist-xz])
 AM_SILENT_RULES([yes])
 
 # Checks for programs.

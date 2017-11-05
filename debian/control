@@ -6,6 +6,7 @@ Uploaders: Guillem Jover <guillem@debian.org>
 Vcs-Browser: https://anonscm.debian.org/cgit/dpkg/debsig-verify.git
 Vcs-Git: https://anonscm.debian.org/git/dpkg/debsig-verify.git
 Standards-Version: 4.1.1
+Rules-Requires-Root: no
 Build-Depends:
  debhelper (>= 10),
  pkg-config,

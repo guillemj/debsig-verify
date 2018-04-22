@@ -7,32 +7,6 @@ AC_CONFIG_TESTDIR([test])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build-aux])
 
-CFLAGS="$CFLAGS -Wall"
-CFLAGS="$CFLAGS -Wextra"
-CFLAGS="$CFLAGS -Wno-unused-parameter"
-CFLAGS="$CFLAGS -Wno-missing-field-initializers"
-CFLAGS="$CFLAGS -Wmissing-declarations"
-CFLAGS="$CFLAGS -Wmissing-format-attribute"
-CFLAGS="$CFLAGS -Wformat -Wformat-security"
-CFLAGS="$CFLAGS -Wsizeof-array-argument"
-CFLAGS="$CFLAGS -Wpointer-arith"
-CFLAGS="$CFLAGS -Wlogical-op"
-CFLAGS="$CFLAGS -Wlogical-not-parentheses"
-CFLAGS="$CFLAGS -Wswitch-bool"
-CFLAGS="$CFLAGS -Wvla"
-CFLAGS="$CFLAGS -Winit-self"
-CFLAGS="$CFLAGS -Wwrite-strings"
-CFLAGS="$CFLAGS -Wcast-align"
-CFLAGS="$CFLAGS -Wshadow"
-CFLAGS="$CFLAGS -Wduplicated-cond"
-CFLAGS="$CFLAGS -Wnull-dereference"
-CFLAGS="$CFLAGS -Wdeclaration-after-statement"
-CFLAGS="$CFLAGS -Wnested-externs"
-CFLAGS="$CFLAGS -Wbad-function-cast"
-CFLAGS="$CFLAGS -Wstrict-prototypes"
-CFLAGS="$CFLAGS -Wmissing-prototypes"
-CFLAGS="$CFLAGS -Wold-style-definition"
-
 AC_USE_SYSTEM_EXTENSIONS
 AC_SYS_LARGEFILE
 
@@ -58,6 +32,33 @@ AC_TYPE_SIZE_T
 # Checks for library functions.
 AC_FUNC_STRNLEN
 AC_FUNC_OBSTACK
+
+# Checks for the build machinery.
+DPKG_CHECK_COMPILER_FLAG([-Wall])
+DPKG_CHECK_COMPILER_FLAG([-Wextra])
+DPKG_CHECK_COMPILER_FLAG([-Wno-unused-parameter])
+DPKG_CHECK_COMPILER_FLAG([-Wno-missing-field-initializers])
+DPKG_CHECK_COMPILER_FLAG([-Wmissing-declarations])
+DPKG_CHECK_COMPILER_FLAG([-Wmissing-format-attribute])
+DPKG_CHECK_COMPILER_FLAG([-Wformat -Wformat-security])
+DPKG_CHECK_COMPILER_FLAG([-Wsizeof-array-argument])
+DPKG_CHECK_COMPILER_FLAG([-Wpointer-arith])
+DPKG_CHECK_COMPILER_FLAG([-Wlogical-op])
+DPKG_CHECK_COMPILER_FLAG([-Wlogical-not-parentheses])
+DPKG_CHECK_COMPILER_FLAG([-Wswitch-bool])
+DPKG_CHECK_COMPILER_FLAG([-Wvla])
+DPKG_CHECK_COMPILER_FLAG([-Winit-self])
+DPKG_CHECK_COMPILER_FLAG([-Wwrite-strings])
+DPKG_CHECK_COMPILER_FLAG([-Wcast-align])
+DPKG_CHECK_COMPILER_FLAG([-Wshadow])
+DPKG_CHECK_COMPILER_FLAG([-Wduplicated-cond])
+DPKG_CHECK_COMPILER_FLAG([-Wnull-dereference])
+DPKG_CHECK_COMPILER_FLAG([-Wdeclaration-after-statement])
+DPKG_CHECK_COMPILER_FLAG([-Wnested-externs])
+DPKG_CHECK_COMPILER_FLAG([-Wbad-function-cast])
+DPKG_CHECK_COMPILER_FLAG([-Wstrict-prototypes])
+DPKG_CHECK_COMPILER_FLAG([-Wmissing-prototypes])
+DPKG_CHECK_COMPILER_FLAG([-Wold-style-definition])
 
 AC_CONFIG_FILES([
 	Makefile

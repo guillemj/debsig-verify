@@ -3,6 +3,8 @@ debsig-verify (0.19) UNRELEASED; urgency=medium
   * Update Vcs information to point to new hosting.
   * Build system:
     - Detect compiler flags availability at build-time.
+  * Packaging:
+    - Namespace debhelper files with package names.
 
  -- Guillem Jover <guillem@debian.org>  Sat, 28 Apr 2018 12:14:57 +0200
 

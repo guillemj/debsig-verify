@@ -337,7 +337,7 @@ main(int argc, char *argv[])
     struct dpkg_ar *deb;
     struct policy *pol = NULL;
     char *originID;
-    char buf[8192], pol_file[8192], *force_file = NULL;
+    char *origin_dir = NULL, *pol_file = NULL, *force_file = NULL;
     DIR *pd = NULL;
     struct dirent *pd_ent;
     struct group *grp;
@@ -429,17 +429,23 @@ main(int argc, char *argv[])
 	ds_fail_printf(DS_FAIL_NOSIGS, "Origin Signature check failed. This deb might not be signed.\n");
 
     /* Now we have an ID, let's check the policy to use */
-    snprintf(buf, sizeof(buf) - 1, "%s%s/%s", rootdir, policies_dir, originID);
-    if ((pd = opendir(buf)) == NULL)
-	ds_fail_printf(DS_FAIL_UNKNOWN_ORIGIN,
-		       "Could not open Origin dir %s: %s\n", buf, strerror(errno));
+    m_asprintf(&origin_dir, "%s%s/%s", rootdir, policies_dir, originID);
 
-    ds_printf(DS_LEV_VER, "Using policy directory: %s", buf);
+    pd = opendir(origin_dir);
+    if (pd == NULL)
+	ds_fail_printf(DS_FAIL_UNKNOWN_ORIGIN,
+                       "Could not open Origin directory %s: %s\n",
+                       origin_dir, strerror(errno));
+
+    ds_printf(DS_LEV_VER, "Using policy directory: %s", origin_dir);
 
     if (list_only)
-	ds_printf(DS_LEV_ALWAYS, "  Policies in: %s", buf);
+        ds_printf(DS_LEV_ALWAYS, "  Policies in: %s", origin_dir);
 
     while ((pd_ent = readdir(pd)) != NULL && (pol == NULL || list_only)) {
+        free(pol_file);
+        pol_file = NULL;
+
 	/* Make sure we have the right name format */
 	if (!str_match_end(pd_ent->d_name, ".pol"))
 	    continue;
@@ -448,7 +454,7 @@ main(int argc, char *argv[])
 	    continue;
 
 	/* Now try to parse the file */
-	snprintf(pol_file, sizeof(pol_file) - 1, "%s/%s", buf, pd_ent->d_name);
+        m_asprintf(&pol_file, "%s/%s", origin_dir, pd_ent->d_name);
 	ds_printf(DS_LEV_VER, "  Parsing policy file: %s", pol_file);
 	pol = parsePolicyFile(pol_file);
 
@@ -473,6 +479,9 @@ main(int argc, char *argv[])
 	    ds_printf(DS_LEV_VER, "    Selection group(s) passed, policy is usable.");
     }
     closedir(pd);
+
+    free(origin_dir);
+    free(pol_file);
 
     if ((pol == NULL && !list_only) || list_only == 1) /* Damn, can't verify this one */
 	ds_fail_printf(DS_FAIL_NOPOLICIES, "No applicable policy found.");

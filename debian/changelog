@@ -5,6 +5,7 @@ debsig-verify (0.19) UNRELEASED; urgency=medium
     - Detect compiler flags availability at build-time.
   * Packaging:
     - Namespace debhelper files with package names.
+    - Bump Standard-Version to 4.1.5 (no changes needed).
 
  -- Guillem Jover <guillem@debian.org>  Sat, 28 Apr 2018 12:14:57 +0200
 

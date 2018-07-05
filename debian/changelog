@@ -1,5 +1,6 @@
 debsig-verify (0.19) UNRELEASED; urgency=medium
 
+  * Update Vcs information to point to new hosting.
   * Build system:
     - Detect compiler flags availability at build-time.
 

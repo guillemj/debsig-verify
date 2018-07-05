@@ -35,7 +35,7 @@ Source Repository
 
 The master repository can be browsed and cloned from:
 
-  <https://anonscm.debian.org/git/dpkg/debsig-verify.git>
+  <https://git.dpkg.org/cgit/dpkg/debsig-verify.git>
 
 
 Building from git source

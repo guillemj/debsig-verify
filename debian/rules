@@ -78,8 +78,8 @@ binary-arch: install-arch
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs
-	dh_installdocs doc/policy-syntax.txt doc/policy.dtd
-	dh_installexamples test/policies/*/*.pol
+	dh_installdocs
+	dh_installexamples
 	dh_installman
 	dh_installdeb
 	dh_lintian

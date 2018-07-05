@@ -7,6 +7,7 @@ debsig-verify (0.19) UNRELEASED; urgency=medium
     - Namespace debhelper files with package names.
     - Bump Standard-Version to 4.1.5 (no changes needed).
     - Move debhelper command arguments into fragment files.
+    - Install all test policies into keyid example directories.
 
  -- Guillem Jover <guillem@debian.org>  Sat, 28 Apr 2018 12:14:57 +0200
 

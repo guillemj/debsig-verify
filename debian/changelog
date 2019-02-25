@@ -1,5 +1,6 @@
 debsig-verify (0.20) UNRELEASED; urgency=medium
 
+  * Update copyright years.
   * Packaging:
     - Bump Standard-Version to 4.3.0 (no changes needed).
     - Switch to debhelper compatibility level 11.

@@ -155,5 +155,3 @@ GnuPG format keyrings for use by the policies.
 .BR debsigs (1),
 .BR gpg (1),
 .BR deb (5).
-.SH AUTHOR
-Ben Collins <bcollins@debian.org>

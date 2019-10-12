@@ -36,7 +36,6 @@ EXTRA_DIST = \
 	doc/policy-syntax.txt \
 	doc/policy.dtd \
 	debian/changelog \
-	debian/compat \
 	debian/control \
 	debian/copyright \
 	debian/lintian-overrides \

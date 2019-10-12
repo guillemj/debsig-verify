@@ -8,7 +8,7 @@ Vcs-Git: https://git.dpkg.org/git/dpkg/debsig-verify.git
 Standards-Version: 4.4.1
 Rules-Requires-Root: no
 Build-Depends:
- debhelper (>= 11),
+ debhelper-compat (= 11),
  pkg-config,
  libdpkg-dev (>= 1.18.11),
  libexpat1-dev,

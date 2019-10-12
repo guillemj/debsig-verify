@@ -3,6 +3,7 @@ debsig-verify (0.20) UNRELEASED; urgency=medium
   * Update copyright years.
   * Packaging:
     - Bump Standard-Version to 4.4.1 (no changes needed).
+    - Switch from debian/compat to debhelper-compat in Build-Depends.
     - Switch to debhelper compatibility level 11.
 
  -- Guillem Jover <guillem@debian.org>  Mon, 25 Feb 2019 01:15:01 +0100

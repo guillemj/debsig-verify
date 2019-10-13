@@ -38,7 +38,9 @@ EXTRA_DIST = \
 	debian/changelog \
 	debian/control \
 	debian/copyright \
-	debian/lintian-overrides \
+	debian/debsig-verify.docs \
+	debian/debsig-verify.examples \
+	debian/debsig-verify.lintian-overrides \
 	debian/rules \
 	debian/source/format \
 	debian/tests/control \

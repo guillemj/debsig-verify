@@ -1,6 +1,8 @@
 debsig-verify (0.20) UNRELEASED; urgency=medium
 
   * Update copyright years.
+  * Expand GPLv2 brief notice in debsig-verify man page into the standard
+    GPL-2+ notice.
   * Packaging:
     - Bump Standard-Version to 4.4.1 (no changes needed).
     - Switch from debian/compat to debhelper-compat in Build-Depends.

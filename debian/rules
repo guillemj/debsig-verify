@@ -1,97 +1,15 @@
 #!/usr/bin/make -f
 
-DEB_BUILD_MAINT_OPTIONS = hardening=+all
-DEB_CFLAGS_MAINT_PREPEND = -Wall
-
-include /usr/share/dpkg/default.mk
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export DEB_CFLAGS_MAINT_PREPEND = -Wall
 
 sourcedep_libdpkg_dev := \
 	$(shell dpkg-query \
 	        --showformat '$${source:Package} (= $${source:Version})' \
 	        --show libdpkg-dev)
 
-ifeq ($(DEB_BUILD_GNU_TYPE), $(DEB_HOST_GNU_TYPE))
-	confflags += --build=$(DEB_HOST_GNU_TYPE)
-else
-	confflags += --build=$(DEB_BUILD_GNU_TYPE) --host=$(DEB_HOST_GNU_TYPE)
-endif
+%:
+	dh $@ --builddir=build-tree
 
-# Create configure script if necessary, automake handles rebuilding it.
-configure: configure.ac
-	dh_testdir
-
-	./autogen
-
-# Configure the build tree
-build-tree/config.status: configure
-	dh_testdir
-
-	install -d build-tree
-	cd build-tree && ../configure $(confflags) \
-		CPPFLAGS="$(CPPFLAGS)" \
-		CFLAGS="$(CFLAGS)" \
-		LDFLAGS="$(LDFLAGS)" \
-		--prefix=/usr \
-		--mandir=\$${datadir}/man \
-		--sysconfdir=/etc \
-		--disable-silent-rules
-
-build: build-arch build-indep
-
-build-indep:
-
-# XXX: We need to use a build stamp because the test suite uses GnuPG, which
-# is Set-Uid-Root on non-Linux systems, which breaks it when using also
-# fakeroot.
-build-arch: build-tree/build-arch-stamp
-build-tree/build-arch-stamp: build-tree/config.status
-	dh_testdir
-
-ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
-	$(MAKE) -C build-tree VERBOSE=1 check
-else
-	$(MAKE) -C build-tree
-endif
-	touch $@
-
-.PHONY: build build-indep build-arch
-
-clean:
-	dh_testdir
-	[ ! -f Makefile ] ||  $(MAKE) distclean
-	rm -rf build-tree
-	dh_clean
-
-install-arch: build-arch
-	dh_testdir
-	dh_testroot
-	dh_prep
-	dh_installdirs
-
-	$(MAKE) -C build-tree DESTDIR="$(CURDIR)/debian/debsig-verify" install
-
-.PHONY: install-arch clean
-
-binary-indep:
-
-binary-arch: install-arch
-	dh_testdir
-	dh_testroot
-	dh_installchangelogs
-	dh_installdocs
-	dh_installexamples
-	dh_installman
-	dh_installdeb
-	dh_lintian
-	dh_link
-	dh_strip
-	dh_compress
-	dh_fixperms
-	dh_md5sums
-	dh_shlibdeps
+override_dh_gencontrol:
 	dh_gencontrol -- -Vsourcedep:libdpkg-dev='$(sourcedep_libdpkg_dev)'
-	dh_builddeb
-
-binary: binary-indep binary-arch
-
-.PHONY: binary binary-indep binary-arch

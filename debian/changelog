@@ -3,6 +3,8 @@ debsig-verify (0.20) UNRELEASED; urgency=medium
   * Update copyright years.
   * Expand GPLv2 brief notice in debsig-verify man page into the standard
     GPL-2+ notice.
+  * Print the temporary directory template in case mkdtemp() fails, instead
+    of printing NULL.
   * Build system:
     - Add missing files to the distribution.
     - Generate the .dist-version when creating a dist tarball.

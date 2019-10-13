@@ -66,6 +66,7 @@ static void
 gpg_init(void)
 {
     const char *prog;
+    char *gpg_tmpdir_template;
     int rc;
 
     if (gpg_inited)
@@ -75,9 +76,10 @@ gpg_init(void)
     if (prog)
       gpg_prog = prog;
 
-    gpg_tmpdir = mkdtemp(path_make_temp_template("debsig-verify"));
+    gpg_tmpdir_template = path_make_temp_template("debsig-verify");
+    gpg_tmpdir = mkdtemp(gpg_tmpdir_template);
     if (gpg_tmpdir == NULL)
-        ohshite("cannot create temporary directory '%s'", gpg_tmpdir);
+        ohshite("cannot create temporary directory '%s'", gpg_tmpdir_template);
 
     rc = setenv("GNUPGHOME", gpg_tmpdir, 1);
     if (rc < 0)

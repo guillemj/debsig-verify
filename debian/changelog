@@ -1,4 +1,4 @@
-debsig-verify (0.20) UNRELEASED; urgency=medium
+debsig-verify (0.20) unstable; urgency=medium
 
   * Update copyright years.
   * Expand GPLv2 brief notice in debsig-verify man page into the standard
@@ -14,7 +14,7 @@ debsig-verify (0.20) UNRELEASED; urgency=medium
     - Switch to debhelper compatibility level 12.
     - Switch to dh.
 
- -- Guillem Jover <guillem@debian.org>  Mon, 25 Feb 2019 01:15:01 +0100
+ -- Guillem Jover <guillem@debian.org>  Sat, 19 Oct 2019 04:23:44 +0200
 
 debsig-verify (0.19) unstable; urgency=medium
 

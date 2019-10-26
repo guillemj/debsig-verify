@@ -3,7 +3,8 @@
 set -e
 
 # Configure
-dh_auto_configure -O--builddir=build-tree
+autoreconf -f -i 2>&1
+./configure
 
 # Run the install-time test suite
-make -C build-tree installcheck
+make installcheck

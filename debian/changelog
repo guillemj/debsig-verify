@@ -1,11 +1,11 @@
-debsig-verify (0.21) UNRELEASED; urgency=medium
+debsig-verify (0.21) unstable; urgency=medium
 
   * Packaging:
     - Do not use dh_auto_configure to configure the source in the
       autopkgtest, as it passes unknown options that emit warnings that
       make the test fail. See: #942813.
 
- -- Guillem Jover <guillem@debian.org>  Sat, 26 Oct 2019 20:34:31 +0200
+ -- Guillem Jover <guillem@debian.org>  Sat, 26 Oct 2019 20:38:50 +0200
 
 debsig-verify (0.20) unstable; urgency=medium
 

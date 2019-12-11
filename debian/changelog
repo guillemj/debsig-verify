@@ -1,9 +1,9 @@
-debsig-verify (0.22) UNRELEASED; urgency=medium
+debsig-verify (0.22) unstable; urgency=medium
 
   * Fix use after free on debug output.
     Reported by Moritz Meintker <moritz@thinksilicon.de>.
 
- -- Guillem Jover <guillem@debian.org>  Wed, 11 Dec 2019 05:06:13 +0100
+ -- Guillem Jover <guillem@debian.org>  Wed, 11 Dec 2019 05:12:02 +0100
 
 debsig-verify (0.21) unstable; urgency=medium
 

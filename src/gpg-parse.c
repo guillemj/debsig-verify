@@ -150,7 +150,7 @@ getKeyID(const char *originID, const struct match *mtc)
 	return NULL;
     }
 
-    while ((c = fgets(buf, sizeof(buf), ds)) != NULL) {
+    while (fgets(buf, sizeof(buf), ds) != NULL) {
 	/* Skip comments. */
 	if (buf[0] == '#')
 	    continue;
@@ -251,7 +251,7 @@ getSigKeyID(struct dpkg_ar *deb, const char *type)
 	ohshite("getSigKeyID: error closing gpg write pipe");
 
     /* Now, let's see what gpg has to say about all this */
-    while ((c = fgets(buf, sizeof(buf), ds_read)) != NULL) {
+    while (fgets(buf, sizeof(buf), ds_read) != NULL) {
 	if (strncmp(buf, SIG_MAGIC, strlen(SIG_MAGIC)) == 0) {
 	    if ((c = strchr(buf, '\n')) != NULL)
 		*c = '\0';

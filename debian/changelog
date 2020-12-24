@@ -1,4 +1,4 @@
-debsig-verify (0.23) UNRELEASED; urgency=medium
+debsig-verify (0.23) unstable; urgency=medium
 
   * Remove unused ‘c’ variable assignment in fgets() call.
   * Packaging:
@@ -6,7 +6,7 @@ debsig-verify (0.23) UNRELEASED; urgency=medium
     - Switch to debhelper compatibility level 13.
     - Update copyright years.
 
- -- Guillem Jover <guillem@debian.org>  Wed, 02 Sep 2020 04:19:44 +0200
+ -- Guillem Jover <guillem@debian.org>  Thu, 24 Dec 2020 22:29:03 +0100
 
 debsig-verify (0.22) unstable; urgency=medium
 

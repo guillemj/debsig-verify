@@ -4,6 +4,7 @@ debsig-verify (0.23) UNRELEASED; urgency=medium
   * Packaging:
     - Switch to Standard-Version 4.5.1 (no changes needed).
     - Switch to debhelper compatibility level 13.
+    - Update copyright years.
 
  -- Guillem Jover <guillem@debian.org>  Wed, 02 Sep 2020 04:19:44 +0200
 

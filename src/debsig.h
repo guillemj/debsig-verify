@@ -20,9 +20,6 @@
 
 #include <dpkg/ar.h>
 
-#define SIG_MAGIC ":signature packet:"
-#define USER_MAGIC ":user ID packet:"
-
 #define OPTIONAL_MATCH 1
 #define REQUIRED_MATCH 2
 #define REJECT_MATCH 3

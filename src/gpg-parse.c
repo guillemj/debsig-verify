@@ -40,6 +40,9 @@
 
 #include "debsig.h"
 
+#define SIG_MAGIC ":signature packet:"
+#define USER_MAGIC ":user ID packet:"
+
 static int gpg_inited = 0;
 static char *gpg_tmpdir;
 static const char *gpg_prog = "gpg";

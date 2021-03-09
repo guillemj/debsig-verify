@@ -1,5 +1,7 @@
 debsig-verify (0.24) UNRELEASED; urgency=medium
 
+  * Documentation:
+    - Update .gpg keyring references to .pgp in man page.
   * Test suite:
     - Rename .gpg keyrings to .pgp.
 

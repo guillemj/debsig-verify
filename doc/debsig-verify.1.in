@@ -158,10 +158,14 @@ Directory containing the policy (.pol) definitions.
 XML format policy files.
 .TP
 .I @KEYRINGS_DIR@/
-Directory containing the keyrings that coincide with the policies.
+Directory containing the keyrings (*.pgp) that coincide with the policies.
 .TP
+.I @KEYRINGS_DIR@/*/*.pgp
+.TQ
 .I @KEYRINGS_DIR@/*/*.gpg
-GnuPG format keyrings for use by the policies.
+OpenPGP format keyrings for use by the policies.
+Note: The \fB.gpg\fP extensions are the legacy names used due to the
+prevalence of one of the OpenPGP implementation.
 .SH SEE ALSO
 .BR debsigs (1),
 .BR gpg (1),

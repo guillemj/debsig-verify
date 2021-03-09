@@ -44,8 +44,8 @@ debsig_setup_gnupg ()
   fi
 
   # Import the keys.
-  $GPG $GPGOPTS -v --batch --import $TESTKEYRINGS/$TESTKEYID/pubring.gpg
-  $GPG $GPGOPTS -v --batch --import $TESTKEYRINGS/$TESTKEYID/secring.gpg
+  $GPG $GPGOPTS -v --batch --import $TESTKEYRINGS/$TESTKEYID/pubring.pgp
+  $GPG $GPGOPTS -v --batch --import $TESTKEYRINGS/$TESTKEYID/secring.pgp
 }
 
 debsig_teardown_gnupg ()

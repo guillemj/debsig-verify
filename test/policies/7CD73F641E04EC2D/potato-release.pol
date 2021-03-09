@@ -6,14 +6,14 @@
 
   <!-- Since this is potato release, we require the potato sig -->
   <Selection>
-    <Required Type="origin" File="debian-debsig.gpg" id="7CD73F641E04EC2D"/>
-    <Required Type="release" File="debian-debsig.gpg" id="7CD73F641E04EC2D"/>
+    <Required Type="origin" File="debian-debsig.pgp" id="7CD73F641E04EC2D"/>
+    <Required Type="release" File="debian-debsig.pgp" id="7CD73F641E04EC2D"/>
   </Selection>
 
   <Verification MinOptional="0">
-    <Required Type="origin" File="debian-debsig.gpg" id="7CD73F641E04EC2D"/>
-    <Required Type="release" File="debian-debsig.gpg" id="Ben Collins &lt;bcollins@debian.org&gt;"/>
-    <Optional Type="maint" File="debian-keyring.gpg"/>
+    <Required Type="origin" File="debian-debsig.pgp" id="7CD73F641E04EC2D"/>
+    <Required Type="release" File="debian-debsig.pgp" id="Ben Collins &lt;bcollins@debian.org&gt;"/>
+    <Optional Type="maint" File="debian-keyring.pgp"/>
   </Verification>
 
 </Policy>

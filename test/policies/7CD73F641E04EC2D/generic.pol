@@ -10,15 +10,15 @@
        reject the release Type, since we want a different rule set for
        that. -->
   <Selection>
-    <Required Type="origin" File="debian-debsig.gpg" id="7CD73F641E04EC2D"/>
+    <Required Type="origin" File="debian-debsig.pgp" id="7CD73F641E04EC2D"/>
     <Reject Type="release"/>
   </Selection>
 
   <!-- Once we decide to use this policy, this must pass in order to verify
        the package. -->
   <Verification MinOptional="0">
-    <Required Type="origin" File="debian-debsig.gpg" id="7CD73F641E04EC2D"/>
-    <Optional Type="maint" File="debian-keyring.gpg"/>
+    <Required Type="origin" File="debian-debsig.pgp" id="7CD73F641E04EC2D"/>
+    <Optional Type="maint" File="debian-keyring.pgp"/>
   </Verification>
 
 </Policy>

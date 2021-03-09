@@ -1,3 +1,10 @@
+debsig-verify (0.24) UNRELEASED; urgency=medium
+
+  * Test suite:
+    - Rename .gpg keyrings to .pgp.
+
+ -- Guillem Jover <guillem@debian.org>  Sat, 20 Mar 2021 01:50:00 +0100
+
 debsig-verify (0.23) unstable; urgency=medium
 
   * Remove unused ‘c’ variable assignment in fgets() call.

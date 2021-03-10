@@ -83,18 +83,3 @@ find_command(const char *prog)
     varbuf_destroy(&filename);
     return false;
 }
-
-off_t
-checkSigExist(struct dpkg_ar *deb, const char *name)
-{
-    char buf[16];
-
-    if (name == NULL) {
-	ds_printf(DS_LEV_DEBUG, "checkSigExist: NULL values passed");
-	return 0;
-    }
-
-    snprintf(buf, sizeof(buf) - 1, "_gpg%s", name);
-
-    return findMember(deb, buf);
-}

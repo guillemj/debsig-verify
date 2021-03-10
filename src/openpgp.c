@@ -63,6 +63,21 @@ getSigKeyID(struct dpkg_ar *deb, const char *type)
 	return openpgp->getSigKeyID(deb, type);
 }
 
+off_t
+checkSigExist(struct dpkg_ar *deb, const char *name)
+{
+	char buf[16];
+
+	if (name == NULL) {
+		ds_printf(DS_LEV_DEBUG, "checkSigExist: NULL values passed");
+		return 0;
+	}
+
+	snprintf(buf, sizeof(buf) - 1, "_gpg%s", name);
+
+	return findMember(deb, buf);
+}
+
 int
 sigVerify(const char *originID, struct match *mtc,
           const char *data, const char *sig)

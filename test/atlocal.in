@@ -18,49 +18,53 @@ TESTKEYID="FAD46790DE88C7E2"
 
 DEBSIG="debsig-verify -v -d --policies-dir $TESTPOLICIES --keyrings-dir $TESTKEYRINGS"
 
-GPG=gpg
-GPGOPTS="--ignore-time-conflict --no-options --no-default-keyring
-         --no-auto-check-trustdb --trust-model=always"
+if command -v gpg >/dev/null; then
+  GPG=gpg
+  GPGOPTS="--ignore-time-conflict --no-options --no-default-keyring
+           --no-auto-check-trustdb --trust-model=always"
 
-# Check if we need to manage the agent ourselves.
-if gpgconf -n --kill gpg-agent >/dev/null 2>&1; then
-  GPGAGENT_MANAGED=true
+  # Check if we need to manage the agent ourselves.
+  if gpgconf -n --kill gpg-agent >/dev/null 2>&1; then
+    GPGAGENT_MANAGED=true
+  else
+    GPGAGENT_MANAGED=false
+  fi
+
+  trap debsig_teardown_gnupg EXIT HUP INT QUIT TERM
+
+  debsig_openpgp_setup ()
+  {
+    # Create the GnuPG home directory.
+    export GNUPGHOME=$(mktemp --tmpdir -d debsig-test-tmp.XXXXXXXXXX)
+    TESTGNUPG=$GNUPGHOME
+    chmod 0700 $GNUPGHOME
+
+    # For recent GnuPG versions, start the agent explicitly.
+    if $GPGAGENT_MANAGED; then
+      gpgconf --launch gpg-agent
+    fi
+
+    # Import the keys.
+    $GPG $GPGOPTS -v --batch --import $TESTKEYRINGS/$TESTKEYID/pubring.pgp
+    $GPG $GPGOPTS -v --batch --import $TESTKEYRINGS/$TESTKEYID/secring.pgp
+  }
+
+  debsig_openpgp_teardown ()
+  {
+    if $GPGAGENT_MANAGED; then
+      gpgconf --kill gpg-agent
+    fi
+    rm -rf "$TESTGNUPG"
+    unset GNUPGHOME
+  }
+
+  debsig_openpgp_detach_sign()
+  {
+    $GPG $GPGOPTS --detach-sig
+  }
 else
-  GPGAGENT_MANAGED=false
+  echo "error: cannot find an OpenPGP backend" >&2
 fi
-
-trap debsig_teardown_gnupg EXIT HUP INT QUIT TERM
-
-debsig_openpgp_setup ()
-{
-  # Create the GnuPG home directory.
-  export GNUPGHOME=$(mktemp --tmpdir -d debsig-test-tmp.XXXXXXXXXX)
-  TESTGNUPG=$GNUPGHOME
-  chmod 0700 $GNUPGHOME
-
-  # For recent GnuPG versions, start the agent explicitly.
-  if $GPGAGENT_MANAGED; then
-    gpgconf --launch gpg-agent
-  fi
-
-  # Import the keys.
-  $GPG $GPGOPTS -v --batch --import $TESTKEYRINGS/$TESTKEYID/pubring.pgp
-  $GPG $GPGOPTS -v --batch --import $TESTKEYRINGS/$TESTKEYID/secring.pgp
-}
-
-debsig_openpgp_teardown ()
-{
-  if $GPGAGENT_MANAGED; then
-    gpgconf --kill gpg-agent
-  fi
-  rm -rf "$TESTGNUPG"
-  unset GNUPGHOME
-}
-
-debsig_openpgp_detach_sign()
-{
-  $GPG $GPGOPTS --detach-sig
-}
 
 debsig_make_deb ()
 {

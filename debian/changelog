@@ -8,6 +8,7 @@ debsig-verify (0.24) UNRELEASED; urgency=medium
   * Test suite:
     - Rename .gpg keyrings to .pgp.
     - Abstract OpenPGP details into debsig_openpgp_* functions.
+    - Check OpenPGP backend availability.
 
  -- Guillem Jover <guillem@debian.org>  Sat, 20 Mar 2021 01:50:00 +0100
 

@@ -1,6 +1,7 @@
 debsig-verify (0.24) UNRELEASED; urgency=medium
 
   * Move GnuPG specific macros to the GnuPG backend module.
+  * Rename gpgVerify() to sigVerify().
   * Documentation:
     - Update .gpg keyring references to .pgp in man page.
   * Test suite:

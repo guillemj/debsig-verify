@@ -210,7 +210,7 @@ verifyGroupRules(struct dpkg_ar *deb, const char *originID, struct group *grp)
 	    ohshit("error closing temp file %s", tmp_sig);
 
 	/* Now, let's check with gpg on this one */
-	t = gpgVerify(originID, mtc, tmp_data, tmp_sig);
+	t = sigVerify(originID, mtc, tmp_data, tmp_sig);
 
 	fd = -1;
 	unlink(tmp_sig);

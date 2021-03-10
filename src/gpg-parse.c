@@ -281,7 +281,7 @@ getSigKeyID(struct dpkg_ar *deb, const char *type)
 }
 
 int
-gpgVerify(const char *originID, struct match *mtc,
+sigVerify(const char *originID, struct match *mtc,
           const char *data, const char *sig)
 {
     char keyring[8192];
@@ -294,7 +294,7 @@ gpgVerify(const char *originID, struct match *mtc,
     snprintf(keyring, sizeof(keyring) - 1, "%s%s/%s/%s",
              rootdir, keyrings_dir, originID, mtc->file);
     if (stat(keyring, &st)) {
-	ds_printf(DS_LEV_DEBUG, "gpgVerify: could not stat %s", keyring);
+	ds_printf(DS_LEV_DEBUG, "sigVerify: could not stat %s", keyring);
 	return 0;
     }
 
@@ -311,9 +311,9 @@ gpgVerify(const char *originID, struct match *mtc,
         command_exec(&cmd);
     }
 
-    rc = subproc_reap(pid, "gpgVerify", SUBPROC_RETERROR | SUBPROC_RETSIGNO);
+    rc = subproc_reap(pid, "sigVerify", SUBPROC_RETERROR | SUBPROC_RETSIGNO);
     if (rc != 0) {
-	ds_printf(DS_LEV_DEBUG, "gpgVerify: gpg exited abnormally or with non-zero exit status");
+	ds_printf(DS_LEV_DEBUG, "sigVerify: gpg exited abnormally or with non-zero exit status");
 	return 0;
     }
 

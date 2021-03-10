@@ -61,7 +61,7 @@ getKeyID(const char *originID, const struct match *mtc);
 char *
 getSigKeyID(struct dpkg_ar *deb, const char *type);
 int
-gpgVerify(const char *originID, struct match *mtc,
+sigVerify(const char *originID, struct match *mtc,
           const char *data, const char *sig);
 void
 clear_policy(void);

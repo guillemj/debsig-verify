@@ -12,9 +12,9 @@ Build-Depends:
  pkg-config,
  libdpkg-dev (>= 1.18.11),
  libexpat1-dev,
- gpg <!nocheck> | gnupg <!nocheck>,
+ gpg <!nocheck> | gnupg <!nocheck> | sqop <!nocheck> | sq <!nocheck>,
 # We need the agent for the test suite as we are handling a secret keyring.
- gpg-agent <!nocheck> | gnupg-agent <!nocheck>,
+ gpg-agent <!nocheck> | gnupg-agent <!nocheck> | sqop <!nocheck> | sq <!nocheck>,
 
 Package: debsig-verify
 Architecture: any

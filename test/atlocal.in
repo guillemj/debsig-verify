@@ -18,7 +18,28 @@ TESTKEYID="FAD46790DE88C7E2"
 
 DEBSIG="debsig-verify -v -d --policies-dir $TESTPOLICIES --keyrings-dir $TESTKEYRINGS"
 
-if command -v gpg >/dev/null; then
+debsig_stub ()
+{
+  :
+}
+
+if command -v sqop >/dev/null; then
+  alias debsig_openpgp_setup=debsig_stub
+  alias debsig_openpgp_teardown=debsig_stub
+
+  debsig_openpgp_detach_sign ()
+  {
+    sqop sign --no-armor $TESTKEYRINGS/$TESTKEYID/secring.pgp
+  }
+elif command -v sq >/dev/null; then
+  alias debsig_openpgp_setup=debsig_stub
+  alias debsig_openpgp_teardown=debsig_stub
+
+  debsig_openpgp_detach_sign ()
+  {
+    sq sign --detached --signer-key $TESTKEYRINGS/$TESTKEYID/secring.pgp
+  }
+elif command -v gpg >/dev/null; then
   GPG=gpg
   GPGOPTS="--ignore-time-conflict --no-options --no-default-keyring
            --no-auto-check-trustdb --trust-model=always"

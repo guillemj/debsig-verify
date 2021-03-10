@@ -133,7 +133,7 @@ verifyGroupRules(struct dpkg_ar *deb, const char *originID, struct group *grp)
     }
 
     /* Now, let's find all the members we need to check and cat them into a
-     * single temp file. This is what we pass to gpg.  */
+     * single temp file. This is what we pass to the OpenPGP implementation. */
     if (!(len = findMember(deb, ver_magic_member)))
         goto fail_and_close;
     len = fd_fd_copy(deb->fd, fd, len, &err);
@@ -209,7 +209,7 @@ verifyGroupRules(struct dpkg_ar *deb, const char *originID, struct group *grp)
 	if (close(fd) < 0)
 	    ohshit("error closing temp file %s", tmp_sig);
 
-	/* Now, let's check with gpg on this one */
+	/* Now, let's check with an OpenPGP implementation on this one. */
 	t = sigVerify(originID, mtc, tmp_data, tmp_sig);
 
 	fd = -1;

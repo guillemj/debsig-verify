@@ -4,6 +4,7 @@ debsig-verify (0.24) UNRELEASED; urgency=medium
   * Rename gpgVerify() to sigVerify().
   * Documentation:
     - Update .gpg keyring references to .pgp in man page.
+    - Mention OpenPGP instead of gpg in generic code comments.
   * Test suite:
     - Rename .gpg keyrings to .pgp.
 

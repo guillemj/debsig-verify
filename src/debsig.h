@@ -52,19 +52,31 @@ struct policy {
         struct group *vers;
 };
 
+typedef char *getKeyID_func(const char *originID, const struct match *mtc);
+typedef char *getSigKeyID_func(struct dpkg_ar *deb, const char *type);
+typedef int sigVerify_func(const char *originID, struct match *mtc,
+                           const char *data, const char *sig);
+
+struct openpgp {
+	const char *cmd;
+	getKeyID_func *getKeyID;
+	getSigKeyID_func *getSigKeyID;
+	sigVerify_func *sigVerify;
+};
+
 struct policy *
 parsePolicyFile(const char *filename);
 off_t
 findMember(struct dpkg_ar *deb, const char *name);
 off_t
 checkSigExist(struct dpkg_ar *deb, const char *name);
-char *
-getKeyID(const char *originID, const struct match *mtc);
-char *
-getSigKeyID(struct dpkg_ar *deb, const char *type);
-int
-sigVerify(const char *originID, struct match *mtc,
-          const char *data, const char *sig);
+getKeyID_func
+getKeyID;
+getSigKeyID_func
+getSigKeyID;
+sigVerify_func
+sigVerify;
+
 void
 clear_policy(void);
 

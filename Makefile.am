@@ -24,8 +24,9 @@ src_debsig_verify_SOURCES = \
 	src/ar-parse.c \
 	src/debsig.h \
 	src/debsig-verify.c \
-	src/gpg-parse.c \
 	src/misc.c \
+	src/openpgp.c \
+	src/openpgp-gpg.c \
 	src/xml-parse.c \
 	$(nil)
 

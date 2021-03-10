@@ -143,8 +143,8 @@ the verification block of the policy were passed.
 .TP
 .B 14
 An internal error occurred. This is an unrecoverable error. Either the
-\fBdeb\fR is corrupt, gpg failed abnormally, or some other uncontrollable
-failure.
+\fBdeb\fR is corrupt, the OpenPGP backend failed abnormally,
+or some other uncontrollable failure.
 .SH ENVIRONMENT
 .TP
 .B DEBSIG_GNUPG_PROGRAM

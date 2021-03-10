@@ -1,5 +1,6 @@
 /*
  * debsig-verify - Debian package signature verification tool
+ * openpgp-gpg.c - OpenPGP backend (GnuPG)
  *
  * Copyright © 2000 Ben Collins <bcollins@debian.org>
  * Copyright © 2014-2017 Guillem Jover <guillem@debian.org>
@@ -16,10 +17,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
-/*
- * routines to parse gpg output
  */
 
 #include <config.h>
@@ -111,8 +108,8 @@ enum keyid_state {
     KEYID_SIG,
 };
 
-char *
-getKeyID(const char *originID, const struct match *mtc)
+static char *
+gpg_getKeyID(const char *originID, const struct match *mtc)
 {
     static char buf[2048];
     char *keyring;
@@ -202,8 +199,8 @@ getKeyID(const char *originID, const struct match *mtc)
     return ret;
 }
 
-char *
-getSigKeyID(struct dpkg_ar *deb, const char *type)
+static char *
+gpg_getSigKeyID(struct dpkg_ar *deb, const char *type)
 {
     static char buf[2048];
     struct dpkg_error err;
@@ -280,9 +277,9 @@ getSigKeyID(struct dpkg_ar *deb, const char *type)
     return ret;
 }
 
-int
-sigVerify(const char *originID, struct match *mtc,
-          const char *data, const char *sig)
+static int
+gpg_sigVerify(const char *originID, struct match *mtc,
+              const char *data, const char *sig)
 {
     char keyring[8192];
     pid_t pid;
@@ -319,3 +316,10 @@ sigVerify(const char *originID, struct match *mtc,
 
     return 1;
 }
+
+const struct openpgp openpgp_gpg = {
+	.cmd = "gpg",
+	.getKeyID = gpg_getKeyID,
+	.getSigKeyID = gpg_getSigKeyID,
+	.sigVerify = gpg_sigVerify,
+};

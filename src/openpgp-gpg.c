@@ -99,6 +99,8 @@ command_gpg_init(struct command *cmd)
     command_add_args(cmd, "--no-options", "--no-default-keyring", "--batch",
                           "--no-secmem-warning", "--no-permission-warning",
                           "--no-mdc-warning", "--no-auto-check-trustdb", NULL);
+    command_add_args(cmd, "--weak-digest", "RIPEMD160", NULL);
+    command_add_args(cmd, "--weak-digest", "SHA1", NULL);
 }
 
 enum keyid_state {

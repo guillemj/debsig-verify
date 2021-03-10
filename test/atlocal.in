@@ -31,7 +31,7 @@ fi
 
 trap debsig_teardown_gnupg EXIT HUP INT QUIT TERM
 
-debsig_setup_gnupg ()
+debsig_openpgp_setup ()
 {
   # Create the GnuPG home directory.
   export GNUPGHOME=$(mktemp --tmpdir -d debsig-test-tmp.XXXXXXXXXX)
@@ -48,13 +48,18 @@ debsig_setup_gnupg ()
   $GPG $GPGOPTS -v --batch --import $TESTKEYRINGS/$TESTKEYID/secring.pgp
 }
 
-debsig_teardown_gnupg ()
+debsig_openpgp_teardown ()
 {
   if $GPGAGENT_MANAGED; then
     gpgconf --kill gpg-agent
   fi
   rm -rf "$TESTGNUPG"
   unset GNUPGHOME
+}
+
+debsig_openpgp_detach_sign()
+{
+  $GPG $GPGOPTS --detach-sig
 }
 
 debsig_make_deb ()
@@ -83,10 +88,10 @@ debsig_make_sig_bad ()
   local debpkg="$1_$2.deb"
 
   # Add a bogus signature to a .deb package.
-  debsig_setup_gnupg
-  $GPG $GPGOPTS --detach-sig >_gpgorigin <"$debpkg"
+  debsig_openpgp_setup
+  debsig_openpgp_detach_sign >_gpgorigin <"$debpkg"
   ar q "$debpkg" _gpgorigin
-  debsig_teardown_gnupg
+  debsig_openpgp_teardown
 }
 
 debsig_make_sig ()
@@ -94,8 +99,8 @@ debsig_make_sig ()
   local debpkg="$1_$2.deb"
 
   # Add signature to a .deb package.
-  debsig_setup_gnupg
-  ar p "$debpkg" | $GPG $GPGOPTS --detach-sig >_gpgorigin
+  debsig_openpgp_setup
+  ar p "$debpkg" | debsig_openpgp_detach_sign >_gpgorigin
   ar q "$debpkg" _gpgorigin
-  debsig_teardown_gnupg
+  debsig_openpgp_teardown
 }

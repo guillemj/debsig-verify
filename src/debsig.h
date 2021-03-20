@@ -18,6 +18,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <stdbool.h>
+
 #include <dpkg/ar.h>
 
 #define OPTIONAL_MATCH 1
@@ -65,6 +67,8 @@ sigVerify(const char *originID, struct match *mtc,
           const char *data, const char *sig);
 void
 clear_policy(void);
+
+bool find_command(const char *prog);
 
 /* Debugging and failures */
 #define DS_LEV_ALWAYS 3

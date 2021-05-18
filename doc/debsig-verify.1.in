@@ -49,9 +49,10 @@ verification.
 .BR Verification
 Rules that are used to actually verify the \fIdeb\fR.
 .PP
-The policy files will reference keyrings by a filename. These keyrings
-will be looked for in a subdirectory of the keyring directory. The
-subdirectory has the same name as the policy subdirectory (previously
+The policy files will reference OpenPGP keyrings by a filename.
+These OpenPGP keyrings will be looked for in a subdirectory of the OpenPGP
+keyring directory.
+The subdirectory has the same name as the policy subdirectory (previously
 determined by the Origin's Public Key ID).
 .PP
 The program will, after first parsing the entire file, check the Origin
@@ -110,10 +111,11 @@ this policy, to try and verify the \fIdeb\fR.
 Use a different directory when looking up for policies.
 .TP
 .BR \-\-keyrings\-dir " \fIdirectory\fP"
-Use a different directory when looking up for keyrings.
+Use a different directory when looking up for OpenPGP keyrings.
 .TP
 .BR \-\-root " \fIdirectory\fP"
-Use a different root directory when looking up for policies and keyrings.
+Use a different root directory when looking up for policies and OpenPGP
+keyrings.
 .SH EXIT STATUS
 .TP
 .B 0
@@ -158,7 +160,8 @@ Directory containing the policy (.pol) definitions.
 XML format policy files.
 .TP
 .I @KEYRINGS_DIR@/
-Directory containing the keyrings (*.pgp) that coincide with the policies.
+Directory containing the OpenPGP keyrings (*.pgp) that coincide with the
+policies.
 .TP
 .I @KEYRINGS_DIR@/*/*.pgp
 .TQ
@@ -166,6 +169,8 @@ Directory containing the keyrings (*.pgp) that coincide with the policies.
 OpenPGP format keyrings for use by the policies.
 Note: The \fB.gpg\fP extensions are the legacy names used due to the
 prevalence of one of the OpenPGP implementation.
+These keyrings must be in OpenPGP keyring format, and not some tool specific
+format (such as GnuPG keybox databases).
 .SH SEE ALSO
 .BR debsigs (1),
 .BR gpg (1),

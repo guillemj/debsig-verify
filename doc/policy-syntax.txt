@@ -70,10 +70,10 @@ Reject		- If this type is present, we fail. This is mostly useful
   Expiry - Number of days old since this sig was created (not yet
 	   enforced). The sig creation can be no older than this.
   ID - If given, the specific keyID to validate against. Otherwise, any
-       key in the keyring specified by "File" will suffice. This is useful
-       if you want several important keys in one keyring, and also for
-       specifying a "group" of keys for one type (like the maintainer
-       keyring).
+       key in the OpenPGP keyring specified by "File" will suffice.
+       This is useful if you want several important keys in one OpenPGP
+       keyring, and also for specifying a "group" of keys for one type
+       (like the maintainer OpenPGP keyring).
 
 For the "Required" and "Optional" matches, the "Type" and "File" attribute
 must be given. ID is optional for both cases. For the "Reject" match, only

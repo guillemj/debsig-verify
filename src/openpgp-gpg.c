@@ -21,6 +21,7 @@
 
 #include <config.h>
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
@@ -36,9 +37,6 @@
 #include <dpkg/path.h>
 
 #include "debsig.h"
-
-#define SIG_MAGIC ":signature packet:"
-#define USER_MAGIC ":user ID packet:"
 
 static int gpg_inited = 0;
 static char *gpg_tmpdir;
@@ -108,6 +106,14 @@ enum keyid_state {
     KEYID_SIG,
 };
 
+static bool
+match_prefix(const char *str, const char *prefix)
+{
+    size_t prefix_len = strlen(prefix);
+
+    return strncmp(str, prefix, prefix_len) == 0;
+}
+
 static char *
 gpg_getKeyID(const char *originID, const struct match *mtc)
 {
@@ -159,7 +165,7 @@ gpg_getKeyID(const char *originID, const struct match *mtc)
 	    continue;
 
 	if (state == KEYID_UNKNOWN) {
-	    if (strncmp(buf, USER_MAGIC, strlen(USER_MAGIC)) != 0)
+	    if (!match_prefix(buf, ":user ID packet:"))
 		continue;
 	    c = strchr(buf, '"');
 	    if (c == NULL)
@@ -174,7 +180,7 @@ gpg_getKeyID(const char *originID, const struct match *mtc)
 	    /* User match found. */
 	    state = KEYID_USER;
 	} else if (state == KEYID_USER) {
-	    if (strncmp(buf, SIG_MAGIC, strlen(SIG_MAGIC)) != 0)
+	    if (!match_prefix(buf, ":signature packet:"))
 		continue;
 	    if ((c = strchr(buf, '\n')) != NULL)
 		*c = '\0';
@@ -255,7 +261,7 @@ gpg_getSigKeyID(struct dpkg_ar *deb, const char *type)
 
     /* Now, let's see what gpg has to say about all this */
     while (fgets(buf, sizeof(buf), ds_read) != NULL) {
-	if (strncmp(buf, SIG_MAGIC, strlen(SIG_MAGIC)) == 0) {
+	if (match_prefix(buf, ":signature packet:")) {
 	    if ((c = strchr(buf, '\n')) != NULL)
 		*c = '\0';
 	    /* This is the only line we care about */

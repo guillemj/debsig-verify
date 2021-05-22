@@ -124,8 +124,11 @@ gpg_getKeyID(const char *originID, const struct match *mtc)
 
     gpg_init();
 
-    m_asprintf(&keyring, "%s%s/%s/%s", rootdir, keyrings_dir, originID,
-               mtc->file);
+    keyring = getDbPathname(rootdir, keyrings_dir, originID, mtc->file);
+    if (keyring == NULL) {
+        ds_printf(DS_LEV_DEBUG, "getKeyID: could not find %s keyring", mtc->file);
+        return NULL;
+    }
 
     m_pipe(pipefd);
     pid = subproc_fork();
@@ -281,17 +284,15 @@ static int
 gpg_sigVerify(const char *originID, struct match *mtc,
               const char *data, const char *sig)
 {
-    char keyring[8192];
+    char *keyring;
     pid_t pid;
     int rc;
-    struct stat st;
 
     gpg_init();
 
-    snprintf(keyring, sizeof(keyring) - 1, "%s%s/%s/%s",
-             rootdir, keyrings_dir, originID, mtc->file);
-    if (stat(keyring, &st)) {
-	ds_printf(DS_LEV_DEBUG, "sigVerify: could not stat %s", keyring);
+    keyring = getDbPathname(rootdir, keyrings_dir, originID, mtc->file);
+    if (keyring == NULL) {
+        ds_printf(DS_LEV_DEBUG, "sigVerify: could not find %s keyring", mtc->file);
 	return 0;
     }
 
@@ -307,6 +308,8 @@ gpg_sigVerify(const char *originID, struct match *mtc,
         command_add_args(&cmd, "--keyring", keyring, "--verify", sig, data, NULL);
         command_exec(&cmd);
     }
+
+    free(keyring);
 
     rc = subproc_reap(pid, "sigVerify", SUBPROC_RETERROR | SUBPROC_RETSIGNO);
     if (rc != 0) {

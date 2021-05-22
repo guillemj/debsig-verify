@@ -70,6 +70,9 @@ off_t
 findMember(struct dpkg_ar *deb, const char *name);
 off_t
 checkSigExist(struct dpkg_ar *deb, const char *name);
+char *
+getDbPathname(const char *rootdir, const char *dir, const char *id,
+              const char *filename);
 bool
 eqKeyID(const char *fprA, const char *fprB);
 getKeyID_func

@@ -429,7 +429,10 @@ main(int argc, char *argv[])
 	ds_fail_printf(DS_FAIL_NOSIGS, "Origin Signature check failed. This deb might not be signed.\n");
 
     /* Now we have an ID, let's check the policy to use */
-    m_asprintf(&origin_dir, "%s%s/%s", rootdir, policies_dir, originID);
+    origin_dir = getDbPathname(rootdir, policies_dir, originID, NULL);
+    if (origin_dir == NULL)
+        ds_fail_printf(DS_FAIL_UNKNOWN_ORIGIN,
+                       "Could not find Origin directory for %s\n", originID);
 
     pd = opendir(origin_dir);
     if (pd == NULL)

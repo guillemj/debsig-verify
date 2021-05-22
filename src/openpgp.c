@@ -21,6 +21,7 @@
 #include <config.h>
 
 #include <string.h>
+#include <unistd.h>
 
 #include <dpkg/dpkg.h>
 #include <dpkg/path.h>
@@ -47,6 +48,32 @@ getOpenPGP(void)
 		ohshit("cannot find an OpenPGP implementation");
 
 	return openpgp;
+}
+
+static char *
+genDbPathname(const char *rootdir, const char *dir, const char *id,
+                    const char *filename)
+{
+	char *pathname;
+
+	if (filename)
+		m_asprintf(&pathname, "%s%s/%s/%s", rootdir, dir, id, filename);
+	else
+		m_asprintf(&pathname, "%s%s/%s", rootdir, dir, id);
+	if (access(pathname, F_OK) == 0)
+		return pathname;
+	return NULL;
+}
+
+char *
+getDbPathname(const char *rootdir, const char *dir, const char *id,
+              const char *filename)
+{
+	char *pathname;
+
+	pathname = genDbPathname(rootdir, dir, id, filename);
+
+	return pathname;
 }
 
 bool

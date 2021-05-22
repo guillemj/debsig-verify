@@ -52,10 +52,25 @@ getOpenPGP(void)
 bool
 eqKeyID(const char *fprA, const char *fprB)
 {
+	size_t lenA, lenB, len;
+
 	if (fprA == NULL || fprB == NULL)
 		return false;
 
-	return strcmp(fprA, fprB) == 0;
+	lenA = strlen(fprA);
+	lenB = strlen(fprB);
+
+	if (lenA == lenB) {
+		len = lenA;
+	} else if (lenA > lenB) {
+		len = lenB;
+		fprA += lenA - lenB;
+	} else {
+		len = lenA;
+		fprB += lenB - lenA;
+	}
+
+	return strncmp(fprA, fprB, len) == 0;
 }
 
 char *

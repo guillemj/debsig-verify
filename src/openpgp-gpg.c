@@ -28,6 +28,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <ctype.h>
 #include <stdlib.h>
 
 #include <dpkg/dpkg.h>
@@ -103,12 +104,13 @@ command_gpg_init(struct command *cmd)
 enum keyid_state {
     KEYID_UNKNOWN,
     KEYID_PUB,
+    KEYID_FPR,
     KEYID_UID,
     KEYID_SIG,
 };
 
 enum colon_fields {
-    COLON_FIELD_PUB_ID = 5,
+    COLON_FIELD_FPR_ID = 10,
     COLON_FIELD_UID_ID = 10,
 };
 
@@ -189,12 +191,14 @@ gpg_getKeyID(const char *originID, const struct match *mtc)
             if (!match_prefix(buf, "pub:"))
 		continue;
 
-            /* Save the KeyID. */
-            ret = get_colon_field(buf, COLON_FIELD_PUB_ID);
-
             /* Certificate found. */
             state = KEYID_PUB;
         } else if (state == KEYID_PUB) {
+            if (!match_prefix(buf, "fpr:"))
+		continue;
+            ret = get_colon_field(buf, COLON_FIELD_FPR_ID);
+            state = KEYID_FPR;
+        } else if (state == KEYID_FPR) {
             char *uid;
 
             if (!match_prefix(buf, "uid:"))
@@ -209,7 +213,7 @@ gpg_getKeyID(const char *originID, const struct match *mtc)
 	    }
             free(uid);
 
-            /* Keyid match found. */
+            /* Fingerprint match found. */
             break;
         }
     }
@@ -237,6 +241,7 @@ gpg_getSigKeyID(struct dpkg_ar *deb, const char *type)
     pid_t pid;
     FILE *ds_read;
     char *c, *ret = NULL;
+    enum keyid_state state = KEYID_UNKNOWN;
 
     if (!len)
 	return NULL;
@@ -280,16 +285,49 @@ gpg_getSigKeyID(struct dpkg_ar *deb, const char *type)
 
     /* Now, let's see what gpg has to say about all this */
     while (fgets(buf, sizeof(buf), ds_read) != NULL) {
-	if (match_prefix(buf, ":signature packet:")) {
-	    if ((c = strchr(buf, '\n')) != NULL)
-		*c = '\0';
-	    /* This is the only line we care about */
-	    ret = strstr(buf, "keyid");
-	    if (ret) {
-		ret += 6;
-		break;
-	    }
-	}
+        char *d;
+
+        /* Skip comments. */
+        if (buf[0] == '#')
+            continue;
+
+        if (state == KEYID_UNKNOWN) {
+            if (match_prefix(buf, ":signature packet:")) {
+                const char keyid_str[] = "keyid";
+
+                if ((c = strchr(buf, '\n')) != NULL)
+                    *c = '\0';
+
+                /* If we find a KeyID, save it in case we cannot find an
+                 * Issuer Fingerprint. */
+                d = strstr(buf, "keyid");
+                if (d) {
+                    d += strlen(keyid_str);
+                    while (isspace(*d))
+                        d++;
+                    ret = d;
+                }
+            }
+            /* Signature packet found. */
+            state = KEYID_SIG;
+        } else if (state == KEYID_SIG) {
+            const char issuer_fpr_str[] = "issuer fpr v";
+
+            d = strstr(buf, issuer_fpr_str);
+            if (d == 0)
+                continue;
+            if ((c = strchr(buf, '\n')) != NULL)
+                *c = '\0';
+            d += strlen(issuer_fpr_str);
+            while (isdigit(*d))
+                d++;
+            while (isspace(*d))
+                d++;
+            ret = d;
+            ret[OPENPGP_FPR_LEN] = '\0';
+            /* Issuer Fingerprint match found. */
+            break;
+        }
     }
     if (ferror(ds_read))
 	ohshit("error reading from gpg");

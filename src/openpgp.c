@@ -50,6 +50,14 @@ getOpenPGP(void)
 	return openpgp;
 }
 
+static const char *
+mapFprToKeyID(const char *id)
+{
+	if (strlen(id) == OPENPGP_FPR_LEN)
+		return id + OPENPGP_FPR_LEN - OPENPGP_KEY_LEN;
+	return id;
+}
+
 static char *
 genDbPathname(const char *rootdir, const char *dir, const char *id,
                     const char *filename)
@@ -69,9 +77,13 @@ char *
 getDbPathname(const char *rootdir, const char *dir, const char *id,
               const char *filename)
 {
+	const char *keyid = mapFprToKeyID(id);
 	char *pathname;
 
 	pathname = genDbPathname(rootdir, dir, id, filename);
+
+	if (id != keyid && pathname == NULL)
+		pathname = genDbPathname(rootdir, dir, keyid, filename);
 
 	return pathname;
 }

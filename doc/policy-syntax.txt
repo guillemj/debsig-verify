@@ -31,7 +31,8 @@ Origin		- Description of this policy. This *must* be the first
 
   Name		- Short name.
   Description	- Descriptive text.
-  ID		- The OpenPGP keyID of this Policy's Origin key, sanity check.
+  ID		- The OpenPGP fingerprint (or long keyID) of this Policy's
+		  Origin key, sanity check.
 
 Selection	- The matching rules which decide if we want to use this
 		  rule set. Basically the rules in this group decide if we
@@ -72,11 +73,12 @@ Reject		- If this type is present, we fail. This is mostly useful
 		  key for this signature.
   Expiry	- Number of days old since this sig was created (not yet
 		  enforced). The sig creation can be no older than this.
-  ID		- If given, the specific keyID to validate against. Otherwise,
-		  any key in the OpenPGP keyring specified by "File" will
-		  suffice. This is useful if you want several important keys
-		  in one OpenPGP keyring, and also for specifying a "group"
-		  of keys for one type (like the maintainer OpenPGP keyring).
+  ID		- If given, the specific fingerprint (or long keyID) to
+		  validate against. Otherwise, any key in the OpenPGP keyring
+		  specified by "File" will suffice. This is useful if you want
+		  several important keys in one OpenPGP keyring, and also for
+		  specifying a "group" of keys for one type (like the
+		  maintainer OpenPGP keyring).
 
 For the "Required" and "Optional" matches, the "Type" and "File" attribute
 must be given. ID is optional for both cases. For the "Reject" match, only

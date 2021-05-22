@@ -4,20 +4,19 @@
 
   <!-- This is mainly a sanity check, since our filename is that of the ID
        anyway. -->
-  <Origin Name="Debsig" id="FAD46790DE88C7E2" Description="Debsig testing"/>
+  <Origin Name="Debsig" id="C2795D9DB38BF08AB1FDE6F6FAD46790DE88C7E2" Description="Debsig testing"/>
 
   <!-- This is required to match in order for this policy to be used. We
        reject the release Type, since we want a different rule set for
        that. -->
   <Selection>
-    <Required Type="origin" File="pubring.pgp"
-              id="Debsig Integration Test Key (This key is for *testing* only) &lt;debsig-test@example.com&gt;"/>
+    <Required Type="origin" File="pubring.pgp" id="C2795D9DB38BF08AB1FDE6F6FAD46790DE88C7E2"/>
   </Selection>
 
   <!-- Once we decide to use this policy, this must pass in order to verify
        the package. -->
   <Verification MinOptional="0">
-    <Required Type="origin" File="pubring.pgp" id="FAD46790DE88C7E2"/>
+    <Required Type="origin" File="pubring.pgp" id="C2795D9DB38BF08AB1FDE6F6FAD46790DE88C7E2"/>
   </Verification>
 
 </Policy>

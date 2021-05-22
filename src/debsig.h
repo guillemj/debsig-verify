@@ -64,6 +64,9 @@ struct openpgp {
 	sigVerify_func *sigVerify;
 };
 
+#define OPENPGP_FPR_LEN 40
+#define OPENPGP_KEY_LEN 16
+
 struct policy *
 parsePolicyFile(const char *filename);
 off_t

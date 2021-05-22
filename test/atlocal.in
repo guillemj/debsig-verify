@@ -14,6 +14,7 @@ export TZ
 TESTDATA="@abs_top_srcdir@/test"
 TESTPOLICIES="$TESTDATA/policies"
 TESTKEYRINGS="$TESTDATA/keyrings"
+TESTFPRID="C2795D9DB38BF08AB1FDE6F6FAD46790DE88C7E2"
 TESTKEYID="FAD46790DE88C7E2"
 
 DEBSIG="debsig-verify -v -d --policies-dir $TESTPOLICIES --keyrings-dir $TESTKEYRINGS"
@@ -29,7 +30,7 @@ if command -v sqop >/dev/null; then
 
   debsig_openpgp_detach_sign ()
   {
-    sqop sign --no-armor $TESTKEYRINGS/$TESTKEYID/secring.pgp
+    sqop sign --no-armor $TESTKEYRINGS/$TESTFPRID/secring.pgp
   }
 elif command -v sq >/dev/null; then
   alias debsig_openpgp_setup=debsig_stub
@@ -37,7 +38,7 @@ elif command -v sq >/dev/null; then
 
   debsig_openpgp_detach_sign ()
   {
-    sq sign --detached --signer-key $TESTKEYRINGS/$TESTKEYID/secring.pgp
+    sq sign --detached --signer-key $TESTKEYRINGS/$TESTFPRID/secring.pgp
   }
 elif command -v gpg >/dev/null; then
   GPG=gpg
@@ -66,8 +67,8 @@ elif command -v gpg >/dev/null; then
     fi
 
     # Import the keys.
-    $GPG $GPGOPTS -v --batch --import $TESTKEYRINGS/$TESTKEYID/pubring.pgp
-    $GPG $GPGOPTS -v --batch --import $TESTKEYRINGS/$TESTKEYID/secring.pgp
+    $GPG $GPGOPTS -v --batch --import $TESTKEYRINGS/$TESTFPRID/pubring.pgp
+    $GPG $GPGOPTS -v --batch --import $TESTKEYRINGS/$TESTFPRID/secring.pgp
   }
 
   debsig_openpgp_teardown ()

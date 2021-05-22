@@ -70,7 +70,7 @@ checkSelRules(struct dpkg_ar *deb, const char *originID, struct group *grp)
         if (mtc->id) {
             char *m_id = getKeyID(originID, mtc);
             char *d_id = getSigKeyID(deb, mtc->name);
-            if (m_id == NULL || d_id == NULL || strcmp(m_id, d_id) != 0)
+            if (!eqKeyID(m_id, d_id))
                 return 0;
         }
 
@@ -176,7 +176,7 @@ verifyGroupRules(struct dpkg_ar *deb, const char *originID, struct group *grp)
 	if (mtc->id) {
 	    char *m_id = getKeyID(originID, mtc);
 	    char *d_id = getSigKeyID(deb, mtc->name);
-	    if (m_id == NULL || d_id == NULL || strcmp(m_id, d_id) != 0)
+	    if (!eqKeyID(m_id, d_id))
 		goto fail_and_close;
 	}
 

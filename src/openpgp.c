@@ -20,6 +20,8 @@
 
 #include <config.h>
 
+#include <string.h>
+
 #include <dpkg/dpkg.h>
 #include <dpkg/path.h>
 
@@ -45,6 +47,15 @@ getOpenPGP(void)
 		ohshit("cannot find an OpenPGP implementation");
 
 	return openpgp;
+}
+
+bool
+eqKeyID(const char *fprA, const char *fprB)
+{
+	if (fprA == NULL || fprB == NULL)
+		return false;
+
+	return strcmp(fprA, fprB) == 0;
 }
 
 char *

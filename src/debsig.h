@@ -70,6 +70,8 @@ off_t
 findMember(struct dpkg_ar *deb, const char *name);
 off_t
 checkSigExist(struct dpkg_ar *deb, const char *name);
+bool
+eqKeyID(const char *fprA, const char *fprB);
 getKeyID_func
 getKeyID;
 getSigKeyID_func

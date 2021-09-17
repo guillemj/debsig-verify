@@ -1,0 +1,41 @@
+image: debian:sid
+
+before_script:
+  - apt update -qq
+  - apt install -qq -y eatmydata
+  - eatmydata apt install -qq -y --no-install-recommends
+    git ca-certificates
+  - eatmydata apt build-dep -qq -y .
+  - ./autogen
+
+# Test whether the release can be done.
+dist-check:
+  stage: test
+  script:
+    - ./configure
+    - make distcheck
+
+# Test whether the unit tests pass (with GnuPG).
+unit-tests-gpg:
+  stage: test
+  script:
+    - ./configure
+    - make check TESTSUITEFLAGS=--verbose
+
+# Test whether the unit tests pass (with Seqouia PGP).
+unit-tests-sq:
+  stage: test
+  script:
+    - eatmydata apt install -qq -y --no-install-recommends
+      sq sqv
+    - ./configure
+    - make check TESTSUITEFLAGS=--verbose
+
+# Test whether the unit tests pass on a VPATH build.
+vpath-tests:
+  stage: test
+  script:
+    - mkdir -p build-tree
+    - cd build-tree
+    - ../configure
+    - make check TESTSUITEFLAGS=--verbose

@@ -4,13 +4,13 @@ main nodes of the Policy, which are Origin, Selection and Verification.
 
 The Origin node describes the supplier of this policy, and subsequent
 packages verified by it. E.g. "debian" is one type of origin, and
-"progeny" may be another.
+"tails" may be another.
 
 The Selection node is used to determine the rules to decide if this policy
 will apply to this package. Since an origin can supply more than one
 policy, this is useful. E.g. Debian could supply a "generic" policy and a
-"Potato Release" policy. Debian CD's may also include a policy for
-verifying that particular set of packages. This node is a list of matches
+Release specific policy. Debian installation media may also include a policy
+for verifying that particular set of packages. This node is a list of matches
 that describe how to evaluate the signatures in the package.
 
 If the Selection block does not pass, then the verification tool will
@@ -23,23 +23,24 @@ verified, and the verification program will exit with a non-zero status,
 indicating failure.
 
 There can be more than one Verification or Selection block. However, there
-must be atleast one of each, else the policy will fail irregardless. All
+must be at least one of each, else the policy will fail irregardless. All
 blocks of the particular type must pass, or all are considered to fail.
 
 Origin		- Description of this policy. This *must* be the first
 		  node in the Policy file.
-  Name - short name
-  Description - descriptive text (duh :)
-  ID - The GPG keyID of this Policy's Origin key, sanity check
+
+  Name		- Short name.
+  Description	- Descriptive text.
+  ID		- The OpenPGP keyID of this Policy's Origin key, sanity check.
 
 Selection	- The matching rules which decide if we want to use this
 		  rule set. Basically the rules in this group decide if we
 		  use this set. If they pass, we commit to using this
 		  Policy. If it fails, the checker will go and try another
 		  Policy. The signatures in this set are not actually
-		  verified via gpg. They are merely checked for existence.
-		  If an ID is specified for a match, then that ID is also
-		  checked.
+		  verified with an OpenPGP implementation. They are merely
+		  checked for existence. If an ID is specified for a match,
+		  then that ID is also checked.
 
 Verification	- Once we commit to using this Policy, the matching rules
 		  in this block must verify without error before we
@@ -47,33 +48,35 @@ Verification	- Once we commit to using this Policy, the matching rules
 		  further policies will be checked and the package is
 		  considered to be insecure.
 
-
   MinOptional	- This is the minimum number of Optional types that must be
 		  present and verified for this group. This is given as an
 		  attribute to the Verification and Selection nodes.
 
-There are three types of matching rules within the two blocks.
+There are three types of matching rules within these last two blocks.
 
 Required	- The Type must be present, and must verify.
-Optional	- If the Type is present, it must verify. If it isn't present, we
-		  ignore this match. Being "present" means that the "Type"
+
+Optional	- If the Type is present, it must verify. If it is not present,
+		  we ignore this match. Being "present" means that the "Type"
 		  exists in the .deb. If the ID is included, then the sig
-		  in the deb must contain the same ID for it to be
-		  considered "present".
+		  in the .deb must contain the same ID for it to be considered
+		  "present".
+
 Reject		- If this type is present, we fail. This is mostly useful
 		  for Selection groups, to manage several policies under
 		  one Origin.
 
-  Type - short string that matches the name of the sig file in the deb.
-  File - the name of the file (sans path) that contains the public key for
-         this signature.
-  Expiry - Number of days old since this sig was created (not yet
-	   enforced). The sig creation can be no older than this.
-  ID - If given, the specific keyID to validate against. Otherwise, any
-       key in the OpenPGP keyring specified by "File" will suffice.
-       This is useful if you want several important keys in one OpenPGP
-       keyring, and also for specifying a "group" of keys for one type
-       (like the maintainer OpenPGP keyring).
+  Type		- Short string that matches the name of the sig file in the
+		  .deb.
+  File		- The name of the file (sans path) that contains the public
+		  key for this signature.
+  Expiry	- Number of days old since this sig was created (not yet
+		  enforced). The sig creation can be no older than this.
+  ID		- If given, the specific keyID to validate against. Otherwise,
+		  any key in the OpenPGP keyring specified by "File" will
+		  suffice. This is useful if you want several important keys
+		  in one OpenPGP keyring, and also for specifying a "group"
+		  of keys for one type (like the maintainer OpenPGP keyring).
 
 For the "Required" and "Optional" matches, the "Type" and "File" attribute
 must be given. ID is optional for both cases. For the "Reject" match, only

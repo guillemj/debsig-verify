@@ -6,6 +6,13 @@ DEBSIG_MAKE_DEB([debraw], [1.0])
 AT_CHECK([$DEBSIG debraw_1.0.deb], [10], [ignore])
 AT_CLEANUP()
 
+AT_SETUP([deb no validates, bad sig])
+AT_KEYWORDS([debsig-verify deb])
+DEBSIG_MAKE_DEB([debsig], [1.0])
+DEBSIG_MAKE_SIG_BAD([debsig], [1.0])
+AT_CHECK([$DEBSIG debsig_1.0.deb], [13], [ignore], [ignore])
+AT_CLEANUP()
+
 AT_SETUP([deb no validates, good sig, no policy dir])
 AT_KEYWORDS([debsig-verify deb])
 DEBSIG_MAKE_DEB([debsig], [1.0])
@@ -19,13 +26,6 @@ DEBSIG_MAKE_DEB([debsig], [1.0])
 DEBSIG_MAKE_SIG([debsig], [1.0])
 AT_CHECK([mkdir -p policies/$TESTKEYID
 $DEBSIG --policies-dir "policies" debsig_1.0.deb], [12], [ignore])
-AT_CLEANUP()
-
-AT_SETUP([deb no validates, bad sig])
-AT_KEYWORDS([debsig-verify deb])
-DEBSIG_MAKE_DEB([debsig], [1.0])
-DEBSIG_MAKE_SIG_BAD([debsig], [1.0])
-AT_CHECK([$DEBSIG debsig_1.0.deb], [13], [ignore], [ignore])
 AT_CLEANUP()
 
 AT_SETUP([deb validates with keyid])

@@ -5,7 +5,7 @@ Maintainer: Dpkg Developers <debian-dpkg@lists.debian.org>
 Uploaders: Guillem Jover <guillem@debian.org>
 Vcs-Browser: https://git.dpkg.org/cgit/dpkg/debsig-verify.git
 Vcs-Git: https://git.dpkg.org/git/dpkg/debsig-verify.git
-Standards-Version: 4.5.1
+Standards-Version: 4.6.0
 Rules-Requires-Root: no
 Build-Depends:
  debhelper-compat (= 13),

@@ -26,9 +26,10 @@
 
 #include <sys/stat.h>
 
+#include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdarg.h>
+
 #include <dpkg/ehandle.h>
 #include <dpkg/varbuf.h>
 

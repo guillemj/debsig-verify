@@ -102,8 +102,14 @@ command_gpg_init(struct command *cmd)
 
 enum keyid_state {
     KEYID_UNKNOWN,
-    KEYID_USER,
+    KEYID_PUB,
+    KEYID_UID,
     KEYID_SIG,
+};
+
+enum colon_fields {
+    COLON_FIELD_PUB_ID = 5,
+    COLON_FIELD_UID_ID = 10,
 };
 
 static bool
@@ -115,6 +121,24 @@ match_prefix(const char *str, const char *prefix)
 }
 
 static char *
+get_colon_field(const char *str, int field_num)
+{
+    const char *end;
+
+    for (int field = 1; field < field_num; field++) {
+        str = strchrnul(str, ':');
+        if (str[0] != ':')
+            return NULL;
+    }
+
+    end = strchrnul(str, ':');
+    if (end[0] != ':')
+        return NULL;
+
+    return strndup(str, end - str);
+}
+
+static char *
 gpg_getKeyID(const char *originID, const struct match *mtc)
 {
     static char buf[2048];
@@ -122,7 +146,7 @@ gpg_getKeyID(const char *originID, const struct match *mtc)
     pid_t pid;
     int pipefd[2];
     FILE *ds;
-    char *c, *d, *ret = NULL;
+    char *ret = NULL;
     enum keyid_state state = KEYID_UNKNOWN;
 
     if (mtc->id == NULL)
@@ -146,7 +170,8 @@ gpg_getKeyID(const char *originID, const struct match *mtc)
         close(pipefd[1]);
 
         command_gpg_init(&cmd);
-        command_add_args(&cmd, "--list-packets", "-q", keyring, NULL);
+        command_add_args(&cmd, "--quiet", "--with-colons", "--show-keys",
+                               keyring, NULL);
         command_exec(&cmd);
     }
     close(pipefd[1]);
@@ -160,39 +185,33 @@ gpg_getKeyID(const char *originID, const struct match *mtc)
     }
 
     while (fgets(buf, sizeof(buf), ds) != NULL) {
-	/* Skip comments. */
-	if (buf[0] == '#')
-	    continue;
-
 	if (state == KEYID_UNKNOWN) {
-	    if (!match_prefix(buf, ":user ID packet:"))
+            if (!match_prefix(buf, "pub:"))
 		continue;
-	    c = strchr(buf, '"');
-	    if (c == NULL)
+
+            /* Save the KeyID. */
+            ret = get_colon_field(buf, COLON_FIELD_PUB_ID);
+
+            /* Certificate found. */
+            state = KEYID_PUB;
+        } else if (state == KEYID_PUB) {
+            char *uid;
+
+            if (!match_prefix(buf, "uid:"))
 		continue;
-	    d = c + 1;
-	    c = strchr(d, '"');
-	    if (c == NULL)
+
+            uid = get_colon_field(buf, COLON_FIELD_UID_ID);
+            if (uid == NULL)
 		continue;
-	    *c = '\0';
-	    if (strcmp(d, mtc->id) != 0)
+            if (strcmp(uid, mtc->id) != 0) {
+                free(uid);
 		continue;
-	    /* User match found. */
-	    state = KEYID_USER;
-	} else if (state == KEYID_USER) {
-	    if (!match_prefix(buf, ":signature packet:"))
-		continue;
-	    if ((c = strchr(buf, '\n')) != NULL)
-		*c = '\0';
-	    d = strstr(buf, "keyid");
-	    if (d) {
-		ret = d + 6;
-		/* Keyid match found. */
-		break;
 	    }
-	    /* Reset state. */
-	    state = KEYID_UNKNOWN;
-	}
+            free(uid);
+
+            /* Keyid match found. */
+            break;
+        }
     }
     fclose(ds);
 

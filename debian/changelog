@@ -1,20 +1,45 @@
-debsig-verify (0.24) UNRELEASED; urgency=medium
+debsig-verify (0.24) unstable; urgency=medium
 
-  * Move GnuPG specific macros to the GnuPG backend module.
-  * Rename gpgVerify() to sigVerify().
-  * Add a new find_command() function.
-  * Abstract the OpenPGP operations behind a frontend driver.
-  * Move checkSigExist() from misc to openpgp module.
+  * Switch keyring parser from gpg --list-packets to --show-keys --with-colons.
+  * Use fingerprint and fallback to use long keyIDs for database filenames.
+  * Reject weak RIPEMD160 and SHA1 algorithms.
   * Documentation:
     - Update .gpg keyring references to .pgp in man page.
     - Mention OpenPGP instead of gpg in generic code comments.
+    - Clarify the requirement for OpenPGP keyrings.
+      Prompted by Steve McIntyre <steve@einval.com>.
+      See #988646.
+    - Update and modernize the policy-syntax specification.
+  * Code internals:
+    - Move GnuPG specific macros to the GnuPG backend module.
+    - Rename gpgVerify() to sigVerify().
+    - Add a new find_command() function.
+    - Abstract the OpenPGP operations behind a frontend driver.
+    - Move checkSigExist() from misc to openpgp module.
+    - Rename XML parser file to policy-xml.
+    - Refactor key ID comparison function.
+    - Support comparing keyIDs and fingerprints.
+    - Refactor database filename generation into a new function.
+    - Refactor prefix matching into a new function.
+    - Regroup header includes.
+  * Build system:
+    - Add GitLab CI support.
+    - Update .gitignore file.
+  * Packaging:
+    - Fix typo for Standards-Version field.
+    - Switch to Standards-Version 4.6.0 (no changes needed).
+    - Do not include the keyid in the example policies pathname.
   * Test suite:
     - Rename .gpg keyrings to .pgp.
     - Abstract OpenPGP details into debsig_openpgp_* functions.
     - Check OpenPGP backend availability.
     - Add sqop and sq OpenPGP backend support.
+    - Remove obsolete and non-compliant test data.
+      Reported by Charles Duffy <charles@dyfis.net>.
+    - Shorten test case titles.
+    - Move bad sig case after no sig case.
 
- -- Guillem Jover <guillem@debian.org>  Sat, 20 Mar 2021 01:50:00 +0100
+ -- Guillem Jover <guillem@debian.org>  Tue, 16 Nov 2021 06:02:07 +0100
 
 debsig-verify (0.23) unstable; urgency=medium
 

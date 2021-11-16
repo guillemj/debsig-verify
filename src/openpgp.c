@@ -116,11 +116,11 @@ eqKeyID(const char *fprA, const char *fprB)
 }
 
 char *
-getKeyID(const char *originID, const struct match *mtc)
+getKeyID(const char *keyring, const struct match *mtc)
 {
 	const struct openpgp *openpgp = getOpenPGP();
 
-	return openpgp->getKeyID(originID, mtc);
+	return openpgp->getKeyID(keyring, mtc);
 }
 
 char *
@@ -147,10 +147,9 @@ checkSigExist(struct dpkg_ar *deb, const char *name)
 }
 
 int
-sigVerify(const char *originID, struct match *mtc,
-          const char *data, const char *sig)
+sigVerify(const char *keyring, const char *data, const char *sig)
 {
 	const struct openpgp *openpgp = getOpenPGP();
 
-	return openpgp->sigVerify(originID, mtc, data, sig);
+	return openpgp->sigVerify(keyring, data, sig);
 }

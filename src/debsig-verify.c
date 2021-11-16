@@ -64,20 +64,32 @@ checkSelRules(struct dpkg_ar *deb, const char *originID, struct group *grp)
     int len;
 
     for (mtc = grp->matches; mtc; mtc = mtc->next) {
+        char *keyring;
+
         ds_printf(DS_LEV_VER, "      Processing '%s' key...", mtc->name);
+
+        /* Get the keyring we might need to use multiple times. */
+        keyring = getDbPathname(rootdir, keyrings_dir, originID, mtc->file);
+        if (keyring == NULL) {
+            ds_printf(DS_LEV_DEBUG, "checkSelRules: cannot find %s keyring", mtc->file);
+            return 0;
+        }
 
         /* If we have an ID for this match, check to make sure it exists, and
          * matches the signature we are about to check.  */
         if (mtc->id) {
-            char *m_id = getKeyID(originID, mtc);
+            char *m_id = getKeyID(keyring, mtc);
             char *d_id = getSigKeyID(deb, mtc->name);
             bool is_same_id = eqKeyID(m_id, d_id);
 
             free(m_id);
             free(d_id);
+            free(keyring);
 
             if (!is_same_id)
                 return 0;
+        } else {
+            free(keyring);
         }
 
 	/* XXX: If the match doesn't specify an ID, we need to check to
@@ -116,6 +128,7 @@ verifyGroupRules(struct dpkg_ar *deb, const char *originID, struct group *grp)
 {
     struct dpkg_error err;
     char *tmp_sig, *tmp_data;
+    char *keyring = NULL;
     int opt_count = 0, t, i, fd;
     struct match *mtc;
     off_t len;
@@ -177,10 +190,17 @@ verifyGroupRules(struct dpkg_ar *deb, const char *originID, struct group *grp)
     for (mtc = grp->matches; mtc; mtc = mtc->next) {
 	ds_printf(DS_LEV_VER, "      Processing '%s' key...", mtc->name);
 
+        /* Get the keyring we might need to use multiple times. */
+        keyring = getDbPathname(rootdir, keyrings_dir, originID, mtc->file);
+        if (keyring == NULL) {
+            ds_printf(DS_LEV_DEBUG, "verifyGroupRules: cannot find %s keyring", mtc->file);
+            goto fail_and_close;
+        }
+
 	/* If we have an ID for this match, check to make sure it exists, and
 	 * matches the signature we are about to check.  */
 	if (mtc->id) {
-	    char *m_id = getKeyID(originID, mtc);
+	    char *m_id = getKeyID(keyring, mtc);
 	    char *d_id = getSigKeyID(deb, mtc->name);
             bool is_same_id = eqKeyID(m_id, d_id);
 
@@ -221,7 +241,10 @@ verifyGroupRules(struct dpkg_ar *deb, const char *originID, struct group *grp)
 	    ohshit("error closing temp file %s", tmp_sig);
 
 	/* Now, let's check with an OpenPGP implementation on this one. */
-	t = sigVerify(originID, mtc, tmp_data, tmp_sig);
+	t = sigVerify(keyring, tmp_data, tmp_sig);
+
+        free(keyring);
+        keyring = NULL;
 
 	fd = -1;
 	unlink(tmp_sig);
@@ -252,6 +275,7 @@ verifyGroupRules(struct dpkg_ar *deb, const char *originID, struct group *grp)
 fail_and_close:
     unlink(tmp_data);
     free(tmp_data);
+    free(keyring);
     if (fd != -1)
 	close(fd);
     return 0;

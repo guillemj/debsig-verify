@@ -169,12 +169,11 @@ get_colon_field(const char *str, int field_num)
 }
 
 static char *
-gpg_getKeyID(const char *originID, const struct match *mtc)
+gpg_getKeyID(const char *keyring, const struct match *mtc)
 {
     char *buf = NULL;
     size_t buflen = 0;
     ssize_t nread;
-    char *keyring;
     pid_t pid;
     int pipefd[2];
     FILE *ds;
@@ -185,12 +184,6 @@ gpg_getKeyID(const char *originID, const struct match *mtc)
 	return NULL;
 
     gpg_init();
-
-    keyring = getDbPathname(rootdir, keyrings_dir, originID, mtc->file);
-    if (keyring == NULL) {
-        ds_printf(DS_LEV_DEBUG, "getKeyID: could not find %s keyring", mtc->file);
-        return NULL;
-    }
 
     m_pipe(pipefd);
     pid = subproc_fork();
@@ -207,8 +200,6 @@ gpg_getKeyID(const char *originID, const struct match *mtc)
         command_exec(&cmd);
     }
     close(pipefd[1]);
-
-    free(keyring);
 
     ds = fdopen(pipefd[0], "r");
     if (ds == NULL) {
@@ -383,20 +374,12 @@ gpg_getSigKeyID(struct dpkg_ar *deb, const char *type)
 }
 
 static int
-gpg_sigVerify(const char *originID, struct match *mtc,
-              const char *data, const char *sig)
+gpg_sigVerify(const char *keyring, const char *data, const char *sig)
 {
-    char *keyring;
     pid_t pid;
     int rc;
 
     gpg_init();
-
-    keyring = getDbPathname(rootdir, keyrings_dir, originID, mtc->file);
-    if (keyring == NULL) {
-        ds_printf(DS_LEV_DEBUG, "sigVerify: could not find %s keyring", mtc->file);
-	return 0;
-    }
 
     pid = subproc_fork();
     if (pid == 0) {
@@ -410,8 +393,6 @@ gpg_sigVerify(const char *originID, struct match *mtc,
         command_add_args(&cmd, "--keyring", keyring, "--verify", sig, data, NULL);
         command_exec(&cmd);
     }
-
-    free(keyring);
 
     rc = subproc_reap(pid, "sigVerify", SUBPROC_RETERROR | SUBPROC_RETSIGNO);
     if (rc != 0) {

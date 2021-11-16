@@ -52,9 +52,9 @@ struct policy {
         struct group *vers;
 };
 
-typedef char *getKeyID_func(const char *originID, const struct match *mtc);
+typedef char *getKeyID_func(const char *keyring, const struct match *mtc);
 typedef char *getSigKeyID_func(struct dpkg_ar *deb, const char *type);
-typedef int sigVerify_func(const char *originID, struct match *mtc,
+typedef int sigVerify_func(const char *keyring,
                            const char *data, const char *sig);
 
 struct openpgp {

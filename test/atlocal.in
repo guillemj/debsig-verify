@@ -52,7 +52,7 @@ elif command -v gpg >/dev/null; then
     GPGAGENT_MANAGED=false
   fi
 
-  trap debsig_teardown_gnupg EXIT HUP INT QUIT TERM
+  trap debsig_openpgp_teardown EXIT HUP INT QUIT TERM
 
   debsig_openpgp_setup ()
   {

@@ -1,3 +1,9 @@
+debsig-verify (0.25) UNRELEASED; urgency=medium
+
+  *
+
+ -- Guillem Jover <guillem@debian.org>  Wed, 17 Nov 2021 02:35:28 +0100
+
 debsig-verify (0.24) unstable; urgency=medium
 
   * Switch keyring parser from gpg --list-packets to --show-keys --with-colons.

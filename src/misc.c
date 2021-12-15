@@ -41,13 +41,13 @@ void
 ds_printf(int level, const char *fmt, ...)
 {
     va_list ap;
-    char buf[8096];
 
     if (level >= ds_debug_level) {
+	printf("debsig: ");
 	va_start(ap, fmt);
-	snprintf(buf, sizeof(buf) - 1, "debsig: %s\n", fmt);
-	(void) vprintf(buf, ap);
+	(void) vprintf(fmt, ap);
 	va_end(ap);
+	printf("\n");
     }
 }
 

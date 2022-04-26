@@ -135,6 +135,8 @@ get_colon_field(const char *str, int field_num)
         str = strchrnul(str, ':');
         if (str[0] != ':')
             return NULL;
+        if (str[0])
+            str++;
     }
 
     end = strchrnul(str, ':');

@@ -131,16 +131,16 @@ get_field(const char *str, int field_sep, int field_num)
 {
     const char *end;
 
-    for (int field = 1; field < field_num; field++) {
+    for (int field = 1; field < field_num && str[0]; field++) {
         str = strchrnul(str, field_sep);
-        if (str[0] != field_sep)
+        if (str[0] != field_sep && str[0] != '\0')
             return NULL;
         if (str[0])
             str++;
     }
 
     end = strchrnul(str, field_sep);
-    if (end[0] != field_sep)
+    if (end[0] != field_sep && end[0] != '\0')
         return NULL;
 
     return strndup(str, end - str);
@@ -202,6 +202,12 @@ gpg_getKeyID(const char *originID, const struct match *mtc)
 
     while ((nread = getline(&buf, &buflen, ds)) >= 0) {
         char *fpr;
+
+        if (buf[nread - 1] != '\n') {
+          ds_printf(DS_LEV_DEBUG, "        getKeyID: found truncated input from GnuPG, aborting");
+          break;
+        }
+        buf[nread - 1] = '\0';
 
 	if (state == KEYID_UNKNOWN) {
             if (!match_prefix(buf, "pub:"))
@@ -309,6 +315,12 @@ gpg_getSigKeyID(struct dpkg_ar *deb, const char *type)
     /* Now, let's see what gpg has to say about all this */
     while ((nread = getline(&buf, &buflen, ds_read)) >= 0) {
         char *d;
+
+        if (buf[nread - 1] != '\n') {
+          ds_printf(DS_LEV_DEBUG, "        getKeyID: found truncated input from GnuPG, aborting");
+          break;
+        }
+        buf[nread - 1] = '\0';
 
         /* Skip comments. */
         if (buf[0] == '#')

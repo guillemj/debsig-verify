@@ -26,6 +26,7 @@
 #include <sys/wait.h>
 
 #include <ctype.h>
+#include <fcntl.h>
 #include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -118,6 +119,12 @@ enum colon_fields {
     COLON_FIELD_UID_ID = 10,
 };
 
+enum errsig_fields {
+    ERRSIG_FIELD_SELF = 2,
+    ERRSIG_FIELD_KEY_ID = 3,
+    ERRSIG_FIELD_FPR_ID = 9,
+};
+
 static bool
 match_prefix(const char *str, const char *prefix)
 {
@@ -144,6 +151,12 @@ get_field(const char *str, int field_sep, int field_num)
         return NULL;
 
     return strndup(str, end - str);
+}
+
+static char *
+get_space_field(const char *str, int field_num)
+{
+    return get_field(str, ' ', field_num);
 }
 
 static char *
@@ -289,6 +302,7 @@ gpg_getSigKeyID(struct dpkg_ar *deb, const char *type)
     pid = subproc_fork();
     if (pid == 0) {
         struct command cmd;
+        int null_fd;
 
 	/* Here we go */
 	m_dup2(pread[1], 1);
@@ -298,8 +312,13 @@ gpg_getSigKeyID(struct dpkg_ar *deb, const char *type)
 	close(pwrite[0]);
 	close(pwrite[1]);
 
+	null_fd = open("/dev/null", O_WRONLY);
+	m_dup2(null_fd, STDERR_FILENO);
+
 	command_gpg_init(&cmd);
-	command_add_args(&cmd, "--list-packets", "-q", "-", NULL);
+	command_add_args(&cmd, "--keyring", "/dev/null", NULL);
+	command_add_args(&cmd, "--status-fd", "1", NULL);
+	command_add_args(&cmd, "--verify", "-", "/dev/null", NULL);
 	command_exec(&cmd);
     }
     close(pread[1]); close(pwrite[0]);
@@ -314,8 +333,6 @@ gpg_getSigKeyID(struct dpkg_ar *deb, const char *type)
 
     /* Now, let's see what gpg has to say about all this */
     while ((nread = getline(&buf, &buflen, ds_read)) >= 0) {
-        char *d;
-
         if (buf[nread - 1] != '\n') {
           ds_printf(DS_LEV_DEBUG, "        getKeyID: found truncated input from GnuPG, aborting");
           break;
@@ -326,43 +343,24 @@ gpg_getSigKeyID(struct dpkg_ar *deb, const char *type)
         if (buf[0] == '#')
             continue;
 
-        if (state == KEYID_UNKNOWN) {
-            if (match_prefix(buf, ":signature packet:")) {
-                const char keyid_str[] = "keyid";
+        if (strncmp(buf, "[GNUPG:]", 8) != 0)
+            continue;
 
-                if ((c = strchr(buf, '\n')) != NULL)
-                    *c = '\0';
-
-                /* If we find a KeyID, save it in case we cannot find an
-                 * Issuer Fingerprint. */
-                d = strstr(buf, "keyid");
-                if (d) {
-                    d += strlen(keyid_str);
-                    while (isspace(*d))
-                        d++;
-                    ret = d;
-                }
-            }
-            /* Signature packet found. */
-            state = KEYID_SIG;
-        } else if (state == KEYID_SIG) {
-            const char issuer_fpr_str[] = "issuer fpr v";
-
-            d = strstr(buf, issuer_fpr_str);
-            if (d == 0)
-                continue;
-            if ((c = strchr(buf, '\n')) != NULL)
-                *c = '\0';
-            d += strlen(issuer_fpr_str);
-            while (isdigit(*d))
-                d++;
-            while (isspace(*d))
-                d++;
-            ret = d;
-            ret[OPENPGP_FPR_LEN] = '\0';
-            /* Issuer Fingerprint match found. */
-            break;
+        ret = get_space_field(buf, ERRSIG_FIELD_SELF);
+        if (strcmp(ret, "ERRSIG") != 0) {
+            free(ret);
+            ret = NULL;
+            continue;
         }
+
+        free(ret);
+        ret = get_space_field(buf, ERRSIG_FIELD_FPR_ID);
+        if (strcmp(ret, "-") != 0)
+            break;
+
+        free(ret);
+        ret = get_space_field(buf, ERRSIG_FIELD_KEY_ID);
+        break;
     }
     if (ferror(ds_read))
 	ohshit("error reading from gpg");
@@ -376,7 +374,9 @@ gpg_getSigKeyID(struct dpkg_ar *deb, const char *type)
     else
 	ds_printf(DS_LEV_DEBUG, "        getSigKeyID: got %s for %s key", ret, type);
 
-    return strdup(ret);
+    if (ret)
+      return strdup(ret);
+    return NULL;
 }
 
 static int

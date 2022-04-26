@@ -99,6 +99,9 @@ eqKeyID(const char *fprA, const char *fprB)
 	lenA = strlen(fprA);
 	lenB = strlen(fprB);
 
+	if (lenA == 0 || lenB == 0)
+		return false;
+
 	if (lenA == lenB) {
 		len = lenA;
 	} else if (lenA > lenB) {

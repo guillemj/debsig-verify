@@ -146,7 +146,9 @@ get_colon_field(const char *str, int field_num)
 static char *
 gpg_getKeyID(const char *originID, const struct match *mtc)
 {
-    static char buf[2048];
+    char *buf = NULL;
+    size_t buflen = 0;
+    ssize_t nread;
     char *keyring;
     pid_t pid;
     int pipefd[2];
@@ -189,7 +191,7 @@ gpg_getKeyID(const char *originID, const struct match *mtc)
 	return NULL;
     }
 
-    while (fgets(buf, sizeof(buf), ds) != NULL) {
+    while ((nread = getline(&buf, &buflen, ds)) >= 0) {
 	if (state == KEYID_UNKNOWN) {
             if (!match_prefix(buf, "pub:"))
 		continue;
@@ -221,6 +223,7 @@ gpg_getKeyID(const char *originID, const struct match *mtc)
         }
     }
     fclose(ds);
+    free(buf);
 
     subproc_reap(pid, "getKeyID", SUBPROC_NORMAL);
 
@@ -237,7 +240,9 @@ gpg_getKeyID(const char *originID, const struct match *mtc)
 static char *
 gpg_getSigKeyID(struct dpkg_ar *deb, const char *type)
 {
-    static char buf[2048];
+    char *buf = NULL;
+    size_t buflen = 0;
+    ssize_t nread;
     struct dpkg_error err;
     int pread[2], pwrite[2];
     off_t len = checkSigExist(deb, type);
@@ -287,7 +292,7 @@ gpg_getSigKeyID(struct dpkg_ar *deb, const char *type)
 	ohshite("getSigKeyID: error closing gpg write pipe");
 
     /* Now, let's see what gpg has to say about all this */
-    while (fgets(buf, sizeof(buf), ds_read) != NULL) {
+    while ((nread = getline(&buf, &buflen, ds_read)) >= 0) {
         char *d;
 
         /* Skip comments. */
@@ -335,6 +340,7 @@ gpg_getSigKeyID(struct dpkg_ar *deb, const char *type)
     if (ferror(ds_read))
 	ohshit("error reading from gpg");
     fclose(ds_read);
+    free(buf);
 
     subproc_reap(pid, "getSigKeyID", SUBPROC_NOCHECK);
 
@@ -343,7 +349,7 @@ gpg_getSigKeyID(struct dpkg_ar *deb, const char *type)
     else
 	ds_printf(DS_LEV_DEBUG, "        getSigKeyID: got %s for %s key", ret, type);
 
-    return ret;
+    return strdup(ret);
 }
 
 static int

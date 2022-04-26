@@ -127,23 +127,29 @@ match_prefix(const char *str, const char *prefix)
 }
 
 static char *
-get_colon_field(const char *str, int field_num)
+get_field(const char *str, int field_sep, int field_num)
 {
     const char *end;
 
     for (int field = 1; field < field_num; field++) {
-        str = strchrnul(str, ':');
-        if (str[0] != ':')
+        str = strchrnul(str, field_sep);
+        if (str[0] != field_sep)
             return NULL;
         if (str[0])
             str++;
     }
 
-    end = strchrnul(str, ':');
-    if (end[0] != ':')
+    end = strchrnul(str, field_sep);
+    if (end[0] != field_sep)
         return NULL;
 
     return strndup(str, end - str);
+}
+
+static char *
+get_colon_field(const char *str, int field_num)
+{
+    return get_field(str, ':', field_num);
 }
 
 static char *

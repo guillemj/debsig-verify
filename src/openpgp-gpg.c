@@ -195,6 +195,8 @@ gpg_getKeyID(const char *originID, const struct match *mtc)
     }
 
     while ((nread = getline(&buf, &buflen, ds)) >= 0) {
+        char *fpr;
+
 	if (state == KEYID_UNKNOWN) {
             if (!match_prefix(buf, "pub:"))
 		continue;
@@ -204,7 +206,11 @@ gpg_getKeyID(const char *originID, const struct match *mtc)
         } else if (state == KEYID_PUB) {
             if (!match_prefix(buf, "fpr:"))
 		continue;
-            ret = get_colon_field(buf, COLON_FIELD_FPR_ID);
+            fpr = get_colon_field(buf, COLON_FIELD_FPR_ID);
+            if (eqKeyID(fpr, mtc->id)) {
+                ret = fpr;
+                break;
+            }
             state = KEYID_FPR;
         } else if (state == KEYID_FPR) {
             char *uid;
@@ -222,6 +228,7 @@ gpg_getKeyID(const char *originID, const struct match *mtc)
             free(uid);
 
             /* Fingerprint match found. */
+            ret = fpr;
             break;
         }
     }

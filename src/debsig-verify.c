@@ -75,9 +75,9 @@ checkSelRules(struct dpkg_ar *deb, const char *originID, struct group *grp)
             return 0;
         }
 
-        /* If we have an ID for this match, check to make sure it exists, and
-         * matches the signature we are about to check.  */
         if (mtc->id) {
+            /* If we have an ID for this match, check to make sure it exists,
+             * and matches the signature we are about to check.  */
             char *m_id = getKeyID(keyring, mtc->id);
             char *d_id = getSigKeyID(deb, mtc->name);
             bool is_same_id = eqKeyID(m_id, d_id);
@@ -89,13 +89,17 @@ checkSelRules(struct dpkg_ar *deb, const char *originID, struct group *grp)
             if (!is_same_id)
                 return 0;
         } else {
-            free(keyring);
-        }
+            /* If the match does not specify an ID, we should check whether
+             * the ID of the signature exists in the keyring specified. */
+            char *m_id = getKeyID(keyring, originID);
+            bool found = m_id != NULL;
 
-	/* XXX: If the match doesn't specify an ID, we need to check to
-	 * make sure the ID of the signature exists in the keyring
-	 * specified, don't we?
-	 */
+            free(m_id);
+            free(keyring);
+
+            if (!found)
+              return 0;
+        }
 
         len = checkSigExist(deb, mtc->name);
 

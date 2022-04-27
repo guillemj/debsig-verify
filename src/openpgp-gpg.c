@@ -97,6 +97,7 @@ static void
 command_gpg_init(struct command *cmd)
 {
     command_init(cmd, gpg_prog, "gpg");
+    command_add_arg(cmd, gpg_prog);
     command_add_args(cmd, "--no-options", "--no-default-keyring", "--batch",
                           "--no-secmem-warning", "--no-permission-warning",
                           "--no-mdc-warning", "--no-auto-check-trustdb", NULL);

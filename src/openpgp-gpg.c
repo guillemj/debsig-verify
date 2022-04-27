@@ -238,8 +238,7 @@ gpg_getKeyID(const char *originID, const struct match *mtc)
     subproc_reap(pid, "getKeyID", SUBPROC_NORMAL);
 
     if (ret == NULL) {
-	ds_printf(DS_LEV_DEBUG, "        getKeyID: no match, falling back to %s", mtc->id);
-	ret = mtc->id;
+	ds_printf(DS_LEV_DEBUG, "        getKeyID: failed for %s", mtc->id);
     } else {
 	ds_printf(DS_LEV_DEBUG, "        getKeyID: mapped %s -> %s", mtc->id, ret);
     }

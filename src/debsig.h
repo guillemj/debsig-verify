@@ -52,7 +52,7 @@ struct policy {
         struct group *vers;
 };
 
-typedef char *getKeyID_func(const char *keyring, const struct match *mtc);
+typedef char *getKeyID_func(const char *keyring, const char *match_id);
 typedef char *getSigKeyID_func(struct dpkg_ar *deb, const char *type);
 typedef int sigVerify_func(const char *keyring,
                            const char *data, const char *sig);

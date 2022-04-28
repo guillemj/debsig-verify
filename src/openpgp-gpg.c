@@ -169,7 +169,7 @@ get_colon_field(const char *str, int field_num)
 }
 
 static char *
-gpg_getKeyID(const char *keyring, const struct match *mtc)
+gpg_getKeyID(const char *keyring, const char *match_id)
 {
     char *buf = NULL;
     size_t buflen = 0;
@@ -180,7 +180,7 @@ gpg_getKeyID(const char *keyring, const struct match *mtc)
     char *ret = NULL;
     enum keyid_state state = KEYID_UNKNOWN;
 
-    if (mtc->id == NULL)
+    if (match_id == NULL)
 	return NULL;
 
     gpg_init();
@@ -226,7 +226,7 @@ gpg_getKeyID(const char *keyring, const struct match *mtc)
             if (!match_prefix(buf, "fpr:"))
 		continue;
             fpr = get_colon_field(buf, COLON_FIELD_FPR_ID);
-            if (eqKeyID(fpr, mtc->id)) {
+            if (eqKeyID(fpr, match_id)) {
                 ret = fpr;
                 break;
             }
@@ -240,7 +240,7 @@ gpg_getKeyID(const char *keyring, const struct match *mtc)
             uid = get_colon_field(buf, COLON_FIELD_UID_ID);
             if (uid == NULL)
 		continue;
-            if (strcmp(uid, mtc->id) != 0) {
+            if (strcmp(uid, match_id) != 0) {
                 free(uid);
 		continue;
 	    }
@@ -257,9 +257,9 @@ gpg_getKeyID(const char *keyring, const struct match *mtc)
     subproc_reap(pid, "getKeyID", SUBPROC_NORMAL);
 
     if (ret == NULL) {
-	ds_printf(DS_LEV_DEBUG, "        getKeyID: failed for %s", mtc->id);
+	ds_printf(DS_LEV_DEBUG, "        getKeyID: failed for %s", match_id);
     } else {
-	ds_printf(DS_LEV_DEBUG, "        getKeyID: mapped %s -> %s", mtc->id, ret);
+	ds_printf(DS_LEV_DEBUG, "        getKeyID: mapped %s -> %s", match_id, ret);
     }
 
     return ret;

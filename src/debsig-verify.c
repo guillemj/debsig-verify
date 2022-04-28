@@ -78,7 +78,7 @@ checkSelRules(struct dpkg_ar *deb, const char *originID, struct group *grp)
         /* If we have an ID for this match, check to make sure it exists, and
          * matches the signature we are about to check.  */
         if (mtc->id) {
-            char *m_id = getKeyID(keyring, mtc);
+            char *m_id = getKeyID(keyring, mtc->id);
             char *d_id = getSigKeyID(deb, mtc->name);
             bool is_same_id = eqKeyID(m_id, d_id);
 
@@ -200,7 +200,7 @@ verifyGroupRules(struct dpkg_ar *deb, const char *originID, struct group *grp)
 	/* If we have an ID for this match, check to make sure it exists, and
 	 * matches the signature we are about to check.  */
 	if (mtc->id) {
-	    char *m_id = getKeyID(keyring, mtc);
+	    char *m_id = getKeyID(keyring, mtc->id);
 	    char *d_id = getSigKeyID(deb, mtc->name);
             bool is_same_id = eqKeyID(m_id, d_id);
 

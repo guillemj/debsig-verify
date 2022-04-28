@@ -116,11 +116,11 @@ eqKeyID(const char *fprA, const char *fprB)
 }
 
 char *
-getKeyID(const char *keyring, const struct match *mtc)
+getKeyID(const char *keyring, const char *match_id)
 {
 	const struct openpgp *openpgp = getOpenPGP();
 
-	return openpgp->getKeyID(keyring, mtc);
+	return openpgp->getKeyID(keyring, match_id);
 }
 
 char *

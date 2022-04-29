@@ -55,7 +55,7 @@ cleanup_gpg_tmpdir(void)
       execlp("rm", "rm", "-rf", gpg_tmpdir, NULL);
       ohshite("unable to execute %s (%s)", "rm", "rm -rf");
     }
-    subproc_reap(pid, "getSigKeyID", SUBPROC_NOCHECK);
+    subproc_reap(pid, "remove GnuPG temporary home directory", SUBPROC_NOCHECK);
 
     free(gpg_tmpdir);
     gpg_tmpdir = NULL;

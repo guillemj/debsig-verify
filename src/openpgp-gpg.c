@@ -266,14 +266,14 @@ gpg_getKeyID(const char *keyring, const char *match_id)
 }
 
 static char *
-gpg_getSigKeyID(struct dpkg_ar *deb, const char *type)
+gpg_getSigKeyID(struct dpkg_ar *deb, const char *name)
 {
     char *buf = NULL;
     size_t buflen = 0;
     ssize_t nread;
     struct dpkg_error err;
     int pread[2], pwrite[2];
-    off_t len = checkSigExist(deb, type);
+    off_t len = checkSigExist(deb, name);
     pid_t pid;
     FILE *ds_read;
     char *c, *ret = NULL;
@@ -364,9 +364,9 @@ gpg_getSigKeyID(struct dpkg_ar *deb, const char *type)
     subproc_reap(pid, "getSigKeyID", SUBPROC_NOCHECK);
 
     if (ret == NULL)
-	ds_printf(DS_LEV_DEBUG, "        getSigKeyID: failed for %s", type);
+	ds_printf(DS_LEV_DEBUG, "        getSigKeyID: failed for %s", name);
     else
-	ds_printf(DS_LEV_DEBUG, "        getSigKeyID: got %s for %s key", ret, type);
+	ds_printf(DS_LEV_DEBUG, "        getSigKeyID: got %s for %s key", ret, name);
 
     if (ret)
       return strdup(ret);

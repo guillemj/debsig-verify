@@ -124,11 +124,11 @@ getKeyID(const char *keyring, const char *match_id)
 }
 
 char *
-getSigKeyID(struct dpkg_ar *deb, const char *type)
+getSigKeyID(struct dpkg_ar *deb, const char *name)
 {
 	const struct openpgp *openpgp = getOpenPGP();
 
-	return openpgp->getSigKeyID(deb, type);
+	return openpgp->getSigKeyID(deb, name);
 }
 
 off_t

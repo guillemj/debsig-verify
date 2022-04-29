@@ -22,16 +22,18 @@
 
 #include <dpkg/ar.h>
 
-#define OPTIONAL_MATCH 1
-#define REQUIRED_MATCH 2
-#define REJECT_MATCH 3
-
 #define SIG_VERSION "1.0"
 #define DEBSIG_NAMESPACE "https://www.debian.org/debsig/"SIG_VERSION"/"
 
+enum match_type {
+	MATCH_OPTIONAL = 1,
+	MATCH_REQUIRED = 2,
+	MATCH_REJECT = 3,
+};
+
 struct match {
         struct match *next;
-        int type;
+	enum match_type type;
         char *name;
         char *file;
         char *id;

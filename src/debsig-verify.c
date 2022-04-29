@@ -105,8 +105,8 @@ checkSelRules(struct dpkg_ar *deb, const char *originID, struct group *grp)
 
         /* If the member exists and we reject it, fail now. Also, if it
          * doesn't exist, and we require it, fail as well. */
-        if ((!len && mtc->type == REQUIRED_MATCH) ||
-                (len && mtc->type == REJECT_MATCH)) {
+        if ((!len && mtc->type == MATCH_REQUIRED) ||
+            (len && mtc->type == MATCH_REJECT)) {
             return 0;
         }
         /* This would mean this is Optional, so we ignore it for now */
@@ -114,7 +114,7 @@ checkSelRules(struct dpkg_ar *deb, const char *originID, struct group *grp)
             continue;
 
         /* Kick up the count once for checking later */
-        if (mtc->type == OPTIONAL_MATCH)
+        if (mtc->type == MATCH_OPTIONAL)
             opt_count++;
     }
 
@@ -220,8 +220,8 @@ verifyGroupRules(struct dpkg_ar *deb, const char *originID, struct group *grp)
 
 	/* If the member exists and we reject it, die now. Also, if it
 	 * doesn't exist, and we require it, die as well. */
-	if ((!len && mtc->type == REQUIRED_MATCH) ||
-		(len && mtc->type == REJECT_MATCH)) {
+	if ((!len && mtc->type == MATCH_REQUIRED) ||
+	    (len && mtc->type == MATCH_REJECT)) {
 	    goto fail_and_close;
 	}
 
@@ -262,7 +262,7 @@ verifyGroupRules(struct dpkg_ar *deb, const char *originID, struct group *grp)
 	}
 
 	/* Kick up the count once for checking later */
-	if (mtc->type == OPTIONAL_MATCH)
+	if (mtc->type == MATCH_OPTIONAL)
 	    opt_count++;
     }
 

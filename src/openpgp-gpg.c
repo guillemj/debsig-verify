@@ -82,6 +82,9 @@ gpg_init(void)
     if (gpg_tmpdir == NULL)
         ohshite("cannot create temporary directory '%s'", gpg_tmpdir_template);
 
+    /* Do not let external interference. */
+    unsetenv("GPG_TTY");
+
     rc = setenv("GNUPGHOME", gpg_tmpdir, 1);
     if (rc < 0)
         ohshite("cannot set environment variable %s to '%s'", "GNUPGHOME",

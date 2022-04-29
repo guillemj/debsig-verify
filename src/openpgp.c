@@ -85,6 +85,9 @@ getDbPathname(const char *rootdir, const char *dir, const char *id,
 	if (id != keyid && pathname == NULL)
 		pathname = genDbPathname(rootdir, dir, keyid, filename);
 
+	if (pathname)
+		ds_printf(DS_LEV_DEBUG, "getDbPathname: using %s keyring", pathname);
+
 	return pathname;
 }
 

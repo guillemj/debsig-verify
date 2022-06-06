@@ -1,3 +1,36 @@
+* Add tests for no matched IDs.
+
+* Add tests for weak algorithms in keys.
+
+* Add tests for key expiry.
+
+* Add tests for optional, reject selections/verification policies.
+
+* Add tests for failing required verifications.
+
+* Add tests for multiple UIDs or keys, need fixes in code.
+
+* Update comments in example policies.
+
+* Redesign format:
+  - Should be stored in a sigs.tar ar member.
+  - Should be able to add other origin signatures (namespace them?).
+  - Should sign entire thing up to the sigs.tar member, no need to extract
+    and concat.
+  - How to handle key rotation or different keys for different archive or
+    releases from the same origin?
+
+* Redesign policies:
+  - Do not require XML.
+  - Do not require fetching the fingerprint for signatures and keys.
+  - Use the origin name as entry point, and role names to refer to keyrings.
+  - Use filesystem as policy declaration? For example:
+    <policy-dir>/keyrings/debian/origin.pgp
+    <policy-dir>/keyrings/debian/role-maint.pgp
+    <policy-dir>/keyrings/debian/role-uploader.pgp
+    <policy-dir>/keyrings/debian/role-builder.pgp
+  - Use a deb822 file for a policy file to denote optional/required/reject?
+
 * Is there a GnuPG library we can link against instead of execing gpg?
   - Yes, there is PGG, but it is merely a wrapper around the GPG binary. A
     very good wrapper, but it is hugely overweight for what we need.
@@ -7,8 +40,8 @@
 
 * Figure out how to integrate this more tightly with the package tools
   (apt, dpkg etc..).
-
-* Expiry still needs to be handled.
+  - Move all .deb format handling into libdpkg.
+  - Merge into dpkg-deb, once the only dependency is gpgv/sqv/sqop.
 
 * Add some more info to the verbose output.
   STATUS: in progress

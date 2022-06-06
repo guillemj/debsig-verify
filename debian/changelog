@@ -1,3 +1,9 @@
+debsig-verify (0.26) UNRELEASED; urgency=medium
+
+  *
+
+ -- Guillem Jover <guillem@debian.org>  Mon, 06 Jun 2022 16:29:12 +0200
+
 debsig-verify (0.25) unstable; urgency=medium
 
   * Update copyright years.

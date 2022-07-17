@@ -405,7 +405,7 @@ main(int argc, char *argv[])
 		outputBadUsage();
 	    }
 	} else {
-	    ds_printf(DS_LEV_ERR, "unknown argument");
+	    ds_printf(DS_LEV_ERR, "unknown argument '%s'", argv[i]);
 	    outputUsage();
 	    exit(1);
 	}

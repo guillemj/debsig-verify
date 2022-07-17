@@ -412,7 +412,10 @@ main(int argc, char *argv[])
     }
 
     /* There should only be one arg left. */
-    if (i + 1 != argc) {
+    if (i == argc) {
+	ds_printf(DS_LEV_ERR, "missing .deb archive");
+	outputBadUsage();
+    } else if (i + 1 > argc) {
 	ds_printf(DS_LEV_ERR, "too many arguments");
 	outputBadUsage();
     }

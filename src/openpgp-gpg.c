@@ -276,8 +276,7 @@ gpg_getSigKeyID(struct dpkg_ar *deb, const char *name)
     off_t len = checkSigExist(deb, name);
     pid_t pid;
     FILE *ds_read;
-    char *c, *ret = NULL;
-    enum keyid_state state = KEYID_UNKNOWN;
+    char *ret = NULL;
 
     if (!len)
 	return NULL;

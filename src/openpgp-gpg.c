@@ -178,6 +178,7 @@ gpg_getKeyID(const char *keyring, const char *match_id)
     int pipefd[2];
     FILE *ds;
     char *ret = NULL;
+    char *fpr = NULL;
     enum keyid_state state = KEYID_UNKNOWN;
 
     if (match_id == NULL)
@@ -208,8 +209,6 @@ gpg_getKeyID(const char *keyring, const char *match_id)
     }
 
     while ((nread = getline(&buf, &buflen, ds)) >= 0) {
-        char *fpr;
-
         if (buf[nread - 1] != '\n') {
           ds_printf(DS_LEV_DEBUG, "        getKeyID: found truncated input from GnuPG, aborting");
           break;

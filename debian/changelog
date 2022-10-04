@@ -1,8 +1,39 @@
-debsig-verify (0.26) UNRELEASED; urgency=medium
+debsig-verify (0.26) unstable; urgency=medium
 
-  *
+  * Print the unknown option on error.
+  * Fix mismatched number of arguments error.
+  * openpgp-gpg: Always pass the gpg command in argv[0].
+  * openpgp-gpg: Skip field separator character when parsing --with-colons
+    output.
+  * openpgp: Do not consider a match if one of the fingerprints has zero
+    length.
+  * openpgp-gpg: When matching on getKeyID match on fingerprint.
+  * openpgp-gpg: Do not fallback to the match ID on fingerprint/keyID not
+    found.
+  * openpgp-gpg: Fix last field parsing.
+  * openpgp-gpg: Switch from internal gpg --list-packets to --verify
+    --status-fd. See #1001331.
+  * openpgp-gpg: Unset GPG_TTY.
+  * Check whether the origin ID is in the keyring if no match ID is specified.
+  * openpgp: Print the pathname for the keyring used in debug mode.
+  * Documentation:
+    - Update TODO.
+    - Refer to the main git repository as primary.
+    - Use https:// for release download URLs.
+    - Switch release URL from ftp.debian.org to deb.debian.org.
+  * Code internals:
+    - Avoid using an intermediate buffer in ds_printf().
+    - Switch from fgets() to getline().
+    - openpgp-gpg: Refactor get_field() out from get_colon_field().
+    - Refactor keyring generation.
+    - Pass a string instead of a struct match to getKeyID().
+    - Rename getSigKeyID() argument from type to name.
+    - Turn struct match «type» member from an int to an enum.
+    - openpgp-gpg: Fix cleanup_gpg_tmpdir() subprocess description.
+  * Test suite:
+    - Add new test keys with non-weak algorithms.
 
- -- Guillem Jover <guillem@debian.org>  Mon, 06 Jun 2022 16:29:12 +0200
+ -- Guillem Jover <guillem@debian.org>  Tue, 04 Oct 2022 04:01:26 +0200
 
 debsig-verify (0.25) unstable; urgency=medium
 

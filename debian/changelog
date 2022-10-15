@@ -1,8 +1,12 @@
-debsig-verify (0.27) UNRELEASED; urgency=medium
+debsig-verify (0.27) unstable; urgency=medium
 
-  *
+  * Build system:
+    - Request pkg-config static linking flags for libdpkg.
+  * Packaging:
+    - Switch to Standards-Version 4.6.1 (no changes needed).
+    - Update lintian overrides for new syntax.
 
- -- Guillem Jover <guillem@debian.org>  Sun, 09 Oct 2022 22:46:25 +0200
+ -- Guillem Jover <guillem@debian.org>  Sat, 15 Oct 2022 11:16:46 +0200
 
 debsig-verify (0.26) unstable; urgency=medium
 

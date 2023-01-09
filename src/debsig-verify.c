@@ -2,7 +2,7 @@
  * debsig-verify - Debian package signature verification tool
  *
  * Copyright © 2000 Ben Collins <bcollins@debian.org>
- * Copyright © 2014-2016, 2018-2019, 2021 Guillem Jover <guillem@debian.org>
+ * Copyright © 2014-2023 Guillem Jover <guillem@debian.org>
  *
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,10 +50,10 @@ const char *keyrings_dir = DEBSIG_KEYRINGS_DIR;
 #define DTAR(x) "data.tar" # x
 static const char ver_magic_member[] = "debian-binary";
 static const char *ver_ctrl_members[] = {
-	CTAR(), CTAR(.gz), CTAR(.xz), NULL
+	CTAR(), CTAR(.gz), CTAR(.xz), CTAR(.zst), NULL
 };
 static const char *ver_data_members[] = {
-	DTAR(), DTAR(.gz), DTAR(.xz), DTAR(.bz2), DTAR(.lzma), NULL
+	DTAR(), DTAR(.gz), DTAR(.xz), DTAR(.zst), DTAR(.bz2), DTAR(.lzma), NULL
 };
 
 static int

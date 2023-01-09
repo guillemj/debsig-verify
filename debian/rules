@@ -11,5 +11,8 @@ sourcedep_libdpkg_dev := \
 %:
 	dh $@ --builddir=build-tree
 
+override_dh_installchangelogs:
+	dh_installchangelogs --no-trim
+
 override_dh_gencontrol:
 	dh_gencontrol -- -Vsourcedep:libdpkg-dev='$(sourcedep_libdpkg_dev)'

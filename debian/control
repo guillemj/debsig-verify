@@ -9,6 +9,7 @@ Standards-Version: 4.6.2
 Rules-Requires-Root: no
 Build-Depends:
  debhelper-compat (= 13),
+ debhelper (>= 13.10),
  pkg-config,
  libdpkg-dev (>= 1.18.11),
  libexpat1-dev,

@@ -1,8 +1,12 @@
-debsig-verify (0.28) UNRELEASED; urgency=medium
+debsig-verify (0.28) unstable; urgency=medium
 
-  *
+  * Add support for zstd compressed .deb archives.
+  * Packaging:
+    - Update copyright years.
+    - Switch to Standards-Version 4.6.2 (no changes needed).
+    - Do not trim debian/changelog.
 
- -- Guillem Jover <guillem@debian.org>  Tue, 10 Jan 2023 23:26:56 +0100
+ -- Guillem Jover <guillem@debian.org>  Tue, 10 Jan 2023 23:38:18 +0100
 
 debsig-verify (0.27) unstable; urgency=medium
 

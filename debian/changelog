@@ -1,3 +1,9 @@
+debsig-verify (0.29) UNRELEASED; urgency=medium
+
+  *
+
+ -- Guillem Jover <guillem@debian.org>  Sun, 09 Apr 2023 23:29:55 +0200
+
 debsig-verify (0.28) unstable; urgency=medium
 
   * Add support for zstd compressed .deb archives.

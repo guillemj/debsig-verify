@@ -257,6 +257,8 @@ gpg_getKeyID(const char *keyring, const char *match_id)
 
     if (ret == NULL) {
 	ds_printf(DS_LEV_DEBUG, "        getKeyID: failed for %s", match_id);
+        /* If we did not find any match release any parsed fingerprint. */
+        free(fpr);
     } else {
 	ds_printf(DS_LEV_DEBUG, "        getKeyID: mapped %s -> %s", match_id, ret);
     }

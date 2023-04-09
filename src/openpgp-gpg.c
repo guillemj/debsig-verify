@@ -368,9 +368,7 @@ gpg_getSigKeyID(struct dpkg_ar *deb, const char *name)
     else
 	ds_printf(DS_LEV_DEBUG, "        getSigKeyID: got %s for %s key", ret, name);
 
-    if (ret)
-      return strdup(ret);
-    return NULL;
+    return ret;
 }
 
 static int

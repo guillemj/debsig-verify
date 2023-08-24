@@ -90,9 +90,6 @@ sigVerify;
 void
 clear_policy(void);
 
-bool
-command_in_path(const char *prog);
-
 /* Debugging and failures */
 #define DS_LEV_ALWAYS 3
 #define DS_LEV_ERR 2

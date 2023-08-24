@@ -25,6 +25,7 @@
 
 #include <dpkg/dpkg.h>
 #include <dpkg/path.h>
+#include <dpkg/command.h>
 
 #include "debsig.h"
 

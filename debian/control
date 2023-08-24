@@ -11,7 +11,7 @@ Build-Depends:
  debhelper-compat (= 13),
  debhelper (>= 13.10),
  pkg-config,
- libdpkg-dev (>= 1.18.11),
+ libdpkg-dev (>= 1.22.0),
  libexpat1-dev,
  gpg <!nocheck> | gnupg <!nocheck> | sqop <!nocheck> | sq <!nocheck>,
 # We need the agent for the test suite as we are handling a secret keyring.

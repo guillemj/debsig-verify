@@ -41,7 +41,7 @@ getOpenPGP(void)
 	const struct openpgp *openpgp;
 
 	for (openpgp = *openpgp_impl; openpgp; openpgp++)
-		if (find_command(openpgp->cmd))
+		if (command_in_path(openpgp->cmd))
 			break;
 
 	if (openpgp == NULL)

@@ -52,7 +52,7 @@ ds_printf(int level, const char *fmt, ...)
 }
 
 bool
-find_command(const char *prog)
+command_in_path(const char *prog)
 {
     struct varbuf filename = VARBUF_INIT;
     struct stat stab;

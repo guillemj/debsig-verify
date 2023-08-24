@@ -90,7 +90,8 @@ sigVerify;
 void
 clear_policy(void);
 
-bool find_command(const char *prog);
+bool
+command_in_path(const char *prog);
 
 /* Debugging and failures */
 #define DS_LEV_ALWAYS 3

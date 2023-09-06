@@ -24,7 +24,7 @@ src_debsig_verify_SOURCES = \
 	src/ar-parse.c \
 	src/debsig.h \
 	src/debsig-verify.c \
-	src/misc.c \
+	src/debug.c \
 	src/openpgp.c \
 	src/openpgp-gpg.c \
 	src/policy-xml.c \

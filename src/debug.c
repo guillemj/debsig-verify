@@ -19,7 +19,7 @@
  */
 
 /*
- * miscellaneous functions
+ * Debug printing functions.
  */
 
 #include <config.h>

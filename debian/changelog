@@ -1,8 +1,14 @@
-debsig-verify (0.29) UNRELEASED; urgency=medium
+debsig-verify (0.29) unstable; urgency=medium
 
-  *
+  * Code internals:
+    - openpgp-gpg: Free fpr if there is no match in gpg_getKeyID().
+    - openpgp-gpg: Do not duplicate the returned value in gpg_getSigKeyID().
+    - Rename find_command() to command_in_path() to match libdpkg.
+    - Rename misc.c to debug.c.
+  * Build system:
+    - Use command_in_path() from libdpkg.
 
- -- Guillem Jover <guillem@debian.org>  Sun, 09 Apr 2023 23:29:55 +0200
+ -- Guillem Jover <guillem@debian.org>  Sat, 09 Sep 2023 21:21:04 +0200
 
 debsig-verify (0.28) unstable; urgency=medium
 

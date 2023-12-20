@@ -83,3 +83,75 @@ AT_CHECK([mkdir -p policies/$TESTKEYID
 cp -a $TESTPOLICIES/$TESTFPRID/* policies/$TESTKEYID
 $DEBSIG --policies-dir policies --use-policy nameid.pol debsig_1.0.deb], [], [ignore], [ignore])
 AT_CLEANUP()
+
+AT_SETUP([deb validates with subkey, fprid, fprid db])
+AT_KEYWORDS([debsig-verify deb])
+DEBSIG_USE_KEY([0DB59D1F9C5B1C3A4504175B4C2E30ED5C790356])
+DEBSIG_MAKE_DEB([debsig], [1.0])
+DEBSIG_MAKE_SIG([debsig], [1.0])
+AT_CHECK([$DEBSIG debsig_1.0.deb], [], [ignore], [ignore])
+AT_CLEANUP()
+
+AT_SETUP([deb validates with subkey, keyid, fprid db])
+AT_KEYWORDS([debsig-verify deb])
+DEBSIG_USE_KEY([0DB59D1F9C5B1C3A4504175B4C2E30ED5C790356])
+DEBSIG_MAKE_DEB([debsig], [1.0])
+DEBSIG_MAKE_SIG([debsig], [1.0])
+AT_CHECK([$DEBSIG --use-policy keyid.pol debsig_1.0.deb], [], [ignore], [ignore])
+AT_CLEANUP()
+
+AT_SETUP([deb validates with subkey, subid, fprid db])
+AT_KEYWORDS([debsig-verify deb])
+DEBSIG_USE_KEY([0DB59D1F9C5B1C3A4504175B4C2E30ED5C790356])
+DEBSIG_MAKE_DEB([debsig], [1.0])
+DEBSIG_MAKE_SIG([debsig], [1.0])
+AT_CHECK([$DEBSIG --use-policy subid.pol debsig_1.0.deb], [], [ignore], [ignore])
+AT_CLEANUP()
+
+AT_SETUP([deb validates with subkey, nameid, fprid db])
+AT_KEYWORDS([debsig-verify deb])
+DEBSIG_USE_KEY([0DB59D1F9C5B1C3A4504175B4C2E30ED5C790356])
+DEBSIG_MAKE_DEB([debsig], [1.0])
+DEBSIG_MAKE_SIG([debsig], [1.0])
+AT_CHECK([$DEBSIG --use-policy nameid.pol debsig_1.0.deb], [], [ignore], [ignore])
+AT_CLEANUP()
+
+AT_SETUP([deb validates with subkey, fprid, keyid db])
+AT_KEYWORDS([debsig-verify deb])
+DEBSIG_USE_KEY([0DB59D1F9C5B1C3A4504175B4C2E30ED5C790356])
+DEBSIG_MAKE_DEB([debsig], [1.0])
+DEBSIG_MAKE_SIG([debsig], [1.0])
+AT_CHECK([mkdir -p policies/$TESTKEYID
+cp -a $TESTPOLICIES/$TESTFPRID/* policies/$TESTKEYID
+$DEBSIG --policies-dir policies debsig_1.0.deb], [], [ignore], [ignore])
+AT_CLEANUP()
+
+AT_SETUP([deb validates with subkey, keyid, keyid db])
+AT_KEYWORDS([debsig-verify deb])
+DEBSIG_USE_KEY([0DB59D1F9C5B1C3A4504175B4C2E30ED5C790356])
+DEBSIG_MAKE_DEB([debsig], [1.0])
+DEBSIG_MAKE_SIG([debsig], [1.0])
+AT_CHECK([mkdir -p policies/$TESTKEYID
+cp -a $TESTPOLICIES/$TESTFPRID/* policies/$TESTKEYID
+$DEBSIG --policies-dir policies --use-policy keyid.pol debsig_1.0.deb], [], [ignore], [ignore])
+AT_CLEANUP()
+
+AT_SETUP([deb validates with subkey, subid, keyid db])
+AT_KEYWORDS([debsig-verify deb])
+DEBSIG_USE_KEY([0DB59D1F9C5B1C3A4504175B4C2E30ED5C790356])
+DEBSIG_MAKE_DEB([debsig], [1.0])
+DEBSIG_MAKE_SIG([debsig], [1.0])
+AT_CHECK([mkdir -p policies/$TESTKEYID
+cp -a $TESTPOLICIES/$TESTFPRID/* policies/$TESTKEYID
+$DEBSIG --policies-dir policies --use-policy subid.pol debsig_1.0.deb], [], [ignore], [ignore])
+AT_CLEANUP()
+
+AT_SETUP([deb validates with subkey, nameid, keyid db])
+AT_KEYWORDS([debsig-verify deb])
+DEBSIG_USE_KEY([0DB59D1F9C5B1C3A4504175B4C2E30ED5C790356])
+DEBSIG_MAKE_DEB([debsig], [1.0])
+DEBSIG_MAKE_SIG([debsig], [1.0])
+AT_CHECK([mkdir -p policies/$TESTKEYID
+cp -a $TESTPOLICIES/$TESTFPRID/* policies/$TESTKEYID
+$DEBSIG --policies-dir policies --use-policy nameid.pol debsig_1.0.deb], [], [ignore], [ignore])
+AT_CLEANUP()

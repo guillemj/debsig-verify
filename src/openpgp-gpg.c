@@ -112,6 +112,7 @@ command_gpg_init(struct command *cmd)
 enum keyid_state {
     KEYID_UNKNOWN,
     KEYID_PUB,
+    KEYID_SUB,
     KEYID_FPR,
     KEYID_UID,
     KEYID_SIG,
@@ -221,9 +222,10 @@ gpg_getKeyID(const char *keyring, const char *match_id)
 
             /* Certificate found. */
             state = KEYID_PUB;
-        } else if (state == KEYID_PUB) {
+        } else if (state == KEYID_PUB || state == KEYID_SUB) {
             if (!match_prefix(buf, "fpr:"))
 		continue;
+            free(fpr);
             fpr = get_colon_field(buf, COLON_FIELD_FPR_ID);
             if (eqKeyID(fpr, match_id)) {
                 ret = fpr;
@@ -233,6 +235,10 @@ gpg_getKeyID(const char *keyring, const char *match_id)
         } else if (state == KEYID_FPR) {
             char *uid;
 
+            if (match_prefix(buf, "sub:")) {
+                state = KEYID_SUB;
+                continue;
+            }
             if (!match_prefix(buf, "uid:"))
 		continue;
 
@@ -245,9 +251,11 @@ gpg_getKeyID(const char *keyring, const char *match_id)
 	    }
             free(uid);
 
-            /* Fingerprint match found. */
+            /* ID match found. */
             ret = fpr;
-            break;
+
+            /* But keep going in case we find a subkey fingerprint. */
+            continue;
         }
     }
     fclose(ds);

@@ -14,6 +14,7 @@ export TZ
 TESTDATA="@abs_top_srcdir@/test"
 TESTPOLICIES="$TESTDATA/policies"
 TESTKEYRINGS="$TESTDATA/keyrings"
+# Default key
 TESTFPRID="B2551A215CE5C74584C6AE0DE9F3837DB59CDACD"
 TESTKEYID="$(echo $TESTFPRID | cut -c25-)"
 
@@ -87,6 +88,14 @@ elif command -v gpg >/dev/null; then
 else
   echo "error: cannot find an OpenPGP backend" >&2
 fi
+
+debsig_use_key ()
+{
+  local fprid="$1"
+
+  TESTFPRID="$fprid"
+  TESTKEYID="$(echo $TESTFPRID | cut -c25-)"
+}
 
 debsig_make_deb ()
 {

@@ -1,8 +1,17 @@
-debsig-verify (0.30) UNRELEASED; urgency=medium
+debsig-verify (0.30) unstable; urgency=medium
 
-  *
+  * Add OpenPGP subkey support.
+    Based on a patch by Steve McIntyre <steve@einval.com>. Closes: #1059150
+  * Switch from pkg-config to pkgconf.
+  * Documentation:
+    - doc: Bump required C compiler to support C99.
+  * Packaging:
+    - Update copyright years.
+  * Test suite:
+    - Add new macro to set the OpenPGP key to use.
+    - Switch to use sq --signer-file.
 
- -- Guillem Jover <guillem@debian.org>  Mon, 08 Apr 2024 04:18:35 +0200
+ -- Guillem Jover <guillem@debian.org>  Mon, 08 Apr 2024 04:53:04 +0200
 
 debsig-verify (0.29) unstable; urgency=medium
 

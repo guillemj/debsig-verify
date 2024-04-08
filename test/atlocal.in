@@ -39,7 +39,7 @@ elif command -v sq >/dev/null; then
 
   debsig_openpgp_detach_sign ()
   {
-    sq sign --detached --signer-key $TESTKEYRINGS/$TESTFPRID/secring.pgp
+    sq sign --detached --signer-file $TESTKEYRINGS/$TESTFPRID/secring.pgp
   }
 elif command -v gpg >/dev/null; then
   GPG=gpg

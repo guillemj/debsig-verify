@@ -10,7 +10,7 @@ Rules-Requires-Root: no
 Build-Depends:
  debhelper-compat (= 13),
  debhelper (>= 13.10),
- pkg-config,
+ pkgconf,
  libdpkg-dev (>= 1.22.0),
  libexpat1-dev,
  gpg <!nocheck> | gnupg <!nocheck> | sqop <!nocheck> | sq <!nocheck>,

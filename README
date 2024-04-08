@@ -63,7 +63,7 @@ tarball is:
 
   C89 compiler
   GNU make
-  pkg-config
+  pkgconf
   libdpkg-dev
   libexpat1-dev
 

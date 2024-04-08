@@ -1,3 +1,9 @@
+debsig-verify (0.30) UNRELEASED; urgency=medium
+
+  *
+
+ -- Guillem Jover <guillem@debian.org>  Mon, 08 Apr 2024 04:18:35 +0200
+
 debsig-verify (0.29) unstable; urgency=medium
 
   * Code internals:

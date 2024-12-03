@@ -13,9 +13,19 @@ Build-Depends:
  pkgconf,
  libdpkg-dev (>= 1.22.0),
  libexpat1-dev,
- gpg <!nocheck> | gnupg <!nocheck> | sqop <!nocheck> | sq <!nocheck>,
+ gpg <!nocheck> | gnupg <!nocheck> | sqop <!nocheck> | rsop <!nocheck> | gosop <!nocheck> | pgpainless-cli <!nocheck> | sq <!nocheck>,
 # We need the agent for the test suite as we are handling a secret keyring.
- gpg-agent <!nocheck> | gnupg-agent <!nocheck> | sqop <!nocheck> | sq <!nocheck>,
+ gpg-agent <!nocheck> | gnupg-agent <!nocheck> | sqop <!nocheck> | rsop <!nocheck> | gosop <!nocheck> | pgpainless-cli <!nocheck> | sq <!nocheck>,
+Build-Conflicts:
+# Uses required SOP features, w/o requiring a hard dependency on sqop.
+ sqop (<< 0.27.2~),
+# Uses required SOP features, w/o requiring a hard dependency on rsop.
+ rsop (<< 0.4.0~),
+# Uses required SOP features, w/o requiring a hard dependency on gosop.
+ gosop (<< 1.1.0~),
+# Uses required SOP features, w/o requiring a hard dependency on pgpainless.
+ pgpainless-cli (<< 1.3.13~),
+ libsop-java-java (<< 4.0.7~),
 
 Package: debsig-verify
 Architecture: any

@@ -25,13 +25,21 @@ debsig_stub ()
   :
 }
 
-if command -v sqop >/dev/null; then
+SOP=
+for sop in sqop rsop gosop pgpainless-cli; do
+  if command -v $sop >/dev/null; then
+    SOP=$sop
+    break
+  fi
+done
+
+if [ -n "$SOP" ]; then
   alias debsig_openpgp_setup=debsig_stub
   alias debsig_openpgp_teardown=debsig_stub
 
   debsig_openpgp_detach_sign ()
   {
-    sqop sign --no-armor $TESTKEYRINGS/$TESTFPRID/secring.pgp
+    $SOP sign --no-armor $TESTKEYRINGS/$TESTFPRID/secring.pgp
   }
 elif command -v sq >/dev/null; then
   alias debsig_openpgp_setup=debsig_stub

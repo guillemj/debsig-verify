@@ -13,9 +13,9 @@ Build-Depends:
  pkgconf,
  libdpkg-dev (>= 1.22.0),
  libexpat1-dev,
- gpg <!nocheck> | gnupg <!nocheck> | sqop <!nocheck> | rsop <!nocheck> | gosop <!nocheck> | pgpainless-cli <!nocheck> | sq <!nocheck>,
+ gpg <!nocheck> | sqop <!nocheck> | rsop <!nocheck> | gosop <!nocheck> | pgpainless-cli <!nocheck> | sq <!nocheck>,
 # We need the agent for the test suite as we are handling a secret keyring.
- gpg-agent <!nocheck> | gnupg-agent <!nocheck> | sqop <!nocheck> | rsop <!nocheck> | gosop <!nocheck> | pgpainless-cli <!nocheck> | sq <!nocheck>,
+ gpg-agent <!nocheck> | sqop <!nocheck> | rsop <!nocheck> | gosop <!nocheck> | pgpainless-cli <!nocheck> | sq <!nocheck>,
 Build-Conflicts:
 # Uses new sq features, w/o requiring a hard build dependency on sq.
  sq (<< 0.40.0~),
@@ -34,7 +34,7 @@ Architecture: any
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
- gpg | gnupg,
+ gpg,
 Suggests:
  debian-keyring,
  debsigs,

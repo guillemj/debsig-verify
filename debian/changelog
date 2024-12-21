@@ -1,8 +1,16 @@
-debsig-verify (0.31) UNRELEASED; urgency=medium
+debsig-verify (0.31) unstable; urgency=medium
 
-  *
+  * Code internals:
+    - Use DS_LEV_INFO instead of a hardcoded value.
+    - Swap order of ds_debug_level in boolean comparisons.
+    - Change ds_printf() to return early on too low debug level.
+  * Packaging:
+    - Drop gnupg and gnupg-agent as alternatives to gpg and gpg-agent.
+  * Test suite:
+    - Generalize SOP support to include rsop, gosop and pgpainless-cli.
+    - Adapt to new sq CLI 0.40.0 API.
 
- -- Guillem Jover <guillem@debian.org>  Sat, 21 Dec 2024 06:25:54 +0100
+ -- Guillem Jover <guillem@debian.org>  Sun, 22 Dec 2024 01:04:22 +0100
 
 debsig-verify (0.30) unstable; urgency=medium
 

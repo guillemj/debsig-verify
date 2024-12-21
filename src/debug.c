@@ -36,11 +36,12 @@ ds_printf(int level, const char *fmt, ...)
 {
     va_list ap;
 
-    if (ds_debug_level <= level) {
-	printf("debsig: ");
-	va_start(ap, fmt);
-	(void) vprintf(fmt, ap);
-	va_end(ap);
-	printf("\n");
-    }
+    if (ds_debug_level > level)
+      return;
+
+    printf("debsig: ");
+    va_start(ap, fmt);
+    (void) vprintf(fmt, ap);
+    va_end(ap);
+    printf("\n");
 }

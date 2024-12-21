@@ -29,7 +29,7 @@
 
 #include "debsig.h"
 
-int ds_debug_level = 1;
+int ds_debug_level = DS_LEV_INFO;
 
 void
 ds_printf(int level, const char *fmt, ...)

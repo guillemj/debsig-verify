@@ -391,7 +391,7 @@ gpg_sigVerify(const char *keyring, const char *data, const char *sig)
     if (pid == 0) {
         struct command cmd;
 
-	if (DS_LEV_DEBUG < ds_debug_level) {
+        if (ds_debug_level > DS_LEV_DEBUG) {
 	    close(0); close(1); close(2);
 	}
 

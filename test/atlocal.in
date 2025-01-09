@@ -123,7 +123,7 @@ Description: Signature Test Package
 EOF
   mkdir -p $debdir/usr/share/doc/
   echo "Debsig testing deb" > $debdir/usr/share/doc/README
-  dpkg-deb -b "$debdir" "$debpkg"
+  dpkg-deb --root-owner-group -b "$debdir" "$debpkg"
 }
 
 debsig_make_sig_bad ()

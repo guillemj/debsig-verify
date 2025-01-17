@@ -17,13 +17,21 @@
   - Should be able to add other origin signatures (namespace them?).
   - Should sign entire thing up to the sigs.tar member, no need to extract
     and concat.
+  - Namespace the contents within sigs.tar with openpgp/ so that perhaps
+    other signatures can be added there, such as secure-boot, or IMA.
+  - Install these signatures into the dpkg db, for later retrieval? For
+    OpenPGP might not make sense, but it might for secure-boot.
   - How to handle key rotation or different keys for different archive or
     releases from the same origin?
+  - We sould require only OpenPGP verification, no additional introspection
+    of OpenPGP objects. This would allow using SOP or even SOPV.
 
 * Redesign policies:
   - Do not require XML.
   - Do not require fetching the fingerprint for signatures and keys.
   - Use the origin name as entry point, and role names to refer to keyrings.
+  - Do we need to be able to also pin a certificate to a specific package in
+    addition to an origin?
   - Use filesystem as policy declaration? For example:
     <policy-dir>/keyrings/debian/origin.pgp
     <policy-dir>/keyrings/debian/role-maint.pgp
@@ -31,17 +39,16 @@
     <policy-dir>/keyrings/debian/role-builder.pgp
   - Use a deb822 file for a policy file to denote optional/required/reject?
 
-* Is there a GnuPG library we can link against instead of execing gpg?
-  - Yes, there is PGG, but it is merely a wrapper around the GPG binary. A
-    very good wrapper, but it is hugely overweight for what we need.
-    Basically this may be a dead issue. Otherwise, we should probably start
-    using the --with-colon and --status-fd output for better parsing of
-    the verify and keyring output.
+* Given that GnuPG has opted out from the OpenPGP specification and will
+  not be adopting new revisions (including the current one, RFC9580),
+  we should be moving away from any reliance on it. The redesign work
+  mentioned above, is one of the pre-requisites for this.
 
 * Figure out how to integrate this more tightly with the package tools
   (apt, dpkg etc..).
   - Move all .deb format handling into libdpkg.
-  - Merge into dpkg-deb, once the only dependency is gpgv/sqv/sqop.
+  - Merge into dpkg-deb, once the only dependency is sopv/sqv (and perhaps
+    gpgv for portability, or perhaps rnp).
 
 * Add some more info to the verbose output.
   STATUS: in progress

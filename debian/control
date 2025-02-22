@@ -13,6 +13,9 @@ Build-Depends:
  pkgconf,
  libdpkg-dev (>= 1.22.0),
  libexpat1-dev,
+# Needed by debsig-verify itself during the test suite execution.
+ gpg <!nocheck> | gpg-from-sq <!nocheck>,
+# Needed by the test suite scaffolding.
  gpg <!nocheck> | sqop <!nocheck> | rsop <!nocheck> | gosop <!nocheck> | pgpainless-cli <!nocheck> | sq <!nocheck>,
 # We need the agent for the test suite as we are handling a secret keyring.
  gpg-agent <!nocheck> | sqop <!nocheck> | rsop <!nocheck> | gosop <!nocheck> | pgpainless-cli <!nocheck> | sq <!nocheck>,

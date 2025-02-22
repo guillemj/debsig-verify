@@ -1,8 +1,15 @@
-debsig-verify (0.32) UNRELEASED; urgency=medium
+debsig-verify (0.32) unstable; urgency=medium
 
-  *
+  * Fix OpenPGP implementation array traversal.
+  * Documentation:
+    - Update TODO.
+  * Packaging:
+    - Switch to Standards-Version 4.7.1 (no changes needed).
+    - Add <!nocheck> Build-Depends on gpg | gpg-from-sq to run debsig-verify.
+  * Test suite:
+    - Pass --root-owner-group to dpkg-deb.
 
- -- Guillem Jover <guillem@debian.org>  Sun, 22 Dec 2024 02:03:42 +0100
+ -- Guillem Jover <guillem@debian.org>  Sat, 22 Feb 2025 14:24:41 +0100
 
 debsig-verify (0.31) unstable; urgency=medium
 

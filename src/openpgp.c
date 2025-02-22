@@ -39,16 +39,16 @@ static const struct openpgp *openpgp_impl[] = {
 static const struct openpgp *
 getOpenPGP(void)
 {
-	const struct openpgp *openpgp;
+	const struct openpgp **openpgp;
 
-	for (openpgp = *openpgp_impl; openpgp; openpgp++)
-		if (command_in_path(openpgp->cmd))
+	for (openpgp = openpgp_impl; *openpgp; openpgp++)
+		if (command_in_path((*openpgp)->cmd))
 			break;
 
-	if (openpgp == NULL)
+	if (*openpgp == NULL)
 		ohshit("cannot find an OpenPGP implementation");
 
-	return openpgp;
+	return *openpgp;
 }
 
 static const char *

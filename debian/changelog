@@ -1,3 +1,9 @@
+debsig-verify (0.33) UNRELEASED; urgency=medium
+
+  *
+
+ -- Guillem Jover <guillem@debian.org>  Sat, 22 Feb 2025 20:49:10 +0100
+
 debsig-verify (0.32) unstable; urgency=medium
 
   * Fix OpenPGP implementation array traversal.

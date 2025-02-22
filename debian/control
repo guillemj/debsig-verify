@@ -21,7 +21,7 @@ Build-Depends:
  gpg-agent <!nocheck> | sqop <!nocheck> | rsop <!nocheck> | gosop <!nocheck> | pgpainless-cli <!nocheck> | sq <!nocheck>,
 Build-Conflicts:
 # Uses new sq features, w/o requiring a hard build dependency on sq.
- sq (<< 0.40.0~),
+ sq (<< 1.0.0~),
 # Uses required SOP features, w/o requiring a hard dependency on sqop.
  sqop (<< 0.27.2~),
 # Uses required SOP features, w/o requiring a hard dependency on rsop.

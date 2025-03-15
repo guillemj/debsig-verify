@@ -1,8 +1,13 @@
-debsig-verify (0.33) UNRELEASED; urgency=medium
+debsig-verify (0.33) unstable; urgency=medium
 
-  *
+  * Build system:
+    - Terminate lists in variables with «# EOL».
+  * Packaging:
+    - Switch to Standards-Version 4.7.2 (no changes needed).
+  * Test suite:
+    - Fix «sq sign» invocation with CLI version 1.0.
 
- -- Guillem Jover <guillem@debian.org>  Sat, 22 Feb 2025 20:49:10 +0100
+ -- Guillem Jover <guillem@debian.org>  Sat, 15 Mar 2025 02:57:03 +0100
 
 debsig-verify (0.32) unstable; urgency=medium
 

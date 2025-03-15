@@ -9,13 +9,15 @@ AM_CPPFLAGS = \
 	-I$(top_builddir) \
 	-DLIBDPKG_VOLATILE_API=1 \
 	-DDEBSIG_POLICIES_DIR=\"$(DEBSIG_POLICIES_DIR)\" \
-	-DDEBSIG_KEYRINGS_DIR=\"$(DEBSIG_KEYRINGS_DIR)\"
+	-DDEBSIG_KEYRINGS_DIR=\"$(DEBSIG_KEYRINGS_DIR)\" \
+	# EOL
 AM_CFLAGS = \
 	$(LIBDPKG_CFLAGS) \
-	$(nil)
+	# EOL
 LDADD = \
 	$(LIBDPKG_LIBS) \
-	-lexpat
+	-lexpat \
+	# EOL
 
 
 bin_PROGRAMS = src/debsig-verify
@@ -28,7 +30,7 @@ src_debsig_verify_SOURCES = \
 	src/openpgp.c \
 	src/openpgp-gpg.c \
 	src/policy-xml.c \
-	$(nil)
+	# EOL
 
 EXTRA_DIST = \
 	autogen \
@@ -46,7 +48,7 @@ EXTRA_DIST = \
 	debian/source/format \
 	debian/tests/control \
 	debian/tests/functional \
-	$(nil)
+	# EOL
 
 do_man_subst = $(AM_V_GEN) \
 	sed -e 's,@POLICIES_DIR@,$(DEBSIG_POLICIES_DIR),g' \
@@ -60,7 +62,7 @@ doc/%.1: doc/%.1.in
 
 man_MANS = \
 	doc/debsig-verify.1 \
-	$(nil)
+	# EOL
 
 install-data-local:
 	$(MKDIR_P) $(DESTDIR)$(DEBSIG_POLICIES_DIR)

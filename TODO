@@ -12,32 +12,47 @@
 
 * Update comments in example policies.
 
+* Objectives of the redesign:
+  - Make it possible to implement in dpkg-deb (for signing and verification)
+    so all usual essential package restrictions apply.
+  - Make it possible to use only SOP/SOPV (remove all introspection of
+    OpenPGP object that require GnuPG specific interfaces).
+  - Make it extensible to other signature formats or workflows.
+  - Make it possible and acceptable for uploads to the Debian archive (even
+    if this ends up being not allowed, for example due to reproducibility
+    concerns).
+
 * Redesign format:
-  - Should be stored in a sigs.tar ar member.
-  - Should be able to add other origin signatures (namespace them?).
+  - Should be stored in a sigs.tar ar member, to avoid unbounded amount of
+    new ar members, depending on the roles.
+  - Should be able to add other origin signatures types to be future-proof.
+    Namespace the contents within sigs.tar with openpgp/ so that perhaps
+    other signatures can be added there, such as secure-boot, or IMA.
   - Should sign entire thing up to the sigs.tar member, no need to extract
     and concat.
-  - Namespace the contents within sigs.tar with openpgp/ so that perhaps
-    other signatures can be added there, such as secure-boot, or IMA.
-  - Install these signatures into the dpkg db, for later retrieval? For
-    OpenPGP might not make sense, but it might for secure-boot.
-  - How to handle key rotation or different keys for different archive or
-    releases from the same origin?
-  - We sould require only OpenPGP verification, no additional introspection
-    of OpenPGP objects. This would allow using SOP or even SOPV.
+  - Should end up with the signatures installed into the dpkg db (under a
+    new /var/lib/dpkg/sigs directory), for later retrieval. For example
+    for reproducible .debs, to be able to dpkg-repack them.
 
 * Redesign policies:
-  - Do not require XML.
-  - Do not require fetching the fingerprint for signatures and keys.
-  - Use the origin name as entry point, and role names to refer to keyrings.
-  - Do we need to be able to also pin a certificate to a specific package in
-    addition to an origin?
-  - Use filesystem as policy declaration? For example:
+  - Do not require XML (to avoid pulling new packages into the essential set).
+  - Do not require OpenPGP object introspection for signatures and keys (to
+    simplify the verification process and be able to use SOP/SOPV/sq/sqv).
+  - Use a keyring-centric workflow for simple verification, which has been
+    proven to work fine and be enough for distributions on archive-based
+    signing strategies.
+    + Use the origin name as entry point, and either a fixed keyring name
+      or the role names to refer to keyrings.
+    + Drop support for optional/required/reject policy actions.
+    + No apparent need to be able to also pin a certificate to a specific
+      package in addition to an origin.
+    + Unclear whether to keep «roles», for now leaning towards keeping them,
+      as they could be dropped in the future easily.
+  - Use filesystem as policy declaration. For example:
     <policy-dir>/keyrings/debian/origin.pgp
     <policy-dir>/keyrings/debian/role-maint.pgp
     <policy-dir>/keyrings/debian/role-uploader.pgp
     <policy-dir>/keyrings/debian/role-builder.pgp
-  - Use a deb822 file for a policy file to denote optional/required/reject?
 
 * Given that GnuPG has opted out from the OpenPGP specification and will
   not be adopting new revisions (including the current one, RFC9580),

@@ -94,7 +94,7 @@ findMember(struct dpkg_ar *deb, const char *name)
 	if (r != sizeof(arh))
 	    ohshit("findMember: unexpected end of package");
 
-	if (dpkg_ar_member_is_illegal(&arh))
+	if (dpkg_ar_member_is_invalid(&arh))
 	    ohshit("findMember: archive appears to be corrupt, fmag incorrect");
 
 	dpkg_ar_normalize_name(&arh);

@@ -68,6 +68,9 @@ install-data-local:
 	$(MKDIR_P) $(DESTDIR)$(DEBSIG_POLICIES_DIR)
 	$(MKDIR_P) $(DESTDIR)$(DEBSIG_KEYRINGS_DIR)
 
+TAR_OPTIONS = --owner=0 --group=0
+export TAR_OPTIONS
+
 dist-hook:
 	echo $(VERSION) >$(distdir)/.dist-version
 

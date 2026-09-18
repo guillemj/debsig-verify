@@ -1,3 +1,14 @@
+debsig-verify (0.35) unstable; urgency=medium
+
+  * Update for new libdpkg-dev >= 1.23.8 API changes. Closes: #1148191
+  * Build system:
+    - Set TAR_OPTIONS to avoid leaking maintainer information on dist.
+  * Packaging:
+    - Switch to Standards-Version 4.7.4 (no changes needed).
+    - Update lintian overrides.
+
+ -- Guillem Jover <guillem@debian.org>  Fri, 18 Sep 2026 03:01:12 +0200
+
 debsig-verify (0.34) unstable; urgency=medium
 
   * Update for new libdpkg-dev >= 1.23.0 API changes. Closes: #1123841

@@ -98,7 +98,7 @@ findMember(struct dpkg_ar *deb, const char *name)
 	    ohshit("findMember: archive appears to be corrupt, fmag incorrect");
 
 	dpkg_ar_normalize_name(&arh);
-	mem_len = dpkg_ar_member_get_size(deb, &arh);
+	mem_len = dpkg_ar_member_parse_size(deb, &arh);
 
 	/*
 	 * If all looks well, then we return the length of the member, and

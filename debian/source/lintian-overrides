@@ -1,0 +1,3 @@
+# We need to evaluate whether some design decisions in debhelper compatibility
+# level 14 are worth the trouble.
+package-uses-old-debhelper-compat-version 13

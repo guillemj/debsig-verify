@@ -46,6 +46,7 @@ EXTRA_DIST = \
 	debian/debsig-verify.lintian-overrides \
 	debian/rules \
 	debian/source/format \
+	debian/source/lintian-overrides \
 	debian/tests/control \
 	debian/tests/functional \
 	# EOL

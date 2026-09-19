@@ -9,7 +9,7 @@ Build-Depends:
  debhelper-compat (= 13),
  debhelper (>= 13.10),
  pkgconf,
- libdpkg-dev (>= 1.23.0),
+ libdpkg-dev (>= 1.23.8),
  libexpat1-dev,
 # Needed by debsig-verify itself during the test suite execution.
  gpg <!nocheck> | gpg-from-sq <!nocheck>,
